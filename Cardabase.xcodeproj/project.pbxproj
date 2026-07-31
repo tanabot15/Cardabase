@@ -10,6 +10,7 @@
 		D96D2FD1301C41880083DC1E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D96D2FCD301C41880083DC1E /* Assets.xcassets */; };
 		D96D2FD2301C41880083DC1E /* CardabaseApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FCE301C41880083DC1E /* CardabaseApp.swift */; };
 		D96D2FD3301C41880083DC1E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FCF301C41880083DC1E /* ContentView.swift */; };
+		D96D2FD7301C42900083DC1E /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = D96D2FD6301C42900083DC1E /* GoogleMobileAds */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -17,6 +18,7 @@
 		D96D2FCD301C41880083DC1E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D96D2FCE301C41880083DC1E /* CardabaseApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardabaseApp.swift; sourceTree = "<group>"; };
 		D96D2FCF301C41880083DC1E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		D96D2FD4301C424E0083DC1E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -24,6 +26,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D96D2FD7301C42900083DC1E /* GoogleMobileAds in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -49,6 +52,7 @@
 		D96D2FD0301C41880083DC1E /* Cardabase */ = {
 			isa = PBXGroup;
 			children = (
+				D96D2FD4301C424E0083DC1E /* Info.plist */,
 				D96D2FCD301C41880083DC1E /* Assets.xcassets */,
 				D96D2FCE301C41880083DC1E /* CardabaseApp.swift */,
 				D96D2FCF301C41880083DC1E /* ContentView.swift */,
@@ -73,6 +77,7 @@
 			);
 			name = Cardabase;
 			packageProductDependencies = (
+				D96D2FD6301C42900083DC1E /* GoogleMobileAds */,
 			);
 			productName = Cardabase;
 			productReference = D96D2FBF301C40930083DC1E /* Cardabase.app */;
@@ -102,6 +107,9 @@
 			);
 			mainGroup = D96D2FB6301C40930083DC1E;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				D96D2FD5301C42900083DC1E /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D96D2FC0301C40930083DC1E /* Products */;
 			projectDirPath = "";
@@ -267,6 +275,7 @@
 				DEVELOPMENT_TEAM = D86GFNUD35;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Cardabase/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Cardabase;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -306,6 +315,7 @@
 				DEVELOPMENT_TEAM = D86GFNUD35;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Cardabase/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Cardabase;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -357,6 +367,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D96D2FD5301C42900083DC1E /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 13.7.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D96D2FD6301C42900083DC1E /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D96D2FD5301C42900083DC1E /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D96D2FB7301C40930083DC1E /* Project object */;
 }
