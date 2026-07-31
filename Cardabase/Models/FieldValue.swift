@@ -7,13 +7,13 @@
 
 import Foundation
 
-public enum FieldType: String, Codable, CaseIterable, Identifiable {
+enum FieldType: String, Codable, CaseIterable, Identifiable {
     case text
     case number
     case url
     case tag
     
-    public var id: String { rawValue }
+    var id: String { rawValue }
     
     public var displayName: String {
         switch self {
@@ -25,13 +25,13 @@ public enum FieldType: String, Codable, CaseIterable, Identifiable {
     }
 }
 
-public struct FieldValue: Codable, Hashable, Identifiable {
-    public var id: UUID
-    public var key: String
-    public var value: String
-    public var type: FieldType
+struct FieldValue: Codable, Hashable, Identifiable {
+    let id: UUID
+    var key: String
+    var value: String
+    var type: FieldType
     
-    public init(id: UUID = UUID(), key: String, value: String, type: FieldType = .text) {
+    init(id: UUID = UUID(), key: String, value: String, type: FieldType = .text) {
         self.id = id
         self.key = key
         self.value = value
