@@ -11,6 +11,23 @@
 		D96D2FD2301C41880083DC1E /* CardabaseApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FCE301C41880083DC1E /* CardabaseApp.swift */; };
 		D96D2FD3301C41880083DC1E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FCF301C41880083DC1E /* ContentView.swift */; };
 		D96D2FD7301C42900083DC1E /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = D96D2FD6301C42900083DC1E /* GoogleMobileAds */; };
+		D96D2FDF301C5E7F0083DC1E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FDE301C5E7F0083DC1E /* AppDelegate.swift */; };
+		D96D2FE1301C5E8E0083DC1E /* Folder.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FE0301C5E8E0083DC1E /* Folder.swift */; };
+		D96D2FE3301C5E990083DC1E /* Knowledge.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FE2301C5E990083DC1E /* Knowledge.swift */; };
+		D96D2FE5301C5EA70083DC1E /* FieldValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FE4301C5EA70083DC1E /* FieldValue.swift */; };
+		D96D2FEC301C5F0A0083DC1E /* FolderListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FEB301C5F0A0083DC1E /* FolderListView.swift */; };
+		D96D2FEE301C5F140083DC1E /* DatabaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FED301C5F140083DC1E /* DatabaseView.swift */; };
+		D96D2FF0301C5F1F0083DC1E /* KnowledgeFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FEF301C5F1F0083DC1E /* KnowledgeFormView.swift */; };
+		D96D2FF2301C5F2B0083DC1E /* CardConfigView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FF1301C5F2B0083DC1E /* CardConfigView.swift */; };
+		D96D2FF4301C5F340083DC1E /* FlashcardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FF3301C5F340083DC1E /* FlashcardView.swift */; };
+		D96D2FF6301C5F3E0083DC1E /* StudyResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FF5301C5F3E0083DC1E /* StudyResultView.swift */; };
+		D96D2FF8301C5F460083DC1E /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FF7301C5F460083DC1E /* SettingsView.swift */; };
+		D96D2FFA301C5F570083DC1E /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FF9301C5F570083DC1E /* PaywallView.swift */; };
+		D96D2FFC301C5F640083DC1E /* AdBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FFB301C5F640083DC1E /* AdBannerView.swift */; };
+		D96D2FFE301C5F760083DC1E /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FFD301C5F760083DC1E /* AppState.swift */; };
+		D96D3000301C5F820083DC1E /* Limits.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FFF301C5F820083DC1E /* Limits.swift */; };
+		D96D3002301C5F8C0083DC1E /* AdMobManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D3001301C5F8C0083DC1E /* AdMobManager.swift */; };
+		D96D3004301C5F970083DC1E /* SampleDataGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D3003301C5F970083DC1E /* SampleDataGenerator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +36,23 @@
 		D96D2FCE301C41880083DC1E /* CardabaseApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardabaseApp.swift; sourceTree = "<group>"; };
 		D96D2FCF301C41880083DC1E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		D96D2FD4301C424E0083DC1E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		D96D2FDE301C5E7F0083DC1E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		D96D2FE0301C5E8E0083DC1E /* Folder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Folder.swift; sourceTree = "<group>"; };
+		D96D2FE2301C5E990083DC1E /* Knowledge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Knowledge.swift; sourceTree = "<group>"; };
+		D96D2FE4301C5EA70083DC1E /* FieldValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldValue.swift; sourceTree = "<group>"; };
+		D96D2FEB301C5F0A0083DC1E /* FolderListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderListView.swift; sourceTree = "<group>"; };
+		D96D2FED301C5F140083DC1E /* DatabaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseView.swift; sourceTree = "<group>"; };
+		D96D2FEF301C5F1F0083DC1E /* KnowledgeFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnowledgeFormView.swift; sourceTree = "<group>"; };
+		D96D2FF1301C5F2B0083DC1E /* CardConfigView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardConfigView.swift; sourceTree = "<group>"; };
+		D96D2FF3301C5F340083DC1E /* FlashcardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashcardView.swift; sourceTree = "<group>"; };
+		D96D2FF5301C5F3E0083DC1E /* StudyResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyResultView.swift; sourceTree = "<group>"; };
+		D96D2FF7301C5F460083DC1E /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		D96D2FF9301C5F570083DC1E /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
+		D96D2FFB301C5F640083DC1E /* AdBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdBannerView.swift; sourceTree = "<group>"; };
+		D96D2FFD301C5F760083DC1E /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		D96D2FFF301C5F820083DC1E /* Limits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Limits.swift; sourceTree = "<group>"; };
+		D96D3001301C5F8C0083DC1E /* AdMobManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdMobManager.swift; sourceTree = "<group>"; };
+		D96D3003301C5F970083DC1E /* SampleDataGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleDataGenerator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,12 +86,125 @@
 		D96D2FD0301C41880083DC1E /* Cardabase */ = {
 			isa = PBXGroup;
 			children = (
+				D96D2FD8301C5E1B0083DC1E /* App */,
+				D96D2FD9301C5E230083DC1E /* Models */,
+				D96D2FDA301C5E310083DC1E /* Views */,
+				D96D2FDB301C5E3B0083DC1E /* ViewModels */,
+				D96D2FDC301C5E420083DC1E /* Utilities */,
+				D96D2FDD301C5E4C0083DC1E /* Resources */,
 				D96D2FD4301C424E0083DC1E /* Info.plist */,
 				D96D2FCD301C41880083DC1E /* Assets.xcassets */,
-				D96D2FCE301C41880083DC1E /* CardabaseApp.swift */,
-				D96D2FCF301C41880083DC1E /* ContentView.swift */,
 			);
 			path = Cardabase;
+			sourceTree = "<group>";
+		};
+		D96D2FD8301C5E1B0083DC1E /* App */ = {
+			isa = PBXGroup;
+			children = (
+				D96D2FCE301C41880083DC1E /* CardabaseApp.swift */,
+				D96D2FDE301C5E7F0083DC1E /* AppDelegate.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		D96D2FD9301C5E230083DC1E /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				D96D2FE0301C5E8E0083DC1E /* Folder.swift */,
+				D96D2FE2301C5E990083DC1E /* Knowledge.swift */,
+				D96D2FE4301C5EA70083DC1E /* FieldValue.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		D96D2FDA301C5E310083DC1E /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				D96D3005301C602C0083DC1E /* Main */,
+				D96D2FE6301C5EB30083DC1E /* Folder */,
+				D96D2FE7301C5EBA0083DC1E /* Database */,
+				D96D2FE8301C5EC00083DC1E /* Flashcard */,
+				D96D2FE9301C5EC80083DC1E /* Settings */,
+				D96D2FEA301C5ED00083DC1E /* Components */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		D96D2FDB301C5E3B0083DC1E /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				D96D2FFD301C5F760083DC1E /* AppState.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		D96D2FDC301C5E420083DC1E /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				D96D2FFF301C5F820083DC1E /* Limits.swift */,
+				D96D3001301C5F8C0083DC1E /* AdMobManager.swift */,
+				D96D3003301C5F970083DC1E /* SampleDataGenerator.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		D96D2FDD301C5E4C0083DC1E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		D96D2FE6301C5EB30083DC1E /* Folder */ = {
+			isa = PBXGroup;
+			children = (
+				D96D2FEB301C5F0A0083DC1E /* FolderListView.swift */,
+			);
+			path = Folder;
+			sourceTree = "<group>";
+		};
+		D96D2FE7301C5EBA0083DC1E /* Database */ = {
+			isa = PBXGroup;
+			children = (
+				D96D2FED301C5F140083DC1E /* DatabaseView.swift */,
+				D96D2FEF301C5F1F0083DC1E /* KnowledgeFormView.swift */,
+			);
+			path = Database;
+			sourceTree = "<group>";
+		};
+		D96D2FE8301C5EC00083DC1E /* Flashcard */ = {
+			isa = PBXGroup;
+			children = (
+				D96D2FF1301C5F2B0083DC1E /* CardConfigView.swift */,
+				D96D2FF3301C5F340083DC1E /* FlashcardView.swift */,
+				D96D2FF5301C5F3E0083DC1E /* StudyResultView.swift */,
+			);
+			path = Flashcard;
+			sourceTree = "<group>";
+		};
+		D96D2FE9301C5EC80083DC1E /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				D96D2FF7301C5F460083DC1E /* SettingsView.swift */,
+				D96D2FF9301C5F570083DC1E /* PaywallView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		D96D2FEA301C5ED00083DC1E /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				D96D2FFB301C5F640083DC1E /* AdBannerView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		D96D3005301C602C0083DC1E /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				D96D2FCF301C41880083DC1E /* ContentView.swift */,
+			);
+			path = Main;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -136,8 +283,25 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D96D2FF2301C5F2B0083DC1E /* CardConfigView.swift in Sources */,
+				D96D3002301C5F8C0083DC1E /* AdMobManager.swift in Sources */,
+				D96D2FDF301C5E7F0083DC1E /* AppDelegate.swift in Sources */,
+				D96D2FF0301C5F1F0083DC1E /* KnowledgeFormView.swift in Sources */,
+				D96D3000301C5F820083DC1E /* Limits.swift in Sources */,
 				D96D2FD2301C41880083DC1E /* CardabaseApp.swift in Sources */,
+				D96D2FE5301C5EA70083DC1E /* FieldValue.swift in Sources */,
 				D96D2FD3301C41880083DC1E /* ContentView.swift in Sources */,
+				D96D2FFC301C5F640083DC1E /* AdBannerView.swift in Sources */,
+				D96D2FE1301C5E8E0083DC1E /* Folder.swift in Sources */,
+				D96D2FFA301C5F570083DC1E /* PaywallView.swift in Sources */,
+				D96D3004301C5F970083DC1E /* SampleDataGenerator.swift in Sources */,
+				D96D2FF6301C5F3E0083DC1E /* StudyResultView.swift in Sources */,
+				D96D2FEE301C5F140083DC1E /* DatabaseView.swift in Sources */,
+				D96D2FFE301C5F760083DC1E /* AppState.swift in Sources */,
+				D96D2FF4301C5F340083DC1E /* FlashcardView.swift in Sources */,
+				D96D2FE3301C5E990083DC1E /* Knowledge.swift in Sources */,
+				D96D2FEC301C5F0A0083DC1E /* FolderListView.swift in Sources */,
+				D96D2FF8301C5F460083DC1E /* SettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
