@@ -12,8 +12,7 @@ struct MainTabView: View {
     var body: some View {
         TabView {
             NavigationStack {
-                Text("Folders & Databases")
-                    .navigationTitle("Databases")
+                FolderListView()
             }
             .tabItem {
                 Label("Folder", systemImage: "folder.fill")
