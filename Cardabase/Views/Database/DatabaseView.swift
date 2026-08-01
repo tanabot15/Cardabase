@@ -97,7 +97,7 @@ struct DatabaseView: View {
             CardConfigView(folder: folder)
         }
         .sheet(isPresented: $isShowingPaywall) {
-            PaywallPlaceholderView()
+            PaywallView()
         }
     }
     
@@ -195,37 +195,37 @@ private struct KnowledgeRowView: View {
 //        }
 //    }
 //}
-
-private struct PaywallPlaceholderView: View {
-    @Environment(\.dismiss) private var dismiss
-    
-    var body: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "star.circle.fill")
-                .font(.system(size: 60))
-                .foregroundStyle(.yellow)
-            Text("Upgrade to Cardabase Pro")
-                .font(.title2)
-                .bold()
-            Text("Free version is limited to 50 records per database.\nUpgrade to Pro for unlimited records.")
-                .multilineTextAlignment(.center)
-                .foregroundStyle(.secondary)
-                .padding(.horizontal)
-            
-            Button(action: { dismiss() }) {
-                Text("Close")
-                    .bold()
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.accentColor)
-                    .foregroundStyle(.white)
-                    .cornerRadius(12)
-            }
-            .padding(.horizontal, 32)
-        }
-        .padding()
-    }
-}
+//
+//private struct PaywallPlaceholderView: View {
+//    @Environment(\.dismiss) private var dismiss
+//    
+//    var body: some View {
+//        VStack(spacing: 20) {
+//            Image(systemName: "star.circle.fill")
+//                .font(.system(size: 60))
+//                .foregroundStyle(.yellow)
+//            Text("Upgrade to Cardabase Pro")
+//                .font(.title2)
+//                .bold()
+//            Text("Free version is limited to 50 records per database.\nUpgrade to Pro for unlimited records.")
+//                .multilineTextAlignment(.center)
+//                .foregroundStyle(.secondary)
+//                .padding(.horizontal)
+//            
+//            Button(action: { dismiss() }) {
+//                Text("Close")
+//                    .bold()
+//                    .frame(maxWidth: .infinity)
+//                    .padding()
+//                    .background(Color.accentColor)
+//                    .foregroundStyle(.white)
+//                    .cornerRadius(12)
+//            }
+//            .padding(.horizontal, 32)
+//        }
+//        .padding()
+//    }
+//}
 
 #Preview {
     let folder = Folder(name: "Sample Database")

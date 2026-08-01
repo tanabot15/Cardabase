@@ -86,7 +86,7 @@ struct FolderListView: View {
             .presentationDetents([.height(200)])
         }
         .sheet(isPresented: $isShowingPaywall) {
-            PaywallPlaceholderView()
+            PaywallView()
         }
     }
     
@@ -188,37 +188,37 @@ private struct FolderRowView: View {
 //        .navigationTitle(folder.name)
 //    }
 //}
-
-private struct PaywallPlaceholderView: View {
-    @Environment(\.dismiss) private var dismiss
-    
-    var body: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "star.circle.fill")
-                .font(.system(size: 60))
-                .foregroundStyle(.yellow)
-            Text("Upgrade to Cardabase Pro")
-                .font(.title2)
-                .bold()
-            Text("Free version is limited to 3 databases.\nUpgrade to Pro for unlimited databases & records.")
-                .multilineTextAlignment(.center)
-                .foregroundStyle(.secondary)
-                .padding(.horizontal)
-            
-            Button(action: { dismiss() }) {
-                Text("Close")
-                    .bold()
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.accentColor)
-                    .foregroundStyle(.white)
-                    .cornerRadius(12)
-            }
-            .padding(.horizontal, 12)
-        }
-        .padding()
-    }
-}
+//
+//private struct PaywallPlaceholderView: View {
+//    @Environment(\.dismiss) private var dismiss
+//    
+//    var body: some View {
+//        VStack(spacing: 20) {
+//            Image(systemName: "star.circle.fill")
+//                .font(.system(size: 60))
+//                .foregroundStyle(.yellow)
+//            Text("Upgrade to Cardabase Pro")
+//                .font(.title2)
+//                .bold()
+//            Text("Free version is limited to 3 databases.\nUpgrade to Pro for unlimited databases & records.")
+//                .multilineTextAlignment(.center)
+//                .foregroundStyle(.secondary)
+//                .padding(.horizontal)
+//            
+//            Button(action: { dismiss() }) {
+//                Text("Close")
+//                    .bold()
+//                    .frame(maxWidth: .infinity)
+//                    .padding()
+//                    .background(Color.accentColor)
+//                    .foregroundStyle(.white)
+//                    .cornerRadius(12)
+//            }
+//            .padding(.horizontal, 12)
+//        }
+//        .padding()
+//    }
+//}
 
 #Preview {
     NavigationStack {
