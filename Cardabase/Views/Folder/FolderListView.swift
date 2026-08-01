@@ -43,14 +43,14 @@ struct FolderListView: View {
                 )
             } else {
                 ForEach(displayedFolders) { folder in
-                    NavigationLink(destination: DatabasePlaceholderView(folder: folder)) {
+                    NavigationLink(destination: DatabaseView(folder: folder)) {
                         FolderRowView(folder: folder)
                     }
                 }
                 .onDelete(perform: deleteFolders)
             }
         }
-        .navigationTitle(parentFolder?.name ?? "Databases")
+        .navigationTitle(parentFolder?.name ?? "Database Deck")
         .searchable(text: $searchText, prompt: "Search databases...")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -145,7 +145,7 @@ private struct FolderRowView: View {
         HStack(spacing: 16) {
             Image(systemName: "folder.fill")
                 .font(.title2)
-                .foregroundStyle(.primary)
+                .foregroundStyle(Color.accentColor)
             VStack(alignment: .leading, spacing: 4) {
                 Text(folder.name)
                     .font(.headline)
@@ -171,23 +171,23 @@ private struct FolderRowView: View {
 }
 
 // MARK: - Temporary Placeholders
-private struct DatabasePlaceholderView: View {
-    let folder: Folder
-    
-    var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "shippingbox.fill")
-                .font(.system(size: 50))
-                .foregroundStyle(.secondary)
-            Text("Database View for '\(folder.name)'")
-                .font(.title3)
-                .bold()
-            Text("Knowledge records will be listed here.")
-                .foregroundStyle(.secondary)
-        }
-        .navigationTitle(folder.name)
-    }
-}
+//private struct DatabasePlaceholderView: View {
+//    let folder: Folder
+//    
+//    var body: some View {
+//        VStack(spacing: 16) {
+//            Image(systemName: "shippingbox.fill")
+//                .font(.system(size: 50))
+//                .foregroundStyle(.secondary)
+//            Text("Database View for '\(folder.name)'")
+//                .font(.title3)
+//                .bold()
+//            Text("Knowledge records will be listed here.")
+//                .foregroundStyle(.secondary)
+//        }
+//        .navigationTitle(folder.name)
+//    }
+//}
 
 private struct PaywallPlaceholderView: View {
     @Environment(\.dismiss) private var dismiss
