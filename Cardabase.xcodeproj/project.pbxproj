@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		D96D2FD1301C41880083DC1E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D96D2FCD301C41880083DC1E /* Assets.xcassets */; };
 		D96D2FD2301C41880083DC1E /* CardabaseApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FCE301C41880083DC1E /* CardabaseApp.swift */; };
-		D96D2FD3301C41880083DC1E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FCF301C41880083DC1E /* ContentView.swift */; };
+		D96D2FD3301C41880083DC1E /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FCF301C41880083DC1E /* MainTabView.swift */; };
 		D96D2FD7301C42900083DC1E /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = D96D2FD6301C42900083DC1E /* GoogleMobileAds */; };
 		D96D2FDF301C5E7F0083DC1E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FDE301C5E7F0083DC1E /* AppDelegate.swift */; };
 		D96D2FE1301C5E8E0083DC1E /* Folder.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FE0301C5E8E0083DC1E /* Folder.swift */; };
@@ -34,7 +34,7 @@
 		D96D2FBF301C40930083DC1E /* Cardabase.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cardabase.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D96D2FCD301C41880083DC1E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D96D2FCE301C41880083DC1E /* CardabaseApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardabaseApp.swift; sourceTree = "<group>"; };
-		D96D2FCF301C41880083DC1E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		D96D2FCF301C41880083DC1E /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		D96D2FD4301C424E0083DC1E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D96D2FDE301C5E7F0083DC1E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D96D2FE0301C5E8E0083DC1E /* Folder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Folder.swift; sourceTree = "<group>"; };
@@ -202,7 +202,7 @@
 		D96D3005301C602C0083DC1E /* Main */ = {
 			isa = PBXGroup;
 			children = (
-				D96D2FCF301C41880083DC1E /* ContentView.swift */,
+				D96D2FCF301C41880083DC1E /* MainTabView.swift */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -290,7 +290,7 @@
 				D96D3000301C5F820083DC1E /* Limits.swift in Sources */,
 				D96D2FD2301C41880083DC1E /* CardabaseApp.swift in Sources */,
 				D96D2FE5301C5EA70083DC1E /* FieldValue.swift in Sources */,
-				D96D2FD3301C41880083DC1E /* ContentView.swift in Sources */,
+				D96D2FD3301C41880083DC1E /* MainTabView.swift in Sources */,
 				D96D2FFC301C5F640083DC1E /* AdBannerView.swift in Sources */,
 				D96D2FE1301C5E8E0083DC1E /* Folder.swift in Sources */,
 				D96D2FFA301C5F570083DC1E /* PaywallView.swift in Sources */,

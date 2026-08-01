@@ -58,7 +58,7 @@ final class Knowledge {
     }
     
     func value(forKey key: String) -> String? {
-        if key == "Titile" { return title }
+        if key == "Title" { return title }
         if key == "Summary" { return summary }
         return customFields.first(where: { $0.key == key })?.value
     }

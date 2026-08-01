@@ -6,19 +6,31 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct MainTabView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        TabView {
+            NavigationStack {
+                Text("Folders & Databases")
+                    .navigationTitle("Databases")
+            }
+            .tabItem {
+                Label("Folder", systemImage: "folder.fill")
+            }
+            
+            NavigationStack {
+                Text("Settings")
+                    .navigationTitle("Settings")
+            }
+            .tabItem {
+                Label("Setting", systemImage: "gearshape.fill")
+            }
         }
-        .padding()
     }
 }
 
 #Preview {
     MainTabView()
+        .modelContainer(for: [Folder.self, Knowledge.self], inMemory: true)
 }
