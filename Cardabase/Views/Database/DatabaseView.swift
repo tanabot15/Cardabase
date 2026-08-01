@@ -94,7 +94,7 @@ struct DatabaseView: View {
             KnowledgeFormView(folder: folder, knowledgeToEdit: knowledge)
         }
         .sheet(isPresented: $isShowingStudyConfig) {
-            CardConfigPlaceholderView(folder: folder)
+            CardConfigView(folder: folder)
         }
         .sheet(isPresented: $isShowingPaywall) {
             PaywallPlaceholderView()
@@ -171,30 +171,30 @@ private struct KnowledgeRowView: View {
 }
 
 // MARK: - Temporary Placeholders
-private struct CardConfigPlaceholderView: View {
-    let folder: Folder
-    @Environment(\.dismiss) private var dismiss
-    
-    var body: some View {
-        NavigationStack {
-            VStack(spacing: 20) {
-                Image(systemName: "gearshape.2.fill")
-                    .font(.system(size: 60))
-                    .foregroundStyle(Color.accentColor)
-                Text("Card Config for '\(folder.name)'")
-                    .font(.title2)
-                    .bold()
-                Text("Front/Back column selector will be implemented here.")
-                    .foregroundStyle(.secondary)
-            }
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") { dismiss() }
-                }
-            }
-        }
-    }
-}
+//private struct CardConfigPlaceholderView: View {
+//    let folder: Folder
+//    @Environment(\.dismiss) private var dismiss
+//    
+//    var body: some View {
+//        NavigationStack {
+//            VStack(spacing: 20) {
+//                Image(systemName: "gearshape.2.fill")
+//                    .font(.system(size: 60))
+//                    .foregroundStyle(Color.accentColor)
+//                Text("Card Config for '\(folder.name)'")
+//                    .font(.title2)
+//                    .bold()
+//                Text("Front/Back column selector will be implemented here.")
+//                    .foregroundStyle(.secondary)
+//            }
+//            .toolbar {
+//                ToolbarItem(placement: .cancellationAction) {
+//                    Button("Close") { dismiss() }
+//                }
+//            }
+//        }
+//    }
+//}
 
 private struct PaywallPlaceholderView: View {
     @Environment(\.dismiss) private var dismiss
