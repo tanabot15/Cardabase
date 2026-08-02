@@ -30,6 +30,7 @@ struct FlashcardView: View {
         return knowledges[currentIndex]
     }
     
+    // MARK: - Main view
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {

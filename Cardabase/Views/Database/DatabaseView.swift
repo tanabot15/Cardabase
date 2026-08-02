@@ -32,49 +32,54 @@ struct DatabaseView: View {
         }
     }
     
+    // MARK: - Main view
     var body: some View {
-        List {
-            if !folder.knowledges.isEmpty {
-                Section {
-                    Button(action: { isShowingStudyConfig = true }) {
-                        HStack {
-                            Image(systemName: "rectangle.stack.fill")
-                                .font(.title2)
-                                .foregroundStyle(Color.accentColor)
-                            
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Start Flashcards")
-                                    .font(.headline)
-                                    .foregroundStyle(.primary)
-                                Text("\(folder.knowledges.count) cards ready to study")
+        VStack {
+            AdBannerView()
+            
+            List {
+                if !folder.knowledges.isEmpty {
+                    Section {
+                        Button(action: { isShowingStudyConfig = true }) {
+                            HStack {
+                                Image(systemName: "rectangle.stack.fill")
+                                    .font(.title2)
+                                    .foregroundStyle(Color.accentColor)
+                                
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Start Flashcards")
+                                        .font(.headline)
+                                        .foregroundStyle(.primary)
+                                    Text("\(folder.knowledges.count) cards ready to study")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                                Image(systemName: "chevron.right")
                                     .font(.caption)
-                                    .foregroundStyle(.secondary)
+                                    .foregroundStyle(.tertiary)
                             }
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .font(.caption)
-                                .foregroundStyle(.tertiary)
+                            .padding(.vertical, 4)
                         }
-                        .padding(.vertical, 4)
                     }
                 }
-            }
                 
-            // record list
-            Section(header: Text("Records (\(filteredKnowledges.count))")) {
-                if filteredKnowledges.isEmpty {
-                    ContentUnavailableView(
-                        searchText.isEmpty ? "No Records" : "No Matching Records",
-                        systemImage: searchText.isEmpty ? "doc.badge.plus" : "magnifyingglass",
-                        description: Text(searchText.isEmpty ? "Tap '+' to add your first knowledge record." : "Try a different search term.")
-                    )
-                } else {
-                    ForEach(filteredKnowledges) { knowledge in
-                        Button(action: { selectedKnowledgeToEdit = knowledge }) {
-                            KnowledgeRowView(knowledge: knowledge)
+                // record list
+                Section(header: Text("Records (\(filteredKnowledges.count))")) {
+                    if filteredKnowledges.isEmpty {
+                        ContentUnavailableView(
+                            searchText.isEmpty ? "No Records" : "No Matching Records",
+                            systemImage: searchText.isEmpty ? "doc.badge.plus" : "magnifyingglass",
+                            description: Text(searchText.isEmpty ? "Tap '+' to add your first knowledge record." : "Try a different search term.")
+                        )
+                    } else {
+                        ForEach(filteredKnowledges) { knowledge in
+                            Button(action: { selectedKnowledgeToEdit = knowledge }) {
+                                KnowledgeRowView(knowledge: knowledge)
+                            }
                         }
+                        .onDelete(perform: deleteKnowledges)
                     }
-                    .onDelete(perform: deleteKnowledges)
                 }
             }
         }
@@ -96,18 +101,23 @@ struct DatabaseView: View {
         .sheet(isPresented: $isShowingStudyConfig) {
             CardConfigView(folder: folder)
         }
-        .sheet(isPresented: $isShowingPaywall) {
-            PaywallView()
-        }
+        // for Pro
+//        .sheet(isPresented: $isShowingPaywall) {
+//            PaywallView()
+//        }
     }
     
     // MARK: - Actions
     private func handleAddKnowledgeTapped() {
-        if Limits.isKnowledgeLimitReached(currentCountInFolder: folder.knowledges.count) {
-            isShowingPaywall = true
-        } else {
-            isShowingAddSheet = true
-        }
+        // for Pro
+//        if Limits.isKnowledgeLimitReached(currentCountInFolder: folder.knowledges.count) {
+//            isShowingPaywall = true
+//        } else {
+//            isShowingAddSheet = true
+//        }
+        
+        // delete when Pro
+        isShowingAddSheet = true
     }
     
     private func deleteKnowledges(at offsets: IndexSet) {

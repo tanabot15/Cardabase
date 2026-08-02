@@ -32,22 +32,26 @@ struct FolderListView: View {
         }
     }
     
-    // MARK: - View
+    // MARK: - Main view
     var body: some View {
-        List {
-            if displayedFolders.isEmpty {
-                ContentUnavailableView(
-                    searchText.isEmpty ? "No Databases Yet" : "No Results",
-                    systemImage: searchText.isEmpty ? "folder.badge.plus" : "magnifyingglass",
-                    description: Text(searchText.isEmpty ? "Tap the '+' button to create your first database." : "Try searching for a different name.")
-                )
-            } else {
-                ForEach(displayedFolders) { folder in
-                    NavigationLink(destination: DatabaseView(folder: folder)) {
-                        FolderRowView(folder: folder)
+        VStack {
+            AdBannerView()
+            
+            List {
+                if displayedFolders.isEmpty {
+                    ContentUnavailableView(
+                        searchText.isEmpty ? "No Databases Yet" : "No Results",
+                        systemImage: searchText.isEmpty ? "folder.badge.plus" : "magnifyingglass",
+                        description: Text(searchText.isEmpty ? "Tap the '+' button to create your first database." : "Try searching for a different name.")
+                    )
+                } else {
+                    ForEach(displayedFolders) { folder in
+                        NavigationLink(destination: DatabaseView(folder: folder)) {
+                            FolderRowView(folder: folder)
+                        }
                     }
+                    .onDelete(perform: deleteFolders)
                 }
-                .onDelete(perform: deleteFolders)
             }
         }
         .navigationTitle(parentFolder?.name ?? "Database Deck")
@@ -85,21 +89,25 @@ struct FolderListView: View {
             }
             .presentationDetents([.height(200)])
         }
-        .sheet(isPresented: $isShowingPaywall) {
-            PaywallView()
-        }
+        // for Pro
+//        .sheet(isPresented: $isShowingPaywall) {
+//            PaywallView()
+//        }
     }
     
     // MARK: - Actions
     private func handleAddFolderTapped() {
-        let totalFolderCount = (try? modelContext.fetchCount(FetchDescriptor<Folder>())) ?? 0
+        // for Pro
+//        let totalFolderCount = (try? modelContext.fetchCount(FetchDescriptor<Folder>())) ?? 0
+//        
+//        if Limits.isFolderLimitReached(currentCount: totalFolderCount) {
+//            isShowingPaywall = true
+//        } else {
+//            isShowingCreaateSheet = true
+//        }
         
-        // limit check
-        if Limits.isFolderLimitReached(currentCount: totalFolderCount) {
-            isShowingPaywall = true
-        } else {
-            isShowingCreaateSheet = true
-        }
+        // delete when Pro
+        isShowingCreaateSheet = true
     }
     
     private func createNewFolder() {

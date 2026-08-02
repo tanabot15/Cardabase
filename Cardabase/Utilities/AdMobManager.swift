@@ -24,28 +24,34 @@ final class AdMobManager: ObservableObject {
     #endif
     
     private init() {
-        Task {
-            await checkProStatus()
-        }
+        // for Pro
+//        Task {
+//            await checkProStatus()
+//        }
     }
     
     // StoreKit 2
     func checkProStatus() async {
-        var hasActivePro = false
-        for await result in Transaction.currentEntitlements {
-            if case .verified(let transaction) = result {
-                if transaction.productID == "com.cardabase.pro" && transaction.revocationDate == nil {
-                    hasActivePro = true
-                    break
-                }
-            }
-        }
-        self.isProUser = hasActivePro
+        // for Pro
+//        var hasActivePro = false
+//        for await result in Transaction.currentEntitlements {
+//            if case .verified(let transaction) = result {
+//                if transaction.productID == "com.cardabase.pro" && transaction.revocationDate == nil {
+//                    hasActivePro = true
+//                    break
+//                }
+//            }
+//        }
+//        self.isProUser = hasActivePro
+        
+        // delete for Pro
+        self.isProUser = false
     }
     
     // restore purchases
     func restorePurchases() async throws {
-        try await AppStore.sync()
-        await checkProStatus()
+        // for Pro
+//        try await AppStore.sync()
+//        await checkProStatus()
     }
 }

@@ -12,41 +12,55 @@ struct SettingsView: View {
     @StateObject private var adManager = AdMobManager.shared
     @Query private var folders: [Folder]
     
-    @State private var isShowingPaywall: Bool = false
+    // for Pro
+//    @State private var isShowingPaywall: Bool = false
     
     var body: some View {
         List {
+            // MARK: - Plan Status
             // acount
             Section(header: Text("Plan Status")) {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(adManager.isProUser ? "Cardabase Pro" : "Free Plan")
+                        // delete for Pro
+                        Text("Free Plan")
                             .font(.headline)
                             .foregroundStyle(.primary)
-                        
-                        Text(adManager.isProUser ? "Unlimited databases and ad-free experience." : "Limited to \(Limits.maxFoldersForFree) databases & \(Limits.maxKnowledgesPerFolderForFree) records per database.")
+                                                
+                        Text("All features are available with supported ads.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
+                        
+                        // for Pro
+//                        Text(adManager.isProUser ? "Cardabase Pro" : "Free Plan")
+//                            .font(.headline)
+//                            .foregroundStyle(.primary)
+//                        
+//                        Text(adManager.isProUser ? "Unlimited databases and ad-free experience." : "Limited to \(Limits.maxFoldersForFree) databases & \(Limits.maxKnowledgesPerFolderForFree) records per database.")
+//                            .font(.caption)
+//                            .foregroundStyle(.secondary)
                     }
                     Spacer()
-                    if adManager.isProUser {
-                        Image(systemName: "checkmark.seal.fill")
-                            .font(.title2)
-                            .foregroundStyle(.green)
-                    }
+                    // for Pro
+//                    if adManager.isProUser {
+//                        Image(systemName: "checkmark.seal.fill")
+//                            .font(.title2)
+//                            .foregroundStyle(.green)
+//                    }
                 }
                 .padding(.vertical, 4)
                 
-                if !adManager.isProUser {
-                    Button(action: { isShowingPaywall = true }) {
-                        HStack {
-                            Image(systemName: "star.fill")
-                                .foregroundStyle(.yellow)
-                            Text("Upgrade to Pro")
-                                .bold()
-                        }
-                    }
-                }
+                // for Pro
+//                if !adManager.isProUser {
+//                    Button(action: { isShowingPaywall = true }) {
+//                        HStack {
+//                            Image(systemName: "star.fill")
+//                                .foregroundStyle(.yellow)
+//                            Text("Upgrade to Pro")
+//                                .bold()
+//                        }
+//                    }
+//                }
             }
             
             // data statistics
@@ -54,8 +68,14 @@ struct SettingsView: View {
                 HStack {
                     Text("Total Databases")
                     Spacer()
-                    Text("\(folders.count) / \(adManager.isProUser ? "∞" : "\(Limits.maxFoldersForFree)")")
+                    
+                    // delete for Pro
+                    Text("\(folders.count)")
                         .foregroundStyle(.secondary)
+                    
+                    // for Pro
+//                    Text("\(folders.count) / \(adManager.isProUser ? "∞" : "\(Limits.maxFoldersForFree)")")
+//                        .foregroundStyle(.secondary)
                 }
             }
             
@@ -68,17 +88,19 @@ struct SettingsView: View {
                         .foregroundStyle(.secondary)
                 }
                 
-                Button("Restore Purchases") {
-                    Task {
-                        try? await adManager.restorePurchases()
-                    }
-                }
+                // for Pro
+//                Button("Restore Purchases") {
+//                    Task {
+//                        try? await adManager.restorePurchases()
+//                    }
+//                }
             }
         }
         .navigationTitle("Setting")
-        .sheet(isPresented: $isShowingPaywall) {
-            PaywallView()
-        }
+        // for Pro
+//        .sheet(isPresented: $isShowingPaywall) {
+//            PaywallView()
+//        }
     }
 }
 

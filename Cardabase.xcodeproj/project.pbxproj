@@ -28,6 +28,7 @@
 		D96D3000301C5F820083DC1E /* Limits.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FFF301C5F820083DC1E /* Limits.swift */; };
 		D96D3002301C5F8C0083DC1E /* AdMobManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D3001301C5F8C0083DC1E /* AdMobManager.swift */; };
 		D96D3004301C5F970083DC1E /* SampleDataGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D3003301C5F970083DC1E /* SampleDataGenerator.swift */; };
+		D99D5984301F053500A4CE16 /* AdMobConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = D99D5983301F053500A4CE16 /* AdMobConfig.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,7 +36,7 @@
 		D96D2FCD301C41880083DC1E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D96D2FCE301C41880083DC1E /* CardabaseApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardabaseApp.swift; sourceTree = "<group>"; };
 		D96D2FCF301C41880083DC1E /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
-		D96D2FD4301C424E0083DC1E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		D96D2FD4301C424E0083DC1E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D96D2FDE301C5E7F0083DC1E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D96D2FE0301C5E8E0083DC1E /* Folder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Folder.swift; sourceTree = "<group>"; };
 		D96D2FE2301C5E990083DC1E /* Knowledge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Knowledge.swift; sourceTree = "<group>"; };
@@ -53,6 +54,7 @@
 		D96D2FFF301C5F820083DC1E /* Limits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Limits.swift; sourceTree = "<group>"; };
 		D96D3001301C5F8C0083DC1E /* AdMobManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdMobManager.swift; sourceTree = "<group>"; };
 		D96D3003301C5F970083DC1E /* SampleDataGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleDataGenerator.swift; sourceTree = "<group>"; };
+		D99D5983301F053500A4CE16 /* AdMobConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AdMobConfig.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,8 +94,6 @@
 				D96D2FDB301C5E3B0083DC1E /* ViewModels */,
 				D96D2FDC301C5E420083DC1E /* Utilities */,
 				D96D2FDD301C5E4C0083DC1E /* Resources */,
-				D96D2FD4301C424E0083DC1E /* Info.plist */,
-				D96D2FCD301C41880083DC1E /* Assets.xcassets */,
 			);
 			path = Cardabase;
 			sourceTree = "<group>";
@@ -151,6 +151,9 @@
 		D96D2FDD301C5E4C0083DC1E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				D96D2FD4301C424E0083DC1E /* Info.plist */,
+				D99D5983301F053500A4CE16 /* AdMobConfig.plist */,
+				D96D2FCD301C41880083DC1E /* Assets.xcassets */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -272,6 +275,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D99D5984301F053500A4CE16 /* AdMobConfig.plist in Resources */,
 				D96D2FD1301C41880083DC1E /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -439,7 +443,7 @@
 				DEVELOPMENT_TEAM = D86GFNUD35;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Cardabase/Info.plist;
+				INFOPLIST_FILE = Cardabase/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Cardabase;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -479,7 +483,7 @@
 				DEVELOPMENT_TEAM = D86GFNUD35;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Cardabase/Info.plist;
+				INFOPLIST_FILE = Cardabase/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Cardabase;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

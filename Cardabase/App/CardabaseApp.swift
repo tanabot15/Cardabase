@@ -12,6 +12,8 @@ import SwiftData
 struct CardabaseApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
+    @StateObject private var appState = AppState()
+    
     // SwiftData model container
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
@@ -30,9 +32,14 @@ struct CardabaseApp: App {
     var body: some Scene {
         WindowGroup {
             MainTabView()
+                .environmentObject(appState)
                 .onAppear {
                     SampleDataGenerator.insertSampleDataIfNeeded(modelContext: sharedModelContainer.mainContext)
                 }
+            // for Pro
+//                .task {
+//                    await appState.refreshProStatus()
+//                }
         }
         .modelContainer(sharedModelContainer)
     }

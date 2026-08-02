@@ -6,7 +6,29 @@
 //
 
 import SwiftUI
+import GoogleMobileAds
 
+// MARK: - AdMob View Wrapper (UIViewRepresentable)
+struct BannerAdRepresentable: UIViewRepresentable {
+    let adUnitID: String
+    
+    func makeUIView(context: Context) -> BannerView {
+        let bannerView = BannerView(adSize: AdSizeBanner)
+        bannerView.adUnitID = adUnitID
+        
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let rootVC = windowScene.windows.first?.rootViewController {
+            bannerView.rootViewController = rootVC
+        }
+        
+        bannerView.load(Request())
+        return bannerView
+    }
+    
+    func updateUIView(_ uiView: BannerView, context: Context) { }
+}
+
+// MARK: - SwiftUI AdBannerView Component
 struct AdBannerView: View {
     @StateObject private var adManager = AdMobManager.shared
     
@@ -16,15 +38,8 @@ struct AdBannerView: View {
         } else {
             HStack {
                 Spacer()
-                VStack(spacing: 4) {
-                    Text("AdBanner Area")
-                        .font(.caption2)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.secondary)
-                    Text("ID: \(adManager.bannerAdUnitID)")
-                        .font(.caption2)
-                        .foregroundStyle(.tertiary)
-                }
+                BannerAdRepresentable(adUnitID: adManager.bannerAdUnitID)
+                    .frame(width: 320, height: 50)
                 Spacer()
             }
             .frame(height: 50)
