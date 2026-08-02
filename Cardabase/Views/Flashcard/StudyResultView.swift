@@ -24,6 +24,8 @@ struct StudyResultView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 24) {
+                AdBannerView()
+                
                 Spacer()
                 
                 // icon

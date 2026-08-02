@@ -34,6 +34,8 @@ struct FlashcardView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
+                AdBannerView()
+                
                 // progress bar
                 ProgressView(value: Double(currentIndex), total: Double(knowledges.count))
                     .padding(.horizontal)
