@@ -151,9 +151,6 @@ DerivedData/
 *.indexed-sqlite
 *.indexed-sqlite-journal
 
-# AdMob Credentials（if needed）
-**/AdMobConfig.plist
-
 ### Xcode ###
 
 ## Xcode 8 and earlier

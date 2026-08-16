@@ -7,6 +7,8 @@
 
 import SwiftUI
 import SwiftData
+import AppTrackingTransparency
+import AdSupport
 
 struct MainTabView: View {
     var body: some View {
@@ -23,6 +25,15 @@ struct MainTabView: View {
             }
             .tabItem {
                 Label("Setting", systemImage: "gearshape.fill")
+            }
+        }
+    }
+    
+    /// Request App Tracking Transparency (ATT) authorization
+    private func requestATTInView() {
+        if ATTrackingManager.trackingAuthorizationStatus == .notDetermined {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                ATTrackingManager.requestTrackingAuthorization { _ in }
             }
         }
     }
