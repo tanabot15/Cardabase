@@ -11,8 +11,9 @@ import SwiftData
 struct FolderListView: View {
     @Environment(\.modelContext) private var modelContext
     
+    var mode: ViewMode = .database
     var parentFolder: Folder?
-    
+
     @Query(filter: #Predicate<Folder> { $0.parent == nil }, sort: \Folder.createdAt, order: .reverse)
     private var rootFolders: [Folder]
     
@@ -46,20 +47,30 @@ struct FolderListView: View {
                     )
                 } else {
                     ForEach(displayedFolders) { folder in
-                        NavigationLink(destination: DatabaseView(folder: folder)) {
-                            FolderRowView(folder: folder)
+                        NavigationLink {
+                            if mode == .database {
+                                DatabaseView(folder: folder)
+                            } else {
+                                CardConfigView(folder: folder)
+                            }
+                        } label: {
+                            FolderRowView(folder: folder, mode: mode)
                         }
                     }
                     .onDelete(perform: deleteFolders)
                 }
             }
         }
-        .navigationTitle(parentFolder?.name ?? "Database Deck")
+        .navigationTitle(
+            parentFolder?.name ?? (mode == .database ? "Databases" : "Flashcards")
+        )
         .searchable(text: $searchText, prompt: "Search databases...")
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: handleAddFolderTapped) {
-                    Image(systemName: "plus")
+            if mode == .database {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: handleAddFolderTapped) {
+                        Image(systemName: "plus")
+                    }
                 }
             }
         }
@@ -137,8 +148,8 @@ struct FolderListView: View {
 // MARK: - Folder Row Component
 private struct FolderRowView: View {
     let folder: Folder
+    let mode: ViewMode
     
-    // record limit number
     private var recordCount: Int {
         folder.knowledges.count
     }
@@ -151,9 +162,10 @@ private struct FolderRowView: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            Image(systemName: "folder.fill")
+            Image(systemName: mode == .database ? "shippingbox.fill" : "rectangle.stack.fill")
                 .font(.title2)
                 .foregroundStyle(Color.accentColor)
+            
             VStack(alignment: .leading, spacing: 4) {
                 Text(folder.name)
                     .font(.headline)
@@ -228,9 +240,47 @@ private struct FolderRowView: View {
 //    }
 //}
 
-#Preview {
-    NavigationStack {
-        FolderListView()
-            .modelContainer(for: [Folder.self, Knowledge.self], inMemory: true)
+#Preview("Databases") {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: Folder.self, Knowledge.self, configurations: config)
+    let context = container.mainContext
+    
+    let folder1 = Folder(name: "AI & Tech Concepts")
+    folder1.knowledges.append(Knowledge(title: "Attention Mechanism", summary: "Calculates dynamic weights"))
+    
+    let folder2 = Folder(name: "Financial Indicators")
+    folder2.knowledges.append(contentsOf: [
+        Knowledge(title: "ROIC", summary: "Return on Invested Capital"),
+        Knowledge(title: "PER", summary: "Price to Earnings Ratio"),
+        Knowledge(title: "ROE", summary: "Return on Equity")
+    ])
+    
+    let folder3 = Folder(name: "Intellectual Property")
+    
+    context.insert(folder1)
+    context.insert(folder2)
+    context.insert(folder3)
+    
+    return NavigationStack {
+        FolderListView(mode: .database)
     }
+    .modelContainer(container)
+}
+
+#Preview("Flashcards") {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: Folder.self, Knowledge.self, configurations: config)
+    let context = container.mainContext
+    
+    let folder1 = Folder(name: "Financial Indicators")
+    let k1 = Knowledge(title: "ROIC", summary: "Return on Invested Capital")
+    k1.isMastered = true
+    folder1.knowledges.append(contentsOf: [k1, Knowledge(title: "PER", summary: "Price to Earnings Ratio")])
+    
+    context.insert(folder1)
+    
+    return NavigationStack {
+        FolderListView(mode: .flashcards)
+    }
+    .modelContainer(container)
 }

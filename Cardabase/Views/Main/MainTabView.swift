@@ -10,22 +10,40 @@ import SwiftData
 import AppTrackingTransparency
 import AdSupport
 
+enum ViewMode {
+    case database
+    case flashcards
+}
+
 struct MainTabView: View {
     var body: some View {
         TabView {
+            // 1. Database Tab
             NavigationStack {
-                FolderListView()
+                FolderListView(mode: .database)
             }
             .tabItem {
                 Label("Folder", systemImage: "folder.fill")
             }
             
+            // 2. Flashcards Tab
+            NavigationStack {
+                FolderListView(mode: .flashcards)
+            }
+            .tabItem {
+                Label("Flashcards", systemImage: "rectangle.stack.fill")
+            }
+            
+            // 3. Settings Tab
             NavigationStack {
                 SettingsView()
             }
             .tabItem {
                 Label("Setting", systemImage: "gearshape.fill")
             }
+        }
+        .onAppear {
+            requestATTInView()
         }
     }
     

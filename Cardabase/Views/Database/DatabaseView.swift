@@ -38,33 +38,6 @@ struct DatabaseView: View {
             AdBannerView()
             
             List {
-                if !folder.knowledges.isEmpty {
-                    Section {
-                        Button(action: { isShowingStudyConfig = true }) {
-                            HStack {
-                                Image(systemName: "rectangle.stack.fill")
-                                    .font(.title2)
-                                    .foregroundStyle(Color.accentColor)
-                                
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text("Start Flashcards")
-                                        .font(.headline)
-                                        .foregroundStyle(.primary)
-                                    Text("\(folder.knowledges.count) cards ready to study")
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                                    .font(.caption)
-                                    .foregroundStyle(.tertiary)
-                            }
-                            .padding(.vertical, 4)
-                        }
-                    }
-                }
-                
-                // record list
                 Section(header: Text("Records (\(filteredKnowledges.count))")) {
                     if filteredKnowledges.isEmpty {
                         ContentUnavailableView(
@@ -77,6 +50,7 @@ struct DatabaseView: View {
                             Button(action: { selectedKnowledgeToEdit = knowledge }) {
                                 KnowledgeRowView(knowledge: knowledge)
                             }
+                            .buttonStyle(.plain)
                         }
                         .onDelete(perform: deleteKnowledges)
                     }
@@ -97,9 +71,6 @@ struct DatabaseView: View {
         }
         .sheet(item: $selectedKnowledgeToEdit) { knowledge in
             KnowledgeFormView(folder: folder, knowledgeToEdit: knowledge)
-        }
-        .sheet(isPresented: $isShowingStudyConfig) {
-            CardConfigView(folder: folder)
         }
         // for Pro
 //        .sheet(isPresented: $isShowingPaywall) {
@@ -142,7 +113,7 @@ private struct KnowledgeRowView: View {
                 Spacer()
                 
                 if knowledge.isMastered {
-                    Image(systemName: "checkmark.seel.fill")
+                    Image(systemName: "checkmark.seal.fill")
                         .foregroundStyle(.green)
                         .font(.subheadline)
                 }
