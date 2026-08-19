@@ -35,45 +35,53 @@ struct FolderListView: View {
     
     // MARK: - Main view
     var body: some View {
-        VStack {
-            AdBannerView()
-            
-            List {
-                if displayedFolders.isEmpty {
-                    ContentUnavailableView(
-                        searchText.isEmpty ? "No Databases Yet" : "No Results",
-                        systemImage: searchText.isEmpty ? "folder.badge.plus" : "magnifyingglass",
-                        description: Text(searchText.isEmpty ? "Tap the '+' button to create your first database." : "Try searching for a different name.")
-                    )
-                } else {
-                    ForEach(displayedFolders) { folder in
-                        NavigationLink {
-                            if mode == .database {
-                                DatabaseView(folder: folder)
-                            } else {
-                                CardConfigView(folder: folder)
+        ZStack(alignment: .bottomTrailing) {
+            VStack {
+                AdBannerView()
+                
+                List {
+                    if displayedFolders.isEmpty {
+                        ContentUnavailableView(
+                            searchText.isEmpty ? "No Databases Yet" : "No Results",
+                            systemImage: searchText.isEmpty ? "folder.badge.plus" : "magnifyingglass",
+                            description: Text(searchText.isEmpty ? "Tap the '+' button to create your first database." : "Try searching for a different name.")
+                        )
+                    } else {
+                        ForEach(displayedFolders) { folder in
+                            NavigationLink {
+                                if mode == .database {
+                                    DatabaseView(folder: folder)
+                                } else {
+                                    CardConfigView(folder: folder)
+                                }
+                            } label: {
+                                FolderRowView(folder: folder, mode: mode)
                             }
-                        } label: {
-                            FolderRowView(folder: folder, mode: mode)
                         }
+                        .onDelete(perform: deleteFolders)
                     }
-                    .onDelete(perform: deleteFolders)
                 }
+            }
+            
+            if mode == .database {
+                Button(action: handleAddFolderTapped) {
+                    Image(systemName: "plus")
+                        .font(.title2.bold())
+                        .foregroundStyle(.white)
+                        .frame(width: 56, height: 56)
+                        .background(Color.accentColor)
+                        .clipShape(Circle())
+                        .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 3)
+                }
+                .padding(.trailing, 20)
+                .padding(.bottom, 20)
             }
         }
         .navigationTitle(
             parentFolder?.name ?? (mode == .database ? "Databases" : "Flashcards")
         )
+        .navigationBarTitleDisplayMode(.inline)
         .searchable(text: $searchText, prompt: "Search databases...")
-        .toolbar {
-            if mode == .database {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: handleAddFolderTapped) {
-                        Image(systemName: "plus")
-                    }
-                }
-            }
-        }
         .sheet(isPresented: $isShowingCreaateSheet) {
             NavigationStack {
                 Form {
@@ -164,7 +172,7 @@ private struct FolderRowView: View {
         HStack(spacing: 16) {
             Image(systemName: mode == .database ? "shippingbox.fill" : "rectangle.stack.fill")
                 .font(.title2)
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(.secondary)
             
             VStack(alignment: .leading, spacing: 4) {
                 Text(folder.name)

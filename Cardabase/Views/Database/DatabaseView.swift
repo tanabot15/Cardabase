@@ -34,38 +34,46 @@ struct DatabaseView: View {
     
     // MARK: - Main view
     var body: some View {
-        VStack {
-            AdBannerView()
-            
-            List {
-                Section(header: Text("Records (\(filteredKnowledges.count))")) {
-                    if filteredKnowledges.isEmpty {
-                        ContentUnavailableView(
-                            searchText.isEmpty ? "No Records" : "No Matching Records",
-                            systemImage: searchText.isEmpty ? "doc.badge.plus" : "magnifyingglass",
-                            description: Text(searchText.isEmpty ? "Tap '+' to add your first knowledge record." : "Try a different search term.")
-                        )
-                    } else {
-                        ForEach(filteredKnowledges) { knowledge in
-                            Button(action: { selectedKnowledgeToEdit = knowledge }) {
-                                KnowledgeRowView(knowledge: knowledge)
+        ZStack(alignment: .bottomTrailing) {
+            VStack {
+                AdBannerView()
+                
+                List {
+                    Section(header: Text("Records (\(filteredKnowledges.count))")) {
+                        if filteredKnowledges.isEmpty {
+                            ContentUnavailableView(
+                                searchText.isEmpty ? "No Records" : "No Matching Records",
+                                systemImage: searchText.isEmpty ? "doc.badge.plus" : "magnifyingglass",
+                                description: Text(searchText.isEmpty ? "Tap '+' to add your first knowledge record." : "Try a different search term.")
+                            )
+                        } else {
+                            ForEach(filteredKnowledges) { knowledge in
+                                Button(action: { selectedKnowledgeToEdit = knowledge }) {
+                                    KnowledgeRowView(knowledge: knowledge)
+                                }
+                                .buttonStyle(.plain)
                             }
-                            .buttonStyle(.plain)
+                            .onDelete(perform: deleteKnowledges)
                         }
-                        .onDelete(perform: deleteKnowledges)
                     }
                 }
             }
+            
+            Button(action: handleAddKnowledgeTapped) {
+                Image(systemName: "plus")
+                    .font(.title2.bold())
+                    .foregroundStyle(.white)
+                    .frame(width: 56, height: 56)
+                    .background(Color.accentColor)
+                    .clipShape(Circle())
+                    .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 3)
+            }
+            .padding(.trailing, 20)
+            .padding(.bottom, 20)
         }
         .navigationTitle(folder.name)
+        .navigationBarTitleDisplayMode(.inline)
         .searchable(text: $searchText, prompt: "Search records & fields...")
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: handleAddKnowledgeTapped) {
-                    Image(systemName: "plus")
-                }
-            }
-        }
         .sheet(isPresented: $isShowingAddSheet) {
             KnowledgeFormView(folder: folder)
         }
