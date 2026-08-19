@@ -58,6 +58,28 @@ struct MainTabView: View {
 }
 
 #Preview {
-    MainTabView()
-        .modelContainer(for: [Folder.self, Knowledge.self], inMemory: true)
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: Folder.self, Knowledge.self, configurations: config)
+    let context = container.mainContext
+    
+    let folder1 = Folder(name: "AI & Tech Concepts")
+    folder1.knowledges.append(Knowledge(title: "Attention Mechanism", summary: "Calculates dynamic weights"))
+    
+    let folder2 = Folder(name: "Financial Indicators")
+    let k1 = Knowledge(title: "ROIC", summary: "Return on Invested Capital")
+    k1.isMastered = true
+    folder2.knowledges.append(contentsOf: [
+        k1,
+        Knowledge(title: "PER", summary: "Price to Earnings Ratio"),
+        Knowledge(title: "ROE", summary: "Return on Equity")
+    ])
+    
+    let folder3 = Folder(name: "Intellectual Property")
+    
+    context.insert(folder1)
+    context.insert(folder2)
+    context.insert(folder3)
+    
+    return MainTabView()
+        .modelContainer(container)
 }

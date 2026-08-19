@@ -19,19 +19,19 @@ struct SettingsView: View {
         List {
             // MARK: - Plan Status
             // acount
-            Section(header: Text("Plan Status")) {
-                HStack {
-                    VStack(alignment: .leading, spacing: 4) {
-                        // delete for Pro
-                        Text("Free Plan")
-                            .font(.headline)
-                            .foregroundStyle(.primary)
-                                                
-                        Text("All features are available with supported ads.")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                        
-                        // for Pro
+//            Section(header: Text("Plan Status")) {
+//                HStack {
+//                    VStack(alignment: .leading, spacing: 4) {
+//                        // delete for Pro
+//                        Text("Free Plan")
+//                            .font(.headline)
+//                            .foregroundStyle(.primary)
+//                                                
+//                        Text("All features are available with supported ads.")
+//                            .font(.caption)
+//                            .foregroundStyle(.secondary)
+//                        
+//                         for Pro
 //                        Text(adManager.isProUser ? "Cardabase Pro" : "Free Plan")
 //                            .font(.headline)
 //                            .foregroundStyle(.primary)
@@ -39,18 +39,18 @@ struct SettingsView: View {
 //                        Text(adManager.isProUser ? "Unlimited databases and ad-free experience." : "Limited to \(Limits.maxFoldersForFree) databases & \(Limits.maxKnowledgesPerFolderForFree) records per database.")
 //                            .font(.caption)
 //                            .foregroundStyle(.secondary)
-                    }
-                    Spacer()
-                    // for Pro
+//                    }
+//                    Spacer()
+//                     for Pro
 //                    if adManager.isProUser {
 //                        Image(systemName: "checkmark.seal.fill")
 //                            .font(.title2)
 //                            .foregroundStyle(.green)
 //                    }
-                }
-                .padding(.vertical, 4)
-                
-                // for Pro
+//                }
+//                .padding(.vertical, 4)
+//                
+//                 for Pro
 //                if !adManager.isProUser {
 //                    Button(action: { isShowingPaywall = true }) {
 //                        HStack {
@@ -61,7 +61,7 @@ struct SettingsView: View {
 //                        }
 //                    }
 //                }
-            }
+//            }
             
             // data statistics
             Section(header: Text("Statistics")) {
@@ -80,7 +80,7 @@ struct SettingsView: View {
             }
             
             // app info
-            Section(header: Text("About")) {
+            Section(header: Text("About App")) {
                 HStack {
                     Text("Version")
                     Spacer()
