@@ -23,7 +23,7 @@ struct MainTabView: View {
                 FolderListView(mode: .database)
             }
             .tabItem {
-                Label("Folder", systemImage: "folder.fill")
+                Label("Database", systemImage: "cylinder.split.1x2.fill")
             }
             
             // 2. Flashcards Tab

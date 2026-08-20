@@ -84,7 +84,7 @@ struct SettingsView: View {
                 HStack {
                     Text("Version")
                     Spacer()
-                    Text("1.2")
+                    Text("1.3")
                         .foregroundStyle(.secondary)
                 }
                 
@@ -97,6 +97,7 @@ struct SettingsView: View {
             }
         }
         .navigationTitle("Setting")
+        .navigationBarTitleDisplayMode(.inline)
         // for Pro
 //        .sheet(isPresented: $isShowingPaywall) {
 //            PaywallView()
