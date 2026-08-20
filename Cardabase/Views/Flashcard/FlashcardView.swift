@@ -53,11 +53,10 @@ struct FlashcardView: View {
                 // flip card
                 if let knowledge = currentKnowledge {
                     ZStack {
-                        // frond
-                        CardFaceView(
+                        // front (Question)
+                        CardFrontFaceView(
                             title: frontKey,
-                            content: knowledge.value(forKey: frontKey) ?? "(Empty)",
-                            subHint: "Tap to flip"
+                            content: knowledge.value(forKey: frontKey) ?? "(Empty)"
                         )
                         .opacity(isFlipped ? 0.0 : 1.0)
                         .rotation3DEffect(
@@ -65,11 +64,12 @@ struct FlashcardView: View {
                             axis: (x: 0.0, y: 1.0, z: 0.0)
                         )
                         
-                        // back
-                        CardFaceView(
-                            title: backKey,
-                            content: knowledge.value(forKey: backKey) ?? "(Empty)",
-                            subHint: "How was your recall?"
+                        // back (Question + Divider + Answer)
+                        CardBackFaceView(
+                            frontTitle: frontKey,
+                            frontContent: knowledge.value(forKey: frontKey) ?? "(Empty)",
+                            backTitle: backKey,
+                            backContent: knowledge.value(forKey: backKey) ?? "(Empty)"
                         )
                         .opacity(isFlipped ? 1.0 : 0.0)
                         .rotation3DEffect(
@@ -173,10 +173,10 @@ struct FlashcardView: View {
 }
 
 // MARK: - Subview for Card Design
-private struct CardFaceView: View {
+// Front Face
+private struct CardFrontFaceView: View {
     let title: String
     let content: String
-    let subHint: String
     
     var body: some View {
         VStack(spacing: 16) {
@@ -202,7 +202,73 @@ private struct CardFaceView: View {
             
             Spacer()
             
-            Text(subHint)
+            Text("Tap to flip")
+                .font(.caption2)
+                .foregroundStyle(.tertiary)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(.secondarySystemGroupedBackground))
+        .cornerRadius(20)
+        .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(Color(.systemGray4), lineWidth: 1)
+        )
+    }
+}
+
+// Back Face
+private struct CardBackFaceView: View {
+    let frontTitle: String
+    let frontContent: String
+    let backTitle: String
+    let backContent: String
+    
+    var body: some View {
+        VStack(spacing: 12) {
+            ScrollView {
+                VStack(spacing: 12) {
+                    // 問題部分（上部）
+                    VStack(spacing: 6) {
+                        Text(frontTitle.uppercased())
+                            .font(.caption2)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.secondary)
+                        
+                        Text(frontContent)
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .multilineTextAlignment(.center)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.top, 4)
+                    
+                    Divider()
+                        .padding(.vertical, 4)
+                    
+                    // 解答部分（下部）
+                    VStack(spacing: 8) {
+                        Text(backTitle.uppercased())
+                            .font(.caption)
+                            .fontWeight(.bold)
+                            .foregroundStyle(Color.accentColor)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 4)
+                            .background(Color.accentColor.opacity(0.1))
+                            .cornerRadius(6)
+                        
+                        Text(backContent)
+                            .font(.title3)
+                            .fontWeight(.bold)
+                            .multilineTextAlignment(.center)
+                            .foregroundStyle(.primary)
+                    }
+                }
+                .padding(.horizontal)
+            }
+            
+            Text("How was your recall?")
                 .font(.caption2)
                 .foregroundStyle(.tertiary)
         }
