@@ -120,9 +120,18 @@ private struct KnowledgeRowView: View {
                 
                 Spacer()
                 
-                if knowledge.isMastered {
+                switch knowledge.masterStatus {
+                case .mastered:
                     Image(systemName: "checkmark.seal.fill")
                         .foregroundStyle(.green)
+                        .font(.subheadline)
+                case .incorrect:
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(.red)
+                        .font(.subheadline)
+                case .unreviewed:
+                    Image(systemName: "questionmark.circle")
+                        .foregroundStyle(.gray)
                         .font(.subheadline)
                 }
             }

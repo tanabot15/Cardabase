@@ -14,8 +14,16 @@ import AdSupport
 @main
 struct CardabaseApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    
     @StateObject private var appState = AppState()
+    @AppStorage("userColorScheme") private var userColorScheme: Int = 0
+    
+    private var selectedColorScheme: ColorScheme? {
+        switch userColorScheme {
+        case 1: return .light
+        case 2: return .dark
+        default: return nil // システム設定に従う
+        }
+    }
     
     // SwiftData model container
     var sharedModelContainer: ModelContainer = {
@@ -36,6 +44,7 @@ struct CardabaseApp: App {
         WindowGroup {
             MainTabView()
                 .environmentObject(appState)
+                .preferredColorScheme(selectedColorScheme)
                 .onAppear {
                     SampleDataGenerator.insertSampleDataIfNeeded(modelContext: sharedModelContainer.mainContext)
                 }

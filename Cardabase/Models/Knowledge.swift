@@ -8,6 +8,12 @@
 import Foundation
 import SwiftData
 
+enum MasterStatus: String, Codable, CaseIterable {
+    case unreviewed = "unreviewed"
+    case mastered = "mastered"
+    case incorrect = "unmastered"
+}
+
 @Model
 final class Knowledge {
     var id: UUID
@@ -22,7 +28,7 @@ final class Knowledge {
     // learn status for flashcards
     var reviewCount: Int
     var correctCount: Int
-    var isMastered: Bool
+    var masterStatus: MasterStatus
     var lastReviewedAt: Date?
     
     // related folder
@@ -37,7 +43,7 @@ final class Knowledge {
         customFields: [FieldValue] = [],
         reviewCount: Int = 0,
         correctCount: Int = 0,
-        isMastered: Bool = false,
+        masterStatus: MasterStatus = .unreviewed,
         lastReviewedAt: Date? = nil
     ) {
         self.id = id
@@ -48,7 +54,7 @@ final class Knowledge {
         self.customFields = customFields
         self.reviewCount = reviewCount
         self.correctCount = correctCount
-        self.isMastered = isMastered
+        self.masterStatus = masterStatus
         self.lastReviewedAt = lastReviewedAt
     }
     

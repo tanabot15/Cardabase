@@ -153,10 +153,10 @@ struct FlashcardView: View {
         if isCorrect {
             knowledge.correctCount += 1
             correctCount += 1
-            knowledge.isMastered = true
+            knowledge.masterStatus = .mastered
         } else {
             incorrectCount += 1
-            knowledge.isMastered = false
+            knowledge.masterStatus = .incorrect
         }
         knowledge.lastReviewedAt = Date()
         

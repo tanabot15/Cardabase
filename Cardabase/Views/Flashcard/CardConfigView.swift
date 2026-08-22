@@ -23,7 +23,8 @@ struct CardConfigView: View {
     private var targetKnowledges: [Knowledge] {
         var list = folder.knowledges
         if onlyUnmastered {
-            list = list.filter { !$0.isMastered }
+            // 修正: .mastered 以外のカード（.unreviewed および .incorrect）を抽出
+            list = list.filter { $0.masterStatus != .mastered }
         }
         if shuffleCards {
             return list.shuffled()

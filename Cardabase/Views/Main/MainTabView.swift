@@ -67,7 +67,7 @@ struct MainTabView: View {
     
     let folder2 = Folder(name: "Financial Indicators")
     let k1 = Knowledge(title: "ROIC", summary: "Return on Invested Capital")
-    k1.isMastered = true
+    k1.masterStatus = .mastered
     folder2.knowledges.append(contentsOf: [
         k1,
         Knowledge(title: "PER", summary: "Price to Earnings Ratio"),

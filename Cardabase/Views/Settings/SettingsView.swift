@@ -12,11 +12,22 @@ struct SettingsView: View {
     @StateObject private var adManager = AdMobManager.shared
     @Query private var folders: [Folder]
     
+    @AppStorage("userColorScheme") private var userColorScheme: Int = 0
+    
     // for Pro
 //    @State private var isShowingPaywall: Bool = false
     
     var body: some View {
         List {
+            Section(header: Text("Appearance")) {
+                Picker("Theme", selection: $userColorScheme) {
+                    Text("System").tag(0)
+                    Text("Light").tag(1)
+                    Text("Dark").tag(2)
+                }
+                .pickerStyle(.menu)
+            }
+            
             // MARK: - Plan Status
             // acount
 //            Section(header: Text("Plan Status")) {
@@ -84,7 +95,7 @@ struct SettingsView: View {
                 HStack {
                     Text("Version")
                     Spacer()
-                    Text("1.3")
+                    Text("1.5")
                         .foregroundStyle(.secondary)
                 }
                 

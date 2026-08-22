@@ -21,7 +21,7 @@ struct FolderListView: View {
     @State private var searchText: String = ""
     @State private var isShowingCreaateSheet: Bool = false
     @State private var newFolderName: String = ""
-    @State private var isShowingPaywall: Bool = false
+//    @State private var isShowingPaywall: Bool = false
     
     // folder list
     private var displayedFolders: [Folder] {
@@ -81,7 +81,7 @@ struct FolderListView: View {
             parentFolder?.name ?? (mode == .database ? "Databases" : "Flashcards")
         )
         .navigationBarTitleDisplayMode(.inline)
-        .searchable(text: $searchText, prompt: "Search databases...")
+        .searchableIf(mode == .database, text: $searchText, prompt: "Search databases...")
         .sheet(isPresented: $isShowingCreaateSheet) {
             NavigationStack {
                 Form {
@@ -153,6 +153,18 @@ struct FolderListView: View {
     }
 }
 
+// MARK: - Conditional Searchable Extension
+private extension View {
+    @ViewBuilder
+    func searchableIf(_ condition: Bool, text: Binding<String>, prompt: String) -> some View {
+        if condition {
+            self.searchable(text: text, prompt: prompt)
+        } else {
+            self
+        }
+    }
+}
+
 // MARK: - Folder Row Component
 private struct FolderRowView: View {
     let folder: Folder
@@ -164,7 +176,7 @@ private struct FolderRowView: View {
     
     private var masteryPercentage: Int {
         guard recordCount > 0 else { return 0 }
-        let masteredCount = folder.knowledges.filter { $0.isMastered }.count
+        let masteredCount = folder.knowledges.filter { $0.masterStatus == .mastered }.count
         return Int(round(Double(masteredCount) / Double(recordCount) * 100))
     }
     
@@ -282,7 +294,7 @@ private struct FolderRowView: View {
     
     let folder1 = Folder(name: "Financial Indicators")
     let k1 = Knowledge(title: "ROIC", summary: "Return on Invested Capital")
-    k1.isMastered = true
+    k1.masterStatus = .mastered // 修正
     folder1.knowledges.append(contentsOf: [k1, Knowledge(title: "PER", summary: "Price to Earnings Ratio")])
     
     context.insert(folder1)
