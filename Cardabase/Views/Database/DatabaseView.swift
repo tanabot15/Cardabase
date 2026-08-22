@@ -226,11 +226,45 @@ private struct KnowledgeRowView: View {
 //}
 
 #Preview {
-    let folder = Folder(name: "Sample Database")
-    folder.knowledges.append(Knowledge(title: "Sample Title", summary: "Sample Summary"))
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: Folder.self, Knowledge.self, configurations: config)
+    let context = container.mainContext
+    
+    let folder = Folder(name: "SAKE DIPLOMA")
+    
+    // 1. マスター済み ＋ カスタムフィールドあり
+    let k1 = Knowledge(
+        title: "山田錦",
+        summary: "兵庫県特A地区などで生産される代表的な酒造好適米。心白が大きく心白率が高い。",
+        customFields: [
+            FieldValue(key: "原産地", value: "兵庫県"),
+            FieldValue(key: "特性", value: "心白大")
+        ],
+        masterStatus: .mastered
+    )
+    
+    // 2. 不正解 ＋ サマリーのみ
+    let k2 = Knowledge(
+        title: "生酛造り",
+        summary: "自然の乳酸菌を活用して醸造する伝統的な酒母造りの手法。重厚で複雑な味わいになる。",
+        masterStatus: .incorrect
+    )
+    
+    // 3. 未レビュー ＋ サマリーなし ＋ カスタムフィールドのみ
+    let k3 = Knowledge(
+        title: "醸造アルコール",
+        summary: "",
+        customFields: [
+            FieldValue(key: "目的", value: "香りの引き出し・スッキリ感")
+        ],
+        masterStatus: .unreviewed
+    )
+    
+    folder.knowledges.append(contentsOf: [k1, k2, k3])
+    context.insert(folder)
     
     return NavigationStack {
         DatabaseView(folder: folder)
-            .modelContainer(for: [Folder.self, Knowledge.self], inMemory: true)
     }
+    .modelContainer(container)
 }
