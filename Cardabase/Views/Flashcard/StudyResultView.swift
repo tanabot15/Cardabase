@@ -16,6 +16,8 @@ struct StudyResultView: View {
     let correctCount: Int
     let incorrectCount: Int
     
+    var onRestart: (() -> Void)? = nil
+    
     private var accuracyRate: Int {
         guard totalStudied > 0 else { return 0 }
         return Int(round(Double(correctCount) / Double(totalStudied) * 100))
@@ -54,23 +56,52 @@ struct StudyResultView: View {
                 
                 Spacer()
                 
-                // done
-                Button(action: {
-                    dismiss()
-                }) {
-                    Text("Done")
+                // action buttons
+                HStack(spacing: 12) {
+                    Button(action: resetAndRestart) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "arrow.clockwise")
+                            Text("Restart")
+                        }
                         .font(.headline)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(.red)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.accentColor)
+                        .background(Color(.secondarySystemBackground))
                         .cornerRadius(12)
+                    }
+                    
+                    Button(action: {
+                        dismiss()
+                    }) {
+                        HStack(spacing: 6) {
+                            HStack {
+                                Image(systemName: "checkmark")
+                                Text("Done")
+                            }
+                            .font(.headline)
+                            .foregroundStyle(Color.accentColor)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color(.secondarySystemBackground))
+                            .cornerRadius(12)
+                        }
+                    }
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 16)
             }
             .navigationBarBackButtonHidden(true)
         }
+    }
+    
+    private func resetAndRestart() {
+        for knowledge in folder.knowledges {
+            knowledge.masterStatus = .unreviewed
+        }
+        
+        dismiss()
+        onRestart?()
     }
 }
 

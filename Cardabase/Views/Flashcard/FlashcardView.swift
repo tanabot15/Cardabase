@@ -138,7 +138,13 @@ struct FlashcardView: View {
                     folder: folder,
                     totalStudied: knowledges.count,
                     correctCount: correctCount,
-                    incorrectCount: incorrectCount
+                    incorrectCount: incorrectCount,
+                    onRestart: {
+                        currentIndex = 0
+                        correctCount = 0
+                        incorrectCount = 0
+                        isFlipped = false
+                    }
                 )
             }
         }

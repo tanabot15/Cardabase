@@ -36,7 +36,7 @@ struct FolderListView: View {
     // MARK: - Main view
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
-            VStack {
+            VStack(spacing: 0) {
                 AdBannerView()
                 
                 List {
@@ -77,11 +77,6 @@ struct FolderListView: View {
                 .padding(.bottom, 20)
             }
         }
-        .navigationTitle(
-            parentFolder?.name ?? (mode == .database ? "Databases" : "Flashcards")
-        )
-        .navigationBarTitleDisplayMode(.inline)
-        .searchableIf(mode == .database, text: $searchText, prompt: "Search databases...")
         .sheet(isPresented: $isShowingCreaateSheet) {
             NavigationStack {
                 Form {
@@ -149,18 +144,6 @@ struct FolderListView: View {
         for index in offsets {
             let folder = displayedFolders[index]
             modelContext.delete(folder)
-        }
-    }
-}
-
-// MARK: - Conditional Searchable Extension
-private extension View {
-    @ViewBuilder
-    func searchableIf(_ condition: Bool, text: Binding<String>, prompt: String) -> some View {
-        if condition {
-            self.searchable(text: text, prompt: prompt)
-        } else {
-            self
         }
     }
 }

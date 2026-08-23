@@ -35,9 +35,34 @@ struct DatabaseView: View {
     // MARK: - Main view
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
-            VStack {
+            VStack(spacing: 0) {
+                // 1. 最上部に広告
                 AdBannerView()
                 
+                // 2. 広告の直下に配置するカスタム検索バー
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundStyle(.secondary)
+                    
+                    TextField("Search records & fields...", text: $searchText)
+                        .textFieldStyle(.plain)
+                        .autocorrectionDisabled()
+                    
+                    if !searchText.isEmpty {
+                        Button(action: { searchText = "" }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                .padding(.horizontal, 10)
+                .padding(.vertical, 8)
+                .background(Color(.secondarySystemBackground))
+                .cornerRadius(10)
+                .padding(.horizontal)
+                .padding(.vertical, 8)
+                
+                // 3. レコードリスト
                 List {
                     Section(header: Text("Records (\(filteredKnowledges.count))")) {
                         if filteredKnowledges.isEmpty {
@@ -73,7 +98,7 @@ struct DatabaseView: View {
         }
         .navigationTitle(folder.name)
         .navigationBarTitleDisplayMode(.inline)
-        .searchable(text: $searchText, prompt: "Search records & fields...")
+        // .searchable(...) は削除
         .sheet(isPresented: $isShowingAddSheet) {
             KnowledgeFormView(folder: folder)
         }

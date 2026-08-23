@@ -11,7 +11,7 @@ import SwiftData
 enum MasterStatus: String, Codable, CaseIterable {
     case unreviewed = "unreviewed"
     case mastered = "mastered"
-    case incorrect = "unmastered"
+    case incorrect = "incorrect"
 }
 
 @Model
