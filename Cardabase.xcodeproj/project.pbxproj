@@ -28,6 +28,8 @@
 		D96D3000301C5F820083DC1E /* Limits.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FFF301C5F820083DC1E /* Limits.swift */; };
 		D96D3002301C5F8C0083DC1E /* AdMobManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D3001301C5F8C0083DC1E /* AdMobManager.swift */; };
 		D96D3004301C5F970083DC1E /* SampleDataGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D3003301C5F970083DC1E /* SampleDataGenerator.swift */; };
+		D990D1B8303C0562001B3CDA /* DataManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D990D1B7303C0562001B3CDA /* DataManagementView.swift */; };
+		D990D1BA303C059C001B3CDA /* DataTransferManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D990D1B9303C059C001B3CDA /* DataTransferManager.swift */; };
 		D99D5984301F053500A4CE16 /* AdMobConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = D99D5983301F053500A4CE16 /* AdMobConfig.plist */; };
 /* End PBXBuildFile section */
 
@@ -54,6 +56,8 @@
 		D96D2FFF301C5F820083DC1E /* Limits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Limits.swift; sourceTree = "<group>"; };
 		D96D3001301C5F8C0083DC1E /* AdMobManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdMobManager.swift; sourceTree = "<group>"; };
 		D96D3003301C5F970083DC1E /* SampleDataGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleDataGenerator.swift; sourceTree = "<group>"; };
+		D990D1B7303C0562001B3CDA /* DataManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManagementView.swift; sourceTree = "<group>"; };
+		D990D1B9303C059C001B3CDA /* DataTransferManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTransferManager.swift; sourceTree = "<group>"; };
 		D99D5983301F053500A4CE16 /* AdMobConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AdMobConfig.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -144,6 +148,7 @@
 				D96D2FFF301C5F820083DC1E /* Limits.swift */,
 				D96D3001301C5F8C0083DC1E /* AdMobManager.swift */,
 				D96D3003301C5F970083DC1E /* SampleDataGenerator.swift */,
+				D990D1B9303C059C001B3CDA /* DataTransferManager.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -190,6 +195,7 @@
 			children = (
 				D96D2FF7301C5F460083DC1E /* SettingsView.swift */,
 				D96D2FF9301C5F570083DC1E /* PaywallView.swift */,
+				D990D1B7303C0562001B3CDA /* DataManagementView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -289,6 +295,7 @@
 			files = (
 				D96D2FF2301C5F2B0083DC1E /* CardConfigView.swift in Sources */,
 				D96D3002301C5F8C0083DC1E /* AdMobManager.swift in Sources */,
+				D990D1BA303C059C001B3CDA /* DataTransferManager.swift in Sources */,
 				D96D2FDF301C5E7F0083DC1E /* AppDelegate.swift in Sources */,
 				D96D2FF0301C5F1F0083DC1E /* KnowledgeFormView.swift in Sources */,
 				D96D3000301C5F820083DC1E /* Limits.swift in Sources */,
@@ -296,6 +303,7 @@
 				D96D2FE5301C5EA70083DC1E /* FieldValue.swift in Sources */,
 				D96D2FD3301C41880083DC1E /* MainTabView.swift in Sources */,
 				D96D2FFC301C5F640083DC1E /* AdBannerView.swift in Sources */,
+				D990D1B8303C0562001B3CDA /* DataManagementView.swift in Sources */,
 				D96D2FE1301C5E8E0083DC1E /* Folder.swift in Sources */,
 				D96D2FFA301C5F570083DC1E /* PaywallView.swift in Sources */,
 				D96D3004301C5F970083DC1E /* SampleDataGenerator.swift in Sources */,
@@ -439,7 +447,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = D86GFNUD35;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -456,7 +464,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.6;
+				MARKETING_VERSION = 1.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.suzuki.kenichiro.Cardabase;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -479,7 +487,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = D86GFNUD35;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -496,7 +504,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.6;
+				MARKETING_VERSION = 1.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.suzuki.kenichiro.Cardabase;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;

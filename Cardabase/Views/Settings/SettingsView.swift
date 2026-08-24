@@ -90,12 +90,19 @@ struct SettingsView: View {
                 }
             }
             
+            // Data Management Section
+            Section(header: Text("Data Management")) {
+                NavigationLink(destination: DataManagementView()) {
+                    Text("Data Import / Export")
+                }
+            }
+            
             // app info
             Section(header: Text("About App")) {
                 HStack {
                     Text("Version")
                     Spacer()
-                    Text("1.6")
+                    Text("1.7")
                         .foregroundStyle(.secondary)
                 }
                 
