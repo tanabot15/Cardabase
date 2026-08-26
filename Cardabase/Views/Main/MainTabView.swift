@@ -18,29 +18,29 @@ enum ViewMode {
 struct MainTabView: View {
     var body: some View {
         TabView {
-            // 1. Database Tab
-            NavigationStack {
-                FolderListView(mode: .database)
-            }
-            .tabItem {
-                Label("Database", systemImage: "cylinder.split.1x2.fill")
-            }
+            // 1. Databases Tab
+            FolderListView(mode: .database)
+                .tabItem {
+                    Label("Databases", systemImage: "cylinder.split.1x2.fill")
+                }
             
             // 2. Flashcards Tab
-            NavigationStack {
-                FolderListView(mode: .flashcards)
-            }
-            .tabItem {
-                Label("Flashcards", systemImage: "rectangle.stack.fill")
-            }
+            FolderListView(mode: .flashcards)
+                .tabItem {
+                    Label("Flashcards", systemImage: "rectangle.stack.fill")
+                }
             
-            // 3. Settings Tab
-            NavigationStack {
-                SettingsView()
-            }
-            .tabItem {
-                Label("Setting", systemImage: "gearshape.fill")
-            }
+            // 3. Analytics Tab (新規追加)
+            AnalyticsView()
+                .tabItem {
+                    Label("Analytics", systemImage: "chart.pie.fill")
+                }
+            
+            // 4. Settings Tab
+            SettingsView()
+                .tabItem {
+                    Label("Settings", systemImage: "gearshape.fill")
+                }
         }
         .onAppear {
             requestATTInView()

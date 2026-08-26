@@ -31,6 +31,7 @@
 		D990D1B8303C0562001B3CDA /* DataManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D990D1B7303C0562001B3CDA /* DataManagementView.swift */; };
 		D990D1BA303C059C001B3CDA /* DataTransferManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D990D1B9303C059C001B3CDA /* DataTransferManager.swift */; };
 		D99D5984301F053500A4CE16 /* AdMobConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = D99D5983301F053500A4CE16 /* AdMobConfig.plist */; };
+		D9D57E3F303D5F3E004B29BA /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D57E3E303D5F3E004B29BA /* AnalyticsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,6 +60,7 @@
 		D990D1B7303C0562001B3CDA /* DataManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManagementView.swift; sourceTree = "<group>"; };
 		D990D1B9303C059C001B3CDA /* DataTransferManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTransferManager.swift; sourceTree = "<group>"; };
 		D99D5983301F053500A4CE16 /* AdMobConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AdMobConfig.plist; sourceTree = "<group>"; };
+		D9D57E3E303D5F3E004B29BA /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +130,7 @@
 				D96D2FE6301C5EB30083DC1E /* Folder */,
 				D96D2FE7301C5EBA0083DC1E /* Database */,
 				D96D2FE8301C5EC00083DC1E /* Flashcard */,
+				D9D57E3D303D5F2D004B29BA /* Analytics */,
 				D96D2FE9301C5EC80083DC1E /* Settings */,
 				D96D2FEA301C5ED00083DC1E /* Components */,
 			);
@@ -216,6 +219,14 @@
 			path = Main;
 			sourceTree = "<group>";
 		};
+		D9D57E3D303D5F2D004B29BA /* Analytics */ = {
+			isa = PBXGroup;
+			children = (
+				D9D57E3E303D5F3E004B29BA /* AnalyticsView.swift */,
+			);
+			path = Analytics;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -298,6 +309,7 @@
 				D990D1BA303C059C001B3CDA /* DataTransferManager.swift in Sources */,
 				D96D2FDF301C5E7F0083DC1E /* AppDelegate.swift in Sources */,
 				D96D2FF0301C5F1F0083DC1E /* KnowledgeFormView.swift in Sources */,
+				D9D57E3F303D5F3E004B29BA /* AnalyticsView.swift in Sources */,
 				D96D3000301C5F820083DC1E /* Limits.swift in Sources */,
 				D96D2FD2301C41880083DC1E /* CardabaseApp.swift in Sources */,
 				D96D2FE5301C5EA70083DC1E /* FieldValue.swift in Sources */,
@@ -447,7 +459,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_TEAM = D86GFNUD35;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -464,7 +476,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.7;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.suzuki.kenichiro.Cardabase;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -487,7 +499,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_TEAM = D86GFNUD35;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -504,7 +516,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.7;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.suzuki.kenichiro.Cardabase;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
