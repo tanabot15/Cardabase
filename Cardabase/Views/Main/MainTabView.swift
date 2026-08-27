@@ -19,28 +19,36 @@ struct MainTabView: View {
     var body: some View {
         TabView {
             // 1. Databases Tab
-            FolderListView(mode: .database)
-                .tabItem {
-                    Label("Databases", systemImage: "cylinder.split.1x2.fill")
-                }
+            NavigationStack {
+                FolderListView(mode: .database)
+            }
+            .tabItem {
+                Label("Databases", systemImage: "cylinder.split.1x2.fill")
+            }
             
             // 2. Flashcards Tab
-            FolderListView(mode: .flashcards)
-                .tabItem {
-                    Label("Flashcards", systemImage: "rectangle.stack.fill")
-                }
+            NavigationStack {
+                FolderListView(mode: .flashcards)
+            }
+            .tabItem {
+                Label("Flashcards", systemImage: "rectangle.stack.fill")
+            }
             
-            // 3. Analytics Tab (新規追加)
-            AnalyticsView()
-                .tabItem {
-                    Label("Analytics", systemImage: "chart.pie.fill")
-                }
+            // 3. Analytics Tab
+            NavigationStack {
+                AnalyticsView()
+            }
+            .tabItem {
+                Label("Analytics", systemImage: "chart.pie.fill")
+            }
             
             // 4. Settings Tab
-            SettingsView()
-                .tabItem {
-                    Label("Settings", systemImage: "gearshape.fill")
-                }
+            NavigationStack {
+                SettingsView()
+            }
+            .tabItem {
+                Label("Settings", systemImage: "gearshape.fill")
+            }
         }
         .onAppear {
             requestATTInView()

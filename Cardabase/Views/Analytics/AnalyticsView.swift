@@ -48,87 +48,89 @@ struct AnalyticsView: View {
     
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 20) {
-                    AdBannerView()
-                    
-                    // MARK: - Overview Cards
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                        MetricCard(title: "Total Records", value: "\(totalCards)", systemImage: "doc.text.fill", color: .blue)
-                        MetricCard(title: "Overall Accuracy", value: "\(overallAccuracy)%", systemImage: "target", color: .green)
-                        MetricCard(title: "Mastered Cards", value: "\(masteredCount)", systemImage: "checkmark.seal.fill", color: .orange)
-                        MetricCard(title: "Total Reviews", value: "\(totalReviewedCount)", systemImage: "arrow.clockwise.circle.fill", color: .purple)
-                    }
-                    .padding(.horizontal)
-                    
-                    // MARK: - Mastery Status Chart
-                    if !knowledges.isEmpty {
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("Mastery Distribution")
-                                .font(.headline)
-                            
-                            Chart {
-                                SectorMark(
-                                    angle: .value("Count", masteredCount),
-                                    innerRadius: .ratio(0.6),
-                                    angularInset: 1.5
-                                )
-                                .foregroundStyle(by: .value("Status", "Mastered"))
-                                
-                                SectorMark(
-                                    angle: .value("Count", incorrectCount),
-                                    innerRadius: .ratio(0.6),
-                                    angularInset: 1.5
-                                )
-                                .foregroundStyle(by: .value("Status", "Needs Review"))
-                                
-                                SectorMark(
-                                    angle: .value("Count", unreviewedCount),
-                                    innerRadius: .ratio(0.6),
-                                    angularInset: 1.5
-                                )
-                                .foregroundStyle(by: .value("Status", "Unreviewed"))
-                            }
-                            .chartForegroundStyleScale(mapping: { (status: String) -> Color in
-                                statusColors[status] ?? .gray
-                            })
-                            .frame(height: 180)
+            VStack {
+                AdBannerView()
+
+                ScrollView {
+                    VStack(spacing: 20) {
+                        // MARK: - Overview Cards
+                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                            MetricCard(title: "Total Records", value: "\(totalCards)", systemImage: "doc.text.fill", color: .blue)
+                            MetricCard(title: "Overall Accuracy", value: "\(overallAccuracy)%", systemImage: "target", color: .green)
+                            MetricCard(title: "Mastered Cards", value: "\(masteredCount)", systemImage: "checkmark.seal.fill", color: .orange)
+                            MetricCard(title: "Total Reviews", value: "\(totalReviewedCount)", systemImage: "arrow.clockwise.circle.fill", color: .purple)
                         }
-                        .padding()
-                        .background(Color(.secondarySystemBackground))
-                        .cornerRadius(16)
                         .padding(.horizontal)
-                    }
-                    
-                    // MARK: - Database Breakdown List
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Accuracy by Database")
-                            .font(.headline)
-                            .padding(.horizontal)
                         
-                        if folders.isEmpty {
-                            ContentUnavailableView(
-                                "No Databases",
-                                systemImage: "tray",
-                                description: Text("Create a database to track your accuracy.")
-                            )
-                        } else {
-                            VStack(spacing: 0) {
-                                ForEach(folders) { folder in
-                                    FolderAccuracyRow(folder: folder)
-                                    if folder.id != folders.last?.id {
-                                        Divider()
-                                            .padding(.leading, 16)
-                                    }
+                        // MARK: - Mastery Status Chart
+                        if !knowledges.isEmpty {
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("Mastery Distribution")
+                                    .font(.headline)
+                                
+                                Chart {
+                                    SectorMark(
+                                        angle: .value("Count", masteredCount),
+                                        innerRadius: .ratio(0.6),
+                                        angularInset: 1.5
+                                    )
+                                    .foregroundStyle(by: .value("Status", "Mastered"))
+                                    
+                                    SectorMark(
+                                        angle: .value("Count", incorrectCount),
+                                        innerRadius: .ratio(0.6),
+                                        angularInset: 1.5
+                                    )
+                                    .foregroundStyle(by: .value("Status", "Needs Review"))
+                                    
+                                    SectorMark(
+                                        angle: .value("Count", unreviewedCount),
+                                        innerRadius: .ratio(0.6),
+                                        angularInset: 1.5
+                                    )
+                                    .foregroundStyle(by: .value("Status", "Unreviewed"))
                                 }
+                                .chartForegroundStyleScale(mapping: { (status: String) -> Color in
+                                    statusColors[status] ?? .gray
+                                })
+                                .frame(height: 180)
                             }
+                            .padding()
                             .background(Color(.secondarySystemBackground))
                             .cornerRadius(16)
                             .padding(.horizontal)
                         }
+                        
+                        // MARK: - Database Breakdown List
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Accuracy by Database")
+                                .font(.headline)
+                                .padding(.horizontal)
+                            
+                            if folders.isEmpty {
+                                ContentUnavailableView(
+                                    "No Databases",
+                                    systemImage: "tray",
+                                    description: Text("Create a database to track your accuracy.")
+                                )
+                            } else {
+                                VStack(spacing: 0) {
+                                    ForEach(folders) { folder in
+                                        FolderAccuracyRow(folder: folder)
+                                        if folder.id != folders.last?.id {
+                                            Divider()
+                                                .padding(.leading, 16)
+                                        }
+                                    }
+                                }
+                                .background(Color(.secondarySystemBackground))
+                                .cornerRadius(16)
+                                .padding(.horizontal)
+                            }
+                        }
                     }
+                    .padding(.vertical)
                 }
-                .padding(.vertical)
             }
         }
     }
