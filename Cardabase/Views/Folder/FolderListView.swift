@@ -21,19 +21,21 @@ struct FolderListView: View {
     @State private var searchText: String = ""
     @State private var isShowingCreaateSheet: Bool = false
     @State private var newFolderName: String = ""
-//    @State private var isShowingPaywall: Bool = false
+    @State private var customSchemas: [FieldSchema] = []
     
-    // folder list
+    // for adding custom field schema
+    @State private var newSchemaKey: String = ""
+    @State private var newSchemaType: FieldType = .text
+    
     private var displayedFolders: [Folder] {
         let sourceFolders = parentFolder?.subfolders ?? rootFolders
         if searchText.isEmpty {
             return sourceFolders
         } else {
-            return sourceFolders.filter { $0.name.localizedCaseInsensitiveContains(searchText)}
+            return sourceFolders.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
         }
     }
     
-    // MARK: - Main view
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             VStack(spacing: 0) {
@@ -83,14 +85,52 @@ struct FolderListView: View {
                     Section(header: Text("Database Name")) {
                         TextField("e.g. AI Concepts, Patents, Finance", text: $newFolderName)
                     }
+                    
+                    Section(header: Text("Defined Custom Fields (\(customSchemas.count))")) {
+                        if customSchemas.isEmpty {
+                            Text("No custom fields added.")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        } else {
+                            ForEach(customSchemas) { schema in
+                                HStack {
+                                    Text(schema.key)
+                                        .font(.subheadline)
+                                    Spacer()
+                                    Text(schema.type.displayName)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            .onDelete { customSchemas.remove(atOffsets: $0) }
+                        }
+                    }
+                    
+                    Section(header: Text("Add Custom Field")) {
+                        TextField("Field Key (e.g. Year, URL, Tag)", text: $newSchemaKey)
+                        Picker("Field Type", selection: $newSchemaType) {
+                            ForEach(FieldType.allCases) { type in
+                                Text(type.displayName).tag(type)
+                            }
+                        }
+                        
+                        Button(action: addSchema) {
+                            HStack {
+                                Image(systemName: "plus.circle.fill")
+                                Text("Add Field")
+                            }
+                            .font(.subheadline)
+                            .bold()
+                        }
+                        .disabled(newSchemaKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    }
                 }
                 .navigationTitle("New Database")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Cancel") {
-                            isShowingCreaateSheet = false
-                            newFolderName = ""
+                            resetCreateSheet()
                         }
                     }
                     ToolbarItem(placement: .confirmationAction) {
@@ -101,26 +141,19 @@ struct FolderListView: View {
                     }
                 }
             }
-            .presentationDetents([.height(200)])
         }
-        // for Pro
-//        .sheet(isPresented: $isShowingPaywall) {
-//            PaywallView()
-//        }
     }
     
-    // MARK: - Actions
-    private func handleAddFolderTapped() {
-        // for Pro
-//        let totalFolderCount = (try? modelContext.fetchCount(FetchDescriptor<Folder>())) ?? 0
-//        
-//        if Limits.isFolderLimitReached(currentCount: totalFolderCount) {
-//            isShowingPaywall = true
-//        } else {
-//            isShowingCreaateSheet = true
-//        }
+    private func addSchema() {
+        let trimmedKey = newSchemaKey.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedKey.isEmpty else { return }
         
-        // delete when Pro
+        customSchemas.append(FieldSchema(key: trimmedKey, type: newSchemaType))
+        newSchemaKey = ""
+        newSchemaType = .text
+    }
+    
+    private func handleAddFolderTapped() {
         isShowingCreaateSheet = true
     }
     
@@ -128,7 +161,7 @@ struct FolderListView: View {
         let trimmedName = newFolderName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedName.isEmpty else { return }
         
-        let folder = Folder(name: trimmedName)
+        let folder = Folder(name: trimmedName, customFieldSchemas: customSchemas)
         if let parentFolder = parentFolder {
             folder.parent = parentFolder
             parentFolder.subfolders.append(folder)
@@ -136,7 +169,14 @@ struct FolderListView: View {
             modelContext.insert(folder)
         }
         
+        resetCreateSheet()
+    }
+    
+    private func resetCreateSheet() {
         newFolderName = ""
+        customSchemas = []
+        newSchemaKey = ""
+        newSchemaType = .text
         isShowingCreaateSheet = false
     }
     
@@ -192,56 +232,6 @@ private struct FolderRowView: View {
         .padding(.vertical, 4)
     }
 }
-
-// MARK: - Temporary Placeholders
-//private struct DatabasePlaceholderView: View {
-//    let folder: Folder
-//    
-//    var body: some View {
-//        VStack(spacing: 16) {
-//            Image(systemName: "shippingbox.fill")
-//                .font(.system(size: 50))
-//                .foregroundStyle(.secondary)
-//            Text("Database View for '\(folder.name)'")
-//                .font(.title3)
-//                .bold()
-//            Text("Knowledge records will be listed here.")
-//                .foregroundStyle(.secondary)
-//        }
-//        .navigationTitle(folder.name)
-//    }
-//}
-//
-//private struct PaywallPlaceholderView: View {
-//    @Environment(\.dismiss) private var dismiss
-//    
-//    var body: some View {
-//        VStack(spacing: 20) {
-//            Image(systemName: "star.circle.fill")
-//                .font(.system(size: 60))
-//                .foregroundStyle(.yellow)
-//            Text("Upgrade to Cardabase Pro")
-//                .font(.title2)
-//                .bold()
-//            Text("Free version is limited to 3 databases.\nUpgrade to Pro for unlimited databases & records.")
-//                .multilineTextAlignment(.center)
-//                .foregroundStyle(.secondary)
-//                .padding(.horizontal)
-//            
-//            Button(action: { dismiss() }) {
-//                Text("Close")
-//                    .bold()
-//                    .frame(maxWidth: .infinity)
-//                    .padding()
-//                    .background(Color.accentColor)
-//                    .foregroundStyle(.white)
-//                    .cornerRadius(12)
-//            }
-//            .padding(.horizontal, 12)
-//        }
-//        .padding()
-//    }
-//}
 
 #Preview("Databases") {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)

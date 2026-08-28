@@ -38,3 +38,9 @@ struct FieldValue: Codable, Hashable, Identifiable {
         self.type = type
     }
 }
+
+struct FieldSchema: Codable, Hashable, Identifiable {
+    var id: UUID = UUID()
+    var key: String
+    var type: FieldType
+}

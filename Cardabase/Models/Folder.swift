@@ -18,6 +18,9 @@ final class Folder {
     var defaultFrontKey: String
     var defaultBackKey: String
     
+    // Custom Field Schemas defined at Database level
+    var customFieldSchemas: [FieldSchema]
+    
     // child folder
     @Relationship(deleteRule: .cascade, inverse: \Folder.parent)
     var subfolders: [Folder]
@@ -26,7 +29,7 @@ final class Folder {
     var parent: Folder?
     
     // knowledges included folder
-    @Relationship(deleteRule: .cascade,inverse: \Knowledge.folder)
+    @Relationship(deleteRule: .cascade, inverse: \Knowledge.folder)
     var knowledges: [Knowledge]
     
     init(
@@ -35,6 +38,7 @@ final class Folder {
         createdAt: Date = Date(),
         defaultFrontKey: String = "Title",
         defaultBackKey: String = "Summary",
+        customFieldSchemas: [FieldSchema] = [],
         subfolders: [Folder] = [],
         knowledges: [Knowledge] = []
     ) {
@@ -43,16 +47,15 @@ final class Folder {
         self.createdAt = createdAt
         self.defaultFrontKey = defaultFrontKey
         self.defaultBackKey = defaultBackKey
+        self.customFieldSchemas = customFieldSchemas
         self.subfolders = subfolders
         self.knowledges = knowledges
     }
     
     var availableFieldKeys: [String] {
         var keys: Set<String> = ["Title", "Summary"]
-        for knowledge in knowledges {
-            for filed in knowledge.customFields {
-                keys.insert(filed.key)
-            }
+        for schema in customFieldSchemas {
+            keys.insert(schema.key)
         }
         return Array(keys).sorted()
     }

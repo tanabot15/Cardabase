@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct KnowledgeFormView: View {
-    @Environment(\.modelContext) private var modelConetxt
+    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     
     let folder: Folder
@@ -20,13 +20,28 @@ struct KnowledgeFormView: View {
     @State private var summary: String = ""
     @State private var customFields: [FieldValue] = []
     
-    // for adding custom fields
-    @State private var newFieldKey: String = ""
-    @State private var newFieldValue: String = ""
-    @State private var newFieldType: FieldType = .text
-    
     private var isEditing: Bool {
         knowledgeToEdit != nil
+    }
+    
+    // Disabled function
+    private var isSaveDisabled: Bool {
+        let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedSummary = summary.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        if let knowledge = knowledgeToEdit {
+            // Edit Mode
+            let isTitleEmpty = trimmedTitle.isEmpty
+            let isSummaryEmpty = trimmedSummary.isEmpty
+            let isUnchanged = title == knowledge.title &&
+                              summary == knowledge.summary &&
+                              customFields == initialCustomFields(for: knowledge)
+            
+            return isTitleEmpty || isSummaryEmpty || isUnchanged
+        } else {
+            // Add Mode
+            return trimmedTitle.isEmpty || trimmedSummary.isEmpty
+        }
     }
     
     var body: some View {
@@ -44,16 +59,11 @@ struct KnowledgeFormView: View {
                     }
                 }
                 
-                // moving custom field
-                Section(header: Text("Custom Fields (\(customFields.count))")) {
-                    if customFields.isEmpty {
-                        Text("No custom fields added.")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    } else {
+                if !customFields.isEmpty {
+                    Section(header: Text("Custom Fields")) {
                         ForEach($customFields) { $field in
                             HStack(spacing: 8) {
-                                VStack(alignment: .leading) {
+                                VStack(alignment: .leading, spacing: 2) {
                                     Text(field.key)
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
@@ -69,29 +79,7 @@ struct KnowledgeFormView: View {
                                     .foregroundStyle(.secondary)
                             }
                         }
-                        .onDelete(perform: deleteCustomField)
                     }
-                }
-                
-                Section(header: Text("Add Custom Field")) {
-                    TextField("Field Key (e.g. Year, URL, Tag)", text: $newFieldKey)
-                    TextField("Value", text: $newFieldValue)
-                    
-                    Picker("Field Type", selection: $newFieldType) {
-                        ForEach(FieldType.allCases) { type in
-                            Text(type.displayName).tag(type)
-                        }
-                    }
-                    
-                    Button(action: addCustomField) {
-                        HStack {
-                            Image(systemName: "plus.circle.fill")
-                            Text("Add Field")
-                        }
-                        .font(.subheadline)
-                        .bold()
-                    }
-                    .disabled(newFieldKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
             }
             .navigationTitle(isEditing ? "Edit Record" : "New Record")
@@ -104,7 +92,7 @@ struct KnowledgeFormView: View {
                     Button(isEditing ? "Save" : "Add") {
                         saveKnowledge()
                     }
-                    .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .disabled(isSaveDisabled)
                 }
             }
             .onAppear {
@@ -113,48 +101,42 @@ struct KnowledgeFormView: View {
         }
     }
     
-    // MARK: - Helper Methods
+    private func initialCustomFields(for knowledge: Knowledge) -> [FieldValue] {
+        folder.customFieldSchemas.map { schema in
+            if let existing = knowledge.customFields.first(where: { $0.key == schema.key }) {
+                return existing
+            } else {
+                return FieldValue(key: schema.key, value: "", type: schema.type)
+            }
+        }
+    }
+    
     private func setupInitialValues() {
         if let knowledge = knowledgeToEdit {
             title = knowledge.title
             summary = knowledge.summary
-            customFields = knowledge.customFields
+            customFields = initialCustomFields(for: knowledge)
+        } else {
+            customFields = folder.customFieldSchemas.map { schema in
+                FieldValue(key: schema.key, value: "", type: schema.type)
+            }
         }
-    }
-    
-    private func addCustomField() {
-        let trimmedKey = newFieldKey.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmedKey.isEmpty else { return }
-        
-        let field = FieldValue(
-            key: trimmedKey,
-            value: newFieldValue.trimmingCharacters(in: .whitespacesAndNewlines),
-            type: newFieldType
-        )
-        customFields.append(field)
-        
-        newFieldKey = ""
-        newFieldValue = ""
-        newFieldType = .text
-    }
-    
-    private func deleteCustomField(at offsets: IndexSet) {
-        customFields.remove(atOffsets: offsets)
     }
     
     private func saveKnowledge() {
         let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmedTitle.isEmpty else { return }
+        let trimmedSummary = summary.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedTitle.isEmpty && !trimmedSummary.isEmpty else { return }
         
         if let knowledge = knowledgeToEdit {
             knowledge.title = trimmedTitle
-            knowledge.summary = summary
+            knowledge.summary = trimmedSummary
             knowledge.customFields = customFields
             knowledge.updatedAt = Date()
         } else {
             let knowledge = Knowledge(
                 title: trimmedTitle,
-                summary: summary,
+                summary: trimmedSummary,
                 customFields: customFields
             )
             knowledge.folder = folder
@@ -165,8 +147,39 @@ struct KnowledgeFormView: View {
     }
 }
 
-#Preview {
-    let folder = Folder(name: "Sample Folder")
-    return KnowledgeFormView(folder: folder)
+#Preview("New Record") {
+    let folder = Folder(
+        name: "Sample Folder",
+        customFieldSchemas: [
+            FieldSchema(key: "Category", type: .text),
+            FieldSchema(key: "URL", type: .text)
+        ]
+    )
+    
+    KnowledgeFormView(folder: folder)
+        .modelContainer(for: [Folder.self, Knowledge.self], inMemory: true)
+}
+
+#Preview("Edit Record") {
+    let folder = Folder(
+        name: "Sample Folder",
+        customFieldSchemas: [
+            FieldSchema(key: "Category", type: .text),
+            FieldSchema(key: "URL", type: .text)
+        ]
+    )
+    
+    let sampleKnowledge = Knowledge(
+        title: "Apple Inc.",
+        summary: "An American multinational technology company headquartered in Cupertino, California.",
+        customFields: [
+            FieldValue(key: "Category", value: "Tech", type: .text),
+            FieldValue(key: "URL", value: "https://apple.com", type: .text)
+        ]
+    )
+    sampleKnowledge.folder = folder
+    folder.knowledges.append(sampleKnowledge)
+    
+    return KnowledgeFormView(folder: folder, knowledgeToEdit: sampleKnowledge)
         .modelContainer(for: [Folder.self, Knowledge.self], inMemory: true)
 }
