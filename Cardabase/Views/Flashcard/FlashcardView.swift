@@ -16,6 +16,8 @@ struct FlashcardView: View {
     let frontKey: String
     let backKey: String
     
+    var onDone: (() -> Void)? = nil
+    
     // index management
     @State private var currentIndex: Int = 0
     @State private var isFlipped: Bool = false
@@ -144,6 +146,10 @@ struct FlashcardView: View {
                         correctCount = 0
                         incorrectCount = 0
                         isFlipped = false
+                    },
+                    onDone: {
+                        dismiss()
+                        onDone?()
                     }
                 )
             }

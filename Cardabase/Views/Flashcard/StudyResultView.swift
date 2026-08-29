@@ -17,6 +17,7 @@ struct StudyResultView: View {
     let incorrectCount: Int
     
     var onRestart: (() -> Void)? = nil
+    var onDone: (() -> Void)? = nil
     
     private var accuracyRate: Int {
         guard totalStudied > 0 else { return 0 }
@@ -49,7 +50,7 @@ struct StudyResultView: View {
                 // score card
                 HStack(spacing: 20) {
                     ResultStatBox(title: "Accuracy", value: "\(accuracyRate)%", color: .blue)
-                    ResultStatBox(title: "Correct", value: "\(correctCount)%", color: .green)
+                    ResultStatBox(title: "Correct", value: "\(correctCount)", color: .green)
                     ResultStatBox(title: "Incorrect", value: "\(incorrectCount)", color: .red)
                 }
                 .padding(.horizontal)
@@ -57,35 +58,31 @@ struct StudyResultView: View {
                 Spacer()
                 
                 // action buttons
-                HStack(spacing: 12) {
+                HStack(spacing: 24) {
                     Button(action: resetAndRestart) {
                         HStack(spacing: 6) {
                             Image(systemName: "arrow.clockwise")
                             Text("Restart")
                         }
                         .font(.headline)
-                        .foregroundStyle(.red)
+                        .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color(.secondarySystemBackground))
+                        .background(.red)
                         .cornerRadius(12)
                     }
                     
-                    Button(action: {
-                        dismiss()
-                    }) {
+                    Button(action: handleDone) {
                         HStack(spacing: 6) {
-                            HStack {
-                                Image(systemName: "checkmark")
-                                Text("Done")
-                            }
-                            .font(.headline)
-                            .foregroundStyle(Color.accentColor)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color(.secondarySystemBackground))
-                            .cornerRadius(12)
+                            Image(systemName: "checkmark")
+                            Text("Done")
                         }
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(.green)
+                        .cornerRadius(12)
                     }
                 }
                 .padding(.horizontal, 24)
@@ -102,6 +99,11 @@ struct StudyResultView: View {
         
         dismiss()
         onRestart?()
+    }
+    
+    private func handleDone() {
+        dismiss()
+        onDone?()
     }
 }
 

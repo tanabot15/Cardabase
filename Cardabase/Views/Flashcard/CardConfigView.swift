@@ -91,7 +91,10 @@ struct CardConfigView: View {
                     folder: folder,
                     knowledges: targetKnowledges,
                     frontKey: selectedFrontKey,
-                    backKey: selectedBackKey
+                    backKey: selectedBackKey,
+                    onDone: {
+                        dismiss()
+                    }
                 )
             }
         }
