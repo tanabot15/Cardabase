@@ -9,10 +9,12 @@ import SwiftUI
 import SwiftData
 
 struct SettingsView: View {
+    @Environment(\.modelContext) private var modelContext
     @StateObject private var adManager = AdMobManager.shared
     @Query private var folders: [Folder]
     
     @AppStorage("userColorScheme") private var userColorScheme: Int = 0
+    @AppStorage(SampleDataGenerator.hasInsertedSampleKey) private var hasInsertedSampleData: Bool = false
     
     // for Pro
 //    @State private var isShowingPaywall: Bool = false
@@ -92,6 +94,15 @@ struct SettingsView: View {
             
             // Data Management Section
             Section(header: Text("Data Management")) {
+                Button(action: {
+                    SampleDataGenerator.insertSampleDataIfNeeded(modelContext: modelContext)
+                }) {
+                    HStack {
+                        Text(hasInsertedSampleData ? "Sample Data Loaded" : "Load Sample Data")
+                    }
+                }
+                .disabled(hasInsertedSampleData)
+                
                 NavigationLink(destination: DataManagementView()) {
                     Text("Data Import / Export")
                 }
@@ -102,7 +113,7 @@ struct SettingsView: View {
                 HStack {
                     Text("Version")
                     Spacer()
-                    Text("2.2")
+                    Text("2.3")
                         .foregroundStyle(.secondary)
                 }
                 
