@@ -205,7 +205,7 @@ private struct FolderRowView: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            Image(systemName: mode == .database ? "cylinder.split.1x2.fill" : "rectangle.stack.fill")
+            Image(systemName: mode == .database ? "cylinder.split.1x2.fill" : "rectangle.on.rectangle.angled.fill")
                 .font(.title2)
                 .foregroundStyle(.secondary)
             

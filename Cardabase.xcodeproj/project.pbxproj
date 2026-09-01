@@ -32,6 +32,7 @@
 		D990D1BA303C059C001B3CDA /* DataTransferManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D990D1B9303C059C001B3CDA /* DataTransferManager.swift */; };
 		D99D5984301F053500A4CE16 /* AdMobConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = D99D5983301F053500A4CE16 /* AdMobConfig.plist */; };
 		D9D57E3F303D5F3E004B29BA /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D57E3E303D5F3E004B29BA /* AnalyticsView.swift */; };
+		D9D57E4530454697004B29BA /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D57E4430454697004B29BA /* OnboardingView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,6 +62,7 @@
 		D990D1B9303C059C001B3CDA /* DataTransferManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTransferManager.swift; sourceTree = "<group>"; };
 		D99D5983301F053500A4CE16 /* AdMobConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AdMobConfig.plist; sourceTree = "<group>"; };
 		D9D57E3E303D5F3E004B29BA /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsView.swift; sourceTree = "<group>"; };
+		D9D57E4430454697004B29BA /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,6 +134,7 @@
 				D96D2FE8301C5EC00083DC1E /* Flashcard */,
 				D9D57E3D303D5F2D004B29BA /* Analytics */,
 				D96D2FE9301C5EC80083DC1E /* Settings */,
+				D9D57E4330454675004B29BA /* Onboarding */,
 				D96D2FEA301C5ED00083DC1E /* Components */,
 			);
 			path = Views;
@@ -225,6 +228,14 @@
 				D9D57E3E303D5F3E004B29BA /* AnalyticsView.swift */,
 			);
 			path = Analytics;
+			sourceTree = "<group>";
+		};
+		D9D57E4330454675004B29BA /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				D9D57E4430454697004B29BA /* OnboardingView.swift */,
+			);
+			path = Onboarding;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -325,6 +336,7 @@
 				D96D2FF4301C5F340083DC1E /* FlashcardView.swift in Sources */,
 				D96D2FE3301C5E990083DC1E /* Knowledge.swift in Sources */,
 				D96D2FEC301C5F0A0083DC1E /* FolderListView.swift in Sources */,
+				D9D57E4530454697004B29BA /* OnboardingView.swift in Sources */,
 				D96D2FF8301C5F460083DC1E /* SettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -459,7 +471,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 15;
 				DEVELOPMENT_TEAM = D86GFNUD35;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -476,7 +488,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.3;
+				MARKETING_VERSION = 2.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.suzuki.kenichiro.Cardabase;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -499,7 +511,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 15;
 				DEVELOPMENT_TEAM = D86GFNUD35;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -516,7 +528,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.3;
+				MARKETING_VERSION = 2.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.suzuki.kenichiro.Cardabase;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;

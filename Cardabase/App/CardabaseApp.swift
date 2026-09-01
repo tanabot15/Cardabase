@@ -15,7 +15,9 @@ import AdSupport
 struct CardabaseApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject private var appState = AppState()
+    
     @AppStorage("userColorScheme") private var userColorScheme: Int = 0
+    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding: Bool = false
     
     private var selectedColorScheme: ColorScheme? {
         switch userColorScheme {
@@ -45,13 +47,15 @@ struct CardabaseApp: App {
             MainTabView()
                 .environmentObject(appState)
                 .preferredColorScheme(selectedColorScheme)
-                .onAppear {
-                    SampleDataGenerator.insertSampleDataIfNeeded(modelContext: sharedModelContainer.mainContext)
+                .fullScreenCover(isPresented: Binding(
+                    get: { !hasSeenOnboarding },
+                    set: { hasSeenOnboarding = !$0 }
+                )) {
+                    OnboardingView(isFirstLaunch: Binding(
+                        get: { !hasSeenOnboarding },
+                        set: { hasSeenOnboarding = !$0 }
+                    ))
                 }
-            // for Pro
-//                .task {
-//                    await appState.refreshProStatus()
-//                }
         }
         .modelContainer(sharedModelContainer)
     }
@@ -60,9 +64,7 @@ struct CardabaseApp: App {
     private func requestAppTrackingAuthorization() {
         print("[ATT Check] Current Status: \(ATTrackingManager.trackingAuthorizationStatus.rawValue)")
 
-        // Request only if the status is not determined yet
         if ATTrackingManager.trackingAuthorizationStatus == .notDetermined {
-            // Delay for 1.0 second to ensure the app window is ready
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 ATTrackingManager.requestTrackingAuthorization { status in
                     switch status {
