@@ -10,6 +10,7 @@ import SwiftData
 
 struct FolderListView: View {
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var appState: AppState
     
     var mode: ViewMode = .database
     var parentFolder: Folder?
@@ -39,7 +40,9 @@ struct FolderListView: View {
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             VStack(spacing: 0) {
-                AdBannerView()
+                if !appState.isProUser {
+                    AdBannerView()
+                }
                 
                 List {
                     if displayedFolders.isEmpty {
@@ -142,6 +145,9 @@ struct FolderListView: View {
                 }
             }
         }
+        .sheet(isPresented: $appState.isShowingPaywall) {
+            PaywallView()
+        }
     }
     
     private func addSchema() {
@@ -154,7 +160,12 @@ struct FolderListView: View {
     }
     
     private func handleAddFolderTapped() {
-        isShowingCreaateSheet = true
+        let currentCount = rootFolders.count
+        if Limits.isFolderLimitReached(currentCount: currentCount, isPro: appState.isProUser) {
+            appState.isShowingPaywall = true
+        } else {
+            isShowingCreaateSheet = true
+        }
     }
     
     private func createNewFolder() {

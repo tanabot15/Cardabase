@@ -10,6 +10,7 @@ import SwiftData
 
 struct FlashcardView: View {
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var appState: AppState
     
     let folder: Folder
     let knowledges: [Knowledge]
@@ -36,7 +37,9 @@ struct FlashcardView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
-                AdBannerView()
+                if !appState.isProUser {
+                    AdBannerView()
+                }
                 
                 // progress bar
                 ProgressView(value: Double(currentIndex), total: Double(knowledges.count))

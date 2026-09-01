@@ -10,6 +10,7 @@ import SwiftData
 
 struct DatabaseView: View {
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var appState: AppState
     @Bindable var folder: Folder
     
     // state management
@@ -17,7 +18,6 @@ struct DatabaseView: View {
     @State private var isShowingAddSheet: Bool = false
     @State private var selectedKnowledgeToEdit: Knowledge?
     @State private var isShowingStudyConfig: Bool = false
-    @State private var isShowingPaywall: Bool = false
     
     // search filtering record list
     private var filteredKnowledges: [Knowledge] {
@@ -36,8 +36,9 @@ struct DatabaseView: View {
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             VStack(spacing: 0) {
-                // 1. 最上部に広告
-                AdBannerView()
+                if !appState.isProUser {
+                    AdBannerView()
+                }
                 
                 // 2. 広告の直下に配置するカスタム検索バー
                 HStack {
@@ -98,30 +99,24 @@ struct DatabaseView: View {
         }
         .navigationTitle(folder.name)
         .navigationBarTitleDisplayMode(.inline)
-        // .searchable(...) は削除
         .sheet(isPresented: $isShowingAddSheet) {
             KnowledgeFormView(folder: folder)
         }
         .sheet(item: $selectedKnowledgeToEdit) { knowledge in
             KnowledgeFormView(folder: folder, knowledgeToEdit: knowledge)
         }
-        // for Pro
-//        .sheet(isPresented: $isShowingPaywall) {
-//            PaywallView()
-//        }
+        .sheet(isPresented: $appState.isShowingPaywall) {
+            PaywallView()
+        }
     }
     
     // MARK: - Actions
     private func handleAddKnowledgeTapped() {
-        // for Pro
-//        if Limits.isKnowledgeLimitReached(currentCountInFolder: folder.knowledges.count) {
-//            isShowingPaywall = true
-//        } else {
-//            isShowingAddSheet = true
-//        }
-        
-        // delete when Pro
-        isShowingAddSheet = true
+        if Limits.isKnowledgeLimitReached(currentCountInFolder: folder.knowledges.count, isPro: appState.isProUser) {
+            appState.isShowingPaywall = true
+        } else {
+            isShowingAddSheet = true
+        }
     }
     
     private func deleteKnowledges(at offsets: IndexSet) {
@@ -192,63 +187,6 @@ private struct KnowledgeRowView: View {
         .padding(.vertical, 4)
     }
 }
-
-// MARK: - Temporary Placeholders
-//private struct CardConfigPlaceholderView: View {
-//    let folder: Folder
-//    @Environment(\.dismiss) private var dismiss
-//    
-//    var body: some View {
-//        NavigationStack {
-//            VStack(spacing: 20) {
-//                Image(systemName: "gearshape.2.fill")
-//                    .font(.system(size: 60))
-//                    .foregroundStyle(Color.accentColor)
-//                Text("Card Config for '\(folder.name)'")
-//                    .font(.title2)
-//                    .bold()
-//                Text("Front/Back column selector will be implemented here.")
-//                    .foregroundStyle(.secondary)
-//            }
-//            .toolbar {
-//                ToolbarItem(placement: .cancellationAction) {
-//                    Button("Close") { dismiss() }
-//                }
-//            }
-//        }
-//    }
-//}
-//
-//private struct PaywallPlaceholderView: View {
-//    @Environment(\.dismiss) private var dismiss
-//    
-//    var body: some View {
-//        VStack(spacing: 20) {
-//            Image(systemName: "star.circle.fill")
-//                .font(.system(size: 60))
-//                .foregroundStyle(.yellow)
-//            Text("Upgrade to Cardabase Pro")
-//                .font(.title2)
-//                .bold()
-//            Text("Free version is limited to 50 records per database.\nUpgrade to Pro for unlimited records.")
-//                .multilineTextAlignment(.center)
-//                .foregroundStyle(.secondary)
-//                .padding(.horizontal)
-//            
-//            Button(action: { dismiss() }) {
-//                Text("Close")
-//                    .bold()
-//                    .frame(maxWidth: .infinity)
-//                    .padding()
-//                    .background(Color.accentColor)
-//                    .foregroundStyle(.white)
-//                    .cornerRadius(12)
-//            }
-//            .padding(.horizontal, 32)
-//        }
-//        .padding()
-//    }
-//}
 
 #Preview {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)

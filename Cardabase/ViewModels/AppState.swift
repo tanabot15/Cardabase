@@ -11,9 +11,7 @@ import Combine
 @MainActor
 final class AppState: ObservableObject {
     @Published var isProUser: Bool = false
-    
-    // for Pro
-//    @Published var isShowingPaywall: Bool = false
+    @Published var isShowingPaywall: Bool = false
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -24,7 +22,6 @@ final class AppState: ObservableObject {
     }
     
     func refreshProStatus() async {
-        // for Pro
-//        await AdMobManager.shared.checkProStatus()
+        await AdMobManager.shared.checkProStatus()
     }
 }

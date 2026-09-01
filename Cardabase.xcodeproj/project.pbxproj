@@ -33,6 +33,7 @@
 		D99D5984301F053500A4CE16 /* AdMobConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = D99D5983301F053500A4CE16 /* AdMobConfig.plist */; };
 		D9D57E3F303D5F3E004B29BA /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D57E3E303D5F3E004B29BA /* AnalyticsView.swift */; };
 		D9D57E4530454697004B29BA /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D57E4430454697004B29BA /* OnboardingView.swift */; };
+		D9D57E473046FACA004B29BA /* Products.storekit in Resources */ = {isa = PBXBuildFile; fileRef = D9D57E463046FACA004B29BA /* Products.storekit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -63,6 +64,7 @@
 		D99D5983301F053500A4CE16 /* AdMobConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AdMobConfig.plist; sourceTree = "<group>"; };
 		D9D57E3E303D5F3E004B29BA /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsView.swift; sourceTree = "<group>"; };
 		D9D57E4430454697004B29BA /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		D9D57E463046FACA004B29BA /* Products.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Products.storekit; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +82,7 @@
 		D96D2FB6301C40930083DC1E = {
 			isa = PBXGroup;
 			children = (
+				D9D57E463046FACA004B29BA /* Products.storekit */,
 				D96D2FD0301C41880083DC1E /* Cardabase */,
 				D96D2FC0301C40930083DC1E /* Products */,
 			);
@@ -304,6 +307,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D99D5984301F053500A4CE16 /* AdMobConfig.plist in Resources */,
+				D9D57E473046FACA004B29BA /* Products.storekit in Resources */,
 				D96D2FD1301C41880083DC1E /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

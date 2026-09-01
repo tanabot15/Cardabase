@@ -23,7 +23,7 @@ struct CardabaseApp: App {
         switch userColorScheme {
         case 1: return .light
         case 2: return .dark
-        default: return nil // システム設定に従う
+        default: return nil
         }
     }
     
@@ -55,6 +55,9 @@ struct CardabaseApp: App {
                         get: { !hasSeenOnboarding },
                         set: { hasSeenOnboarding = !$0 }
                     ))
+                }
+                .task {
+                    await appState.refreshProStatus()
                 }
         }
         .modelContainer(sharedModelContainer)

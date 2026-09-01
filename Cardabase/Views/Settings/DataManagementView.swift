@@ -11,6 +11,7 @@ import UniformTypeIdentifiers
 
 struct DataManagementView: View {
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var appState: AppState
     @Query private var folders: [Folder]
     
     @State private var selectedFolderForCSV: Folder?
@@ -23,6 +24,35 @@ struct DataManagementView: View {
     
     var body: some View {
         Form {
+            if !appState.isProUser {
+                Section {
+                    VStack(alignment: .center, spacing: 12) {
+                        Image(systemName: "lock.circle.fill")
+                            .font(.system(size: 48))
+                            .foregroundStyle(Color.accentColor)
+                        
+                        Text("Pro Feature Required")
+                            .font(.headline)
+                        
+                        Text("CSV/JSON Import & Export is exclusive to Cardabase Pro users.")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                        
+                        Button(action: { appState.isShowingPaywall = true }) {
+                            Text("Upgrade to Pro")
+                                .font(.headline)
+                                .foregroundStyle(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 10)
+                                .background(Color.accentColor)
+                                .cornerRadius(10)
+                        }
+                    }
+                    .padding(.vertical, 8)
+                }
+            }
+            
             // MARK: - Import CSV
             Section(header: Text("Import Data")) {
                 Picker("Target Database", selection: $selectedFolderForCSV) {
@@ -38,7 +68,7 @@ struct DataManagementView: View {
                         Text("Import CSV File")
                     }
                 }
-                .disabled(selectedFolderForCSV == nil)
+                .disabled(selectedFolderForCSV == nil || !appState.isProUser)
             }
             
             // MARK: - Export Data
@@ -49,7 +79,7 @@ struct DataManagementView: View {
                         Text("Export All Data (JSON Backup)")
                     }
                 }
-                .disabled(folders.isEmpty)
+                .disabled(folders.isEmpty || !appState.isProUser)
                 
                 if let target = selectedFolderForCSV {
                     Button(action: { exportCSV(folder: target) }) {
@@ -58,6 +88,7 @@ struct DataManagementView: View {
                             Text("Export '\(target.name)' to CSV")
                         }
                     }
+                    .disabled(!appState.isProUser)
                 }
             }
         }
@@ -74,6 +105,9 @@ struct DataManagementView: View {
             if let url = exportURL {
                 ShareSheet(activityItems: [url])
             }
+        }
+        .sheet(isPresented: $appState.isShowingPaywall) {
+            PaywallView()
         }
         .alert("Import Status", isPresented: $isShowingAlert) {
             Button("OK", role: .cancel) { }

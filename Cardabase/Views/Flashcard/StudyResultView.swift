@@ -10,6 +10,7 @@ import SwiftData
 
 struct StudyResultView: View {
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var appState: AppState
     
     let folder: Folder
     let totalStudied: Int
@@ -27,7 +28,9 @@ struct StudyResultView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 24) {
-                AdBannerView()
+                if !appState.isProUser {
+                    AdBannerView()
+                }
                 
                 Spacer()
                 

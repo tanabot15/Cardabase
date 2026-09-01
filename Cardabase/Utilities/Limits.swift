@@ -8,26 +8,21 @@
 import Foundation
 
 struct Limits {
-    // for Pro
-//    static let maxFoldersForFree: Int = 3
-//    static let maxKnowledgesPerFolderForFree: Int = 50
+    // Pro Product Identifier
+    static let proProductID: String = "com.cardabase.pro"
     
-    // Free version check
+    // Limits for Free Tier
+    static let maxFoldersForFree: Int = 3
+    static let maxKnowledgesPerFolderForFree: Int = 50
+    
+    // Free version limit checks
     static func isFolderLimitReached(currentCount: Int, isPro: Bool = false) -> Bool {
-        // for Pro
-//        if isPro { return false }
-//        return currentCount >= maxFoldersForFree
-        
-        // delete for Pro
-        return false
+        if isPro { return false }
+        return currentCount >= maxFoldersForFree
     }
     
     static func isKnowledgeLimitReached(currentCountInFolder: Int, isPro: Bool = false) -> Bool {
-        // for Pro
-//        if isPro { return false }
-//        return currentCountInFolder >= maxKnowledgesPerFolderForFree
-        
-        // delete for Pro
-        return false
+        if isPro { return false }
+        return currentCountInFolder >= maxKnowledgesPerFolderForFree
     }
 }
