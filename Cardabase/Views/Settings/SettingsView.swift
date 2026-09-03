@@ -19,15 +19,6 @@ struct SettingsView: View {
     
     var body: some View {
         List {
-            Section(header: Text("Appearance")) {
-                Picker("Theme", selection: $userColorScheme) {
-                    Text("System").tag(0)
-                    Text("Light").tag(1)
-                    Text("Dark").tag(2)
-                }
-                .pickerStyle(.menu)
-            }
-            
             // MARK: - Plan Status
             Section(header: Text("Plan Status")) {
                 HStack {
@@ -61,7 +52,7 @@ struct SettingsView: View {
                 }
             }
             
-            // Data Statistics
+            // Statistics
             Section(header: Text("Statistics")) {
                 HStack {
                     Text("Total Databases")
@@ -69,6 +60,16 @@ struct SettingsView: View {
                     Text("\(folders.count) / \(adManager.isProUser ? "∞" : "\(Limits.maxFoldersForFree)")")
                         .foregroundStyle(.secondary)
                 }
+            }
+            
+            // Appearance
+            Section(header: Text("Appearance")) {
+                Picker("Theme", selection: $userColorScheme) {
+                    Text("System").tag(0)
+                    Text("Light").tag(1)
+                    Text("Dark").tag(2)
+                }
+                .pickerStyle(.menu)
             }
             
             // Data Management Section
@@ -92,7 +93,7 @@ struct SettingsView: View {
                 HStack {
                     Text("Version")
                     Spacer()
-                    Text("2.5")
+                    Text("3.0")
                         .foregroundStyle(.secondary)
                 }
                 
@@ -103,7 +104,7 @@ struct SettingsView: View {
                 }
             }
         }
-        .navigationTitle("Setting")
+        .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $appState.isShowingPaywall) {
             PaywallView()
@@ -114,6 +115,7 @@ struct SettingsView: View {
 #Preview {
     NavigationStack {
         SettingsView()
+            .environmentObject(AppState())
             .modelContainer(for: [Folder.self, Knowledge.self], inMemory: true)
     }
 }

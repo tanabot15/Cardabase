@@ -9,7 +9,7 @@ import Foundation
 
 struct Limits {
     // Pro Product Identifier
-    static let proProductID: String = "com.cardabase.pro"
+    static let proProductID: String = "com.cardabase.pro.v2"
     
     // Limits for Free Tier
     static let maxFoldersForFree: Int = 3

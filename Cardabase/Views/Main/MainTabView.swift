@@ -89,5 +89,6 @@ struct MainTabView: View {
     context.insert(folder3)
     
     return MainTabView()
+        .environmentObject(AppState())
         .modelContainer(container)
 }

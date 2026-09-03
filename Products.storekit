@@ -16,7 +16,7 @@
   "products" : [
     {
       "displayPrice" : "4.99",
-      "familyShareable" : false,
+      "familyShareable" : true,
       "internalID" : "5BE338CE",
       "localizations" : [
         {
@@ -25,8 +25,8 @@
           "locale" : "en_US"
         }
       ],
-      "productID" : "com.cardabase.pro",
-      "referenceName" : "Cardabase Pro Unlock",
+      "productID" : "com.cardabase.pro.v2",
+      "referenceName" : "Cardabase Pro",
       "type" : "NonConsumable"
     }
   ],
