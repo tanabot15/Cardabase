@@ -132,7 +132,7 @@
 		D96D2FDA301C5E310083DC1E /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				D96D3005301C602C0083DC1E /* Main */,
+				D96D2FCF301C41880083DC1E /* MainTabView.swift */,
 				D96D2FE6301C5EB30083DC1E /* Folder */,
 				D96D2FE7301C5EBA0083DC1E /* Database */,
 				D96D2FE8301C5EC00083DC1E /* Flashcard */,
@@ -216,14 +216,6 @@
 				D96D2FFB301C5F640083DC1E /* AdBannerView.swift */,
 			);
 			path = Components;
-			sourceTree = "<group>";
-		};
-		D96D3005301C602C0083DC1E /* Main */ = {
-			isa = PBXGroup;
-			children = (
-				D96D2FCF301C41880083DC1E /* MainTabView.swift */,
-			);
-			path = Main;
 			sourceTree = "<group>";
 		};
 		D9D57E3D303D5F2D004B29BA /* Analytics */ = {
@@ -483,7 +475,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 21;
 				DEVELOPMENT_TEAM = D86GFNUD35;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -500,7 +492,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.2;
+				MARKETING_VERSION = 3.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.suzuki.kenichiro.Cardabase;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -523,7 +515,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 21;
 				DEVELOPMENT_TEAM = D86GFNUD35;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -540,7 +532,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.2;
+				MARKETING_VERSION = 3.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.suzuki.kenichiro.Cardabase;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;

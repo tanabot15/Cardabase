@@ -2,8 +2,6 @@
 //  FolderListView.swift
 //  Cardabase
 //
-//  Created by Kenichiro Suzuki on 2026/07/31.
-//
 
 import SwiftUI
 import SwiftData
@@ -12,7 +10,6 @@ struct FolderListView: View {
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject private var appState: AppState
     
-    var mode: ViewMode = .database
     var parentFolder: Folder?
 
     @Query(filter: #Predicate<Folder> { $0.parent == nil }, sort: \Folder.createdAt, order: .reverse)
@@ -54,37 +51,27 @@ struct FolderListView: View {
                         )
                     } else {
                         ForEach(displayedFolders) { folder in
-                            NavigationLink {
-                                if mode == .database {
-                                    DatabaseView(folder: folder)
-                                } else {
-                                    CardConfigView(folder: folder)
-                                }
-                            } label: {
-                                FolderRowView(folder: folder, mode: mode)
-                            }
+                            FolderRowView(folder: folder)
                         }
                         .onDelete(perform: deleteFolders)
                     }
                 }
             }
             
-            // Floating Add Button (Database Mode Only)
-            if mode == .database {
-                Button(action: handleAddFolderTapped) {
-                    Image(systemName: "plus")
-                        .font(.title2.bold())
-                        .foregroundStyle(.white)
-                        .frame(width: 56, height: 56)
-                        .background(Color.accentColor)
-                        .clipShape(Circle())
-                        .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 3)
-                }
-                .padding(.trailing, 20)
-                .padding(.bottom, 20)
+            // Floating Add Button
+            Button(action: handleAddFolderTapped) {
+                Image(systemName: "plus")
+                    .font(.title2.bold())
+                    .foregroundStyle(.white)
+                    .frame(width: 56, height: 56)
+                    .background(Color.accentColor)
+                    .clipShape(Circle())
+                    .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 3)
             }
+            .padding(.trailing, 20)
+            .padding(.bottom, 20)
         }
-        .navigationTitle(mode == .database ? "Databases" : "Flashcards")
+        .navigationTitle("Databases")
         .navigationBarTitleDisplayMode(.large)
         .sheet(isPresented: $isShowingCreateSheet) {
             createFolderSheet
@@ -209,7 +196,9 @@ struct FolderListView: View {
 
 private struct FolderRowView: View {
     let folder: Folder
-    let mode: ViewMode
+    
+    @State private var isShowingDatabase: Bool = false
+    @State private var isShowingCardConfig: Bool = false
     
     private var recordCount: Int {
         folder.knowledges.count
@@ -222,11 +211,7 @@ private struct FolderRowView: View {
     }
     
     var body: some View {
-        HStack(spacing: 16) {
-            Image(systemName: mode == .database ? "cylinder.split.1x2.fill" : "rectangle.on.rectangle.angled.fill")
-                .font(.title2)
-                .foregroundStyle(.secondary)
-            
+        HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(folder.name)
                     .font(.headline)
@@ -245,14 +230,49 @@ private struct FolderRowView: View {
                     }
                 }
             }
+            
             Spacer()
+            
+            HStack(spacing: 8) {
+                // 1. DatebaseView
+                Button(action: {
+                    isShowingDatabase = true
+                }) {
+                    Image(systemName: "cylinder.split.1x2.fill")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(Color.accentColor)
+                        .padding(10)
+                        .background(Color.accentColor.opacity(0.12))
+                        .clipShape(Circle())
+                }
+                .buttonStyle(.borderless)
+                
+                // 2. FlashCardView
+                Button(action: {
+                    isShowingCardConfig = true
+                }) {
+                    Image(systemName: "rectangle.on.rectangle.angled.fill")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(.orange)
+                        .padding(10)
+                        .background(Color.orange.opacity(0.12))
+                        .clipShape(Circle())
+                }
+                .buttonStyle(.borderless)
+            }
         }
         .padding(.vertical, 4)
+        .navigationDestination(isPresented: $isShowingDatabase) {
+            DatabaseView(folder: folder)
+        }
+        .navigationDestination(isPresented: $isShowingCardConfig) {
+            CardConfigView(folder: folder)
+        }
     }
 }
 
 // MARK: - Previews
-#Preview("Databases") {
+#Preview("Folder List") {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: Folder.self, Knowledge.self, configurations: config)
     let context = container.mainContext
@@ -270,26 +290,7 @@ private struct FolderRowView: View {
     context.insert(folder2)
     
     return NavigationStack {
-        FolderListView(mode: .database)
-    }
-    .modelContainer(container)
-    .environmentObject(AppState())
-}
-
-#Preview("Flashcards") {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: Folder.self, Knowledge.self, configurations: config)
-    let context = container.mainContext
-    
-    let folder = Folder(name: "Italian Wine Classifications")
-    let k1 = Knowledge(title: "DOCG", summary: "Denominazione di Origine Controllata e Garantita")
-    k1.masterStatus = .mastered
-    folder.knowledges.append(k1)
-    
-    context.insert(folder)
-    
-    return NavigationStack {
-        FolderListView(mode: .flashcards)
+        FolderListView()
     }
     .modelContainer(container)
     .environmentObject(AppState())
