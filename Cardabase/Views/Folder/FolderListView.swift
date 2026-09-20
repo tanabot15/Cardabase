@@ -18,13 +18,13 @@ struct FolderListView: View {
     @Query(filter: #Predicate<Folder> { $0.parent == nil }, sort: \Folder.createdAt, order: .reverse)
     private var rootFolders: [Folder]
     
-    // state management
+    // MARK: - State Management
     @State private var searchText: String = ""
-    @State private var isShowingCreaateSheet: Bool = false
+    @State private var isShowingCreateSheet: Bool = false
     @State private var newFolderName: String = ""
     @State private var customSchemas: [FieldSchema] = []
     
-    // for adding custom field schema
+    // States for custom field creation
     @State private var newSchemaKey: String = ""
     @State private var newSchemaType: FieldType = .text
     
@@ -37,6 +37,7 @@ struct FolderListView: View {
         }
     }
     
+    // MARK: - Main Body
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             VStack(spacing: 0) {
@@ -49,7 +50,7 @@ struct FolderListView: View {
                         ContentUnavailableView(
                             searchText.isEmpty ? "No Databases Yet" : "No Results",
                             systemImage: searchText.isEmpty ? "folder.badge.plus" : "magnifyingglass",
-                            description: Text(searchText.isEmpty ? "Tap the '+' button to create your first database." : "Try searching for a different name.")
+                            description: Text(searchText.isEmpty ? "Tap '+' button to create your first database." : "Try searching for another name.")
                         )
                     } else {
                         ForEach(displayedFolders) { folder in
@@ -68,6 +69,7 @@ struct FolderListView: View {
                 }
             }
             
+            // Floating Add Button (Database Mode Only)
             if mode == .database {
                 Button(action: handleAddFolderTapped) {
                     Image(systemName: "plus")
@@ -82,89 +84,93 @@ struct FolderListView: View {
                 .padding(.bottom, 20)
             }
         }
-        .sheet(isPresented: $isShowingCreaateSheet) {
-            NavigationStack {
-                Form {
-                    Section(header: Text("Database Name")) {
-                        TextField("e.g. AI Concepts, Patents, Finance", text: $newFolderName)
-                    }
-                    
-                    Section(header: Text("Defined Custom Fields (\(customSchemas.count))")) {
-                        if customSchemas.isEmpty {
-                            Text("No custom fields added.")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        } else {
-                            ForEach(customSchemas) { schema in
-                                HStack {
-                                    Text(schema.key)
-                                        .font(.subheadline)
-                                    Spacer()
-                                    Text(schema.type.displayName)
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
-                            .onDelete { customSchemas.remove(atOffsets: $0) }
-                        }
-                    }
-                    
-                    Section(header: Text("Add Custom Field")) {
-                        TextField("Field Key (e.g. Year, URL, Tag)", text: $newSchemaKey)
-                        Picker("Field Type", selection: $newSchemaType) {
-                            ForEach(FieldType.allCases) { type in
-                                Text(type.displayName).tag(type)
-                            }
-                        }
-                        
-                        Button(action: addSchema) {
-                            HStack {
-                                Image(systemName: "plus.circle.fill")
-                                Text("Add Field")
-                            }
-                            .font(.subheadline)
-                            .bold()
-                        }
-                        .disabled(newSchemaKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                    }
-                }
-                .navigationTitle("New Database")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Cancel") {
-                            resetCreateSheet()
-                        }
-                    }
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("Create") {
-                            createNewFolder()
-                        }
-                        .disabled(newFolderName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                    }
-                }
-            }
+        .navigationTitle(mode == .database ? "Databases" : "Flashcards")
+        .navigationBarTitleDisplayMode(.large)
+        .sheet(isPresented: $isShowingCreateSheet) {
+            createFolderSheet
         }
         .sheet(isPresented: $appState.isShowingPaywall) {
             PaywallView()
         }
     }
     
+    // MARK: - Subviews
+    
+    private var createFolderSheet: some View {
+        NavigationStack {
+            Form {
+                Section(header: Text("Database Name")) {
+                    TextField("e.g. SAKE DIPLOMA, Finance, AI Concepts", text: $newFolderName)
+                }
+                
+                Section(header: Text("Custom Field Schemas (\(customSchemas.count))")) {
+                    if customSchemas.isEmpty {
+                        Text("No custom fields added.")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    } else {
+                        ForEach(customSchemas) { schema in
+                            HStack {
+                                Text(schema.key)
+                                    .font(.subheadline)
+                                Spacer()
+                                Text(schema.type.displayName)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .onDelete { customSchemas.remove(atOffsets: $0) }
+                    }
+                }
+                
+                Section(header: Text("Add Custom Field")) {
+                    TextField("Field Key (e.g. Region, Variety, Year)", text: $newSchemaKey)
+                    Picker("Field Type", selection: $newSchemaType) {
+                        ForEach(FieldType.allCases) { type in
+                            Text(type.displayName).tag(type)
+                        }
+                    }
+                    
+                    Button(action: addSchema) {
+                        HStack {
+                            Image(systemName: "plus.circle.fill")
+                            Text("Add Field")
+                        }
+                        .font(.subheadline)
+                        .bold()
+                    }
+                    .disabled(newSchemaKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                }
+            }
+            .navigationTitle("New Database")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { resetCreateSheet() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Create") { createNewFolder() }
+                        .disabled(newFolderName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                }
+            }
+        }
+    }
+    
+    // MARK: - Actions
+    
     private func addSchema() {
         let trimmedKey = newSchemaKey.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedKey.isEmpty else { return }
-        
         customSchemas.append(FieldSchema(key: trimmedKey, type: newSchemaType))
         newSchemaKey = ""
         newSchemaType = .text
     }
     
     private func handleAddFolderTapped() {
-        let currentCount = rootFolders.count
-        if Limits.isFolderLimitReached(currentCount: currentCount, isPro: appState.isProUser) {
+        if Limits.isFolderLimitReached(currentCount: rootFolders.count, isPro: appState.isProUser) {
             appState.isShowingPaywall = true
         } else {
-            isShowingCreaateSheet = true
+            isShowingCreateSheet = true
         }
     }
     
@@ -188,7 +194,7 @@ struct FolderListView: View {
         customSchemas = []
         newSchemaKey = ""
         newSchemaType = .text
-        isShowingCreaateSheet = false
+        isShowingCreateSheet = false
     }
     
     private func deleteFolders(at offsets: IndexSet) {
@@ -199,7 +205,8 @@ struct FolderListView: View {
     }
 }
 
-// MARK: - Folder Row Component
+// MARK: - Subview: Folder Row Component
+
 private struct FolderRowView: View {
     let folder: Folder
     let mode: ViewMode
@@ -244,31 +251,29 @@ private struct FolderRowView: View {
     }
 }
 
+// MARK: - Previews
 #Preview("Databases") {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: Folder.self, Knowledge.self, configurations: config)
     let context = container.mainContext
     
-    let folder1 = Folder(name: "AI & Tech Concepts")
-    folder1.knowledges.append(Knowledge(title: "Attention Mechanism", summary: "Calculates dynamic weights"))
+    let folder1 = Folder(name: "SAKE DIPLOMA Study")
+    folder1.knowledges.append(Knowledge(title: "Goshiki", summary: "Five basic sake taste elements"))
     
     let folder2 = Folder(name: "Financial Indicators")
     folder2.knowledges.append(contentsOf: [
         Knowledge(title: "ROIC", summary: "Return on Invested Capital"),
-        Knowledge(title: "PER", summary: "Price to Earnings Ratio"),
-        Knowledge(title: "ROE", summary: "Return on Equity")
+        Knowledge(title: "PER", summary: "Price to Earnings Ratio")
     ])
-    
-    let folder3 = Folder(name: "Intellectual Property")
     
     context.insert(folder1)
     context.insert(folder2)
-    context.insert(folder3)
     
     return NavigationStack {
         FolderListView(mode: .database)
     }
     .modelContainer(container)
+    .environmentObject(AppState())
 }
 
 #Preview("Flashcards") {
@@ -276,15 +281,16 @@ private struct FolderRowView: View {
     let container = try! ModelContainer(for: Folder.self, Knowledge.self, configurations: config)
     let context = container.mainContext
     
-    let folder1 = Folder(name: "Financial Indicators")
-    let k1 = Knowledge(title: "ROIC", summary: "Return on Invested Capital")
-    k1.masterStatus = .mastered // 修正
-    folder1.knowledges.append(contentsOf: [k1, Knowledge(title: "PER", summary: "Price to Earnings Ratio")])
+    let folder = Folder(name: "Italian Wine Classifications")
+    let k1 = Knowledge(title: "DOCG", summary: "Denominazione di Origine Controllata e Garantita")
+    k1.masterStatus = .mastered
+    folder.knowledges.append(k1)
     
-    context.insert(folder1)
+    context.insert(folder)
     
     return NavigationStack {
         FolderListView(mode: .flashcards)
     }
     .modelContainer(container)
+    .environmentObject(AppState())
 }

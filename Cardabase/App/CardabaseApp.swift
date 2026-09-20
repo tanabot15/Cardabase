@@ -2,22 +2,23 @@
 //  CardabaseApp.swift
 //  Cardabase
 //
-//  Created by Kenichiro Suzuki on 2026/07/31.
-//
 
 import SwiftUI
 import SwiftData
 import GoogleMobileAds
 import AppTrackingTransparency
-import AdSupport
 
 @main
 struct CardabaseApp: App {
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject private var appState = AppState()
     
     @AppStorage("userColorScheme") private var userColorScheme: Int = 0
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding: Bool = false
+    
+    init() {
+        // Initialize Google Mobile Ads SDK on app launch
+        MobileAds.shared.start(completionHandler: nil)
+    }
     
     private var selectedColorScheme: ColorScheme? {
         switch userColorScheme {
@@ -27,7 +28,7 @@ struct CardabaseApp: App {
         }
     }
     
-    // SwiftData model container
+    // Shared SwiftData Model Container
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Folder.self,
@@ -38,7 +39,7 @@ struct CardabaseApp: App {
         do {
             return try ModelContainer(for: schema, configurations: [modelConfiguration])
         } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+            fatalError("Failed to create SwiftData ModelContainer: \(error.localizedDescription)")
         }
     }()
     
@@ -58,32 +59,18 @@ struct CardabaseApp: App {
                 }
                 .task {
                     await appState.refreshProStatus()
+                    requestTrackingAuthorization()
                 }
         }
         .modelContainer(sharedModelContainer)
     }
     
-    /// Request App Tracking Transparency (ATT) authorization
-    private func requestAppTrackingAuthorization() {
-        print("[ATT Check] Current Status: \(ATTrackingManager.trackingAuthorizationStatus.rawValue)")
-
-        if ATTrackingManager.trackingAuthorizationStatus == .notDetermined {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                ATTrackingManager.requestTrackingAuthorization { status in
-                    switch status {
-                    case .authorized:
-                        print("[ATT] Tracking authorized (IDFA: \(ASIdentifierManager.shared().advertisingIdentifier))")
-                    case .denied:
-                        print("[ATT] Tracking denied")
-                    case .notDetermined:
-                        print("[ATT] Tracking not determined")
-                    case .restricted:
-                        print("[ATT] Tracking restricted")
-                    @unknown default:
-                        break
-                    }
-                }
-            }
+    /// Requests App Tracking Transparency (ATT) authorization after a brief delay.
+    private func requestTrackingAuthorization() {
+        guard ATTrackingManager.trackingAuthorizationStatus == .notDetermined else { return }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            ATTrackingManager.requestTrackingAuthorization { _ in }
         }
     }
 }

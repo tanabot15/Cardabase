@@ -2,13 +2,12 @@
 //  DataManagementView.swift
 //  Cardabase
 //
-//  Created by Kenichiro Suzuki on 2026/08/24.
-//
 
 import SwiftUI
 import SwiftData
 import UniformTypeIdentifiers
 
+/// View responsible for importing and exporting database content in CSV/JSON formats.
 struct DataManagementView: View {
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject private var appState: AppState
@@ -24,36 +23,12 @@ struct DataManagementView: View {
     
     var body: some View {
         Form {
+            // MARK: Pro Banner
             if !appState.isProUser {
-                Section {
-                    VStack(alignment: .center, spacing: 12) {
-                        Image(systemName: "lock.circle.fill")
-                            .font(.system(size: 48))
-                            .foregroundStyle(Color.accentColor)
-                        
-                        Text("Pro Feature Required")
-                            .font(.headline)
-                        
-                        Text("CSV/JSON Import & Export is exclusive to Cardabase Pro users.")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
-                        
-                        Button(action: { appState.isShowingPaywall = true }) {
-                            Text("Upgrade to Pro")
-                                .font(.headline)
-                                .foregroundStyle(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 10)
-                                .background(Color.accentColor)
-                                .cornerRadius(10)
-                        }
-                    }
-                    .padding(.vertical, 8)
-                }
+                proBannerSection
             }
             
-            // MARK: - Import CSV
+            // MARK: Import CSV Section
             Section(header: Text("Import Data")) {
                 Picker("Target Database", selection: $selectedFolderForCSV) {
                     Text("Select Database").tag(Folder?.none)
@@ -63,30 +38,21 @@ struct DataManagementView: View {
                 }
                 
                 Button(action: { isShowingFileImporter = true }) {
-                    HStack {
-                        Image(systemName: "square.and.arrow.down")
-                        Text("Import CSV File")
-                    }
+                    Label("Import CSV File", systemImage: "square.and.arrow.down")
                 }
                 .disabled(selectedFolderForCSV == nil || !appState.isProUser)
             }
             
-            // MARK: - Export Data
+            // MARK: Export Section
             Section(header: Text("Export & Backup")) {
                 Button(action: exportAllJSON) {
-                    HStack {
-                        Image(systemName: "doc.badge.plus")
-                        Text("Export All Data (JSON Backup)")
-                    }
+                    Label("Export All Data (JSON Backup)", systemImage: "doc.badge.plus")
                 }
                 .disabled(folders.isEmpty || !appState.isProUser)
                 
                 if let target = selectedFolderForCSV {
                     Button(action: { exportCSV(folder: target) }) {
-                        HStack {
-                            Image(systemName: "tablecells")
-                            Text("Export '\(target.name)' to CSV")
-                        }
+                        Label("Export '\(target.name)' to CSV", systemImage: "tablecells")
                     }
                     .disabled(!appState.isProUser)
                 }
@@ -116,7 +82,37 @@ struct DataManagementView: View {
         }
     }
     
-    // MARK: - Handlers
+    // MARK: - Subviews
+    private var proBannerSection: some View {
+        Section {
+            VStack(spacing: 12) {
+                Image(systemName: "lock.circle.fill")
+                    .font(.system(size: 48))
+                    .foregroundStyle(Color.accentColor)
+                
+                Text("Pro Feature Required")
+                    .font(.headline)
+                
+                Text("CSV and JSON import/export functions are available exclusively to Cardabase Pro members.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                
+                Button(action: { appState.isShowingPaywall = true }) {
+                    Text("Upgrade to Pro")
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(Color.accentColor)
+                        .cornerRadius(10)
+                }
+            }
+            .padding(.vertical, 8)
+        }
+    }
+    
+    // MARK: - Helper Methods
     private func handleImport(result: Result<[URL], Error>) {
         guard let targetFolder = selectedFolderForCSV else { return }
         
@@ -148,7 +144,7 @@ struct DataManagementView: View {
     }
 }
 
-// UIActivityViewController wrapper
+// MARK: - ShareSheet UIKit Wrapper
 struct ShareSheet: UIViewControllerRepresentable {
     var activityItems: [Any]
     
@@ -159,6 +155,20 @@ struct ShareSheet: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
 
+// MARK: - Preview
 #Preview {
-    DataManagementView()
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: Folder.self, Knowledge.self, configurations: config)
+    
+    let sampleFolder = Folder(name: "Sample Portfolio")
+    container.mainContext.insert(sampleFolder)
+    
+    let appState = AppState()
+    appState.isProUser = true
+    
+    return NavigationStack {
+        DataManagementView()
+            .modelContainer(container)
+            .environmentObject(appState)
+    }
 }

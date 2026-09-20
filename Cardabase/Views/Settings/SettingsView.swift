@@ -2,12 +2,11 @@
 //  SettingsView.swift
 //  Cardabase
 //
-//  Created by Kenichiro Suzuki on 2026/07/31.
-//
 
 import SwiftUI
 import SwiftData
 
+/// Application Settings view displaying user subscription, options, and data utilities.
 struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject private var appState: AppState
@@ -19,15 +18,14 @@ struct SettingsView: View {
     
     var body: some View {
         List {
-            // MARK: - Plan Status
+            // MARK: Plan Status Section
             Section(header: Text("Plan Status")) {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(adManager.isProUser ? "Cardabase Pro" : "Free Plan")
                             .font(.headline)
-                            .foregroundStyle(.primary)
                         
-                        Text(adManager.isProUser ? "Unlimited databases, records, and ad-free experience." : "Limited to \(Limits.maxFoldersForFree) databases & \(Limits.maxKnowledgesPerFolderForFree) records per database.")
+                        Text(adManager.isProUser ? "Unlimited databases and ad-free experience." : "Limited to \(Limits.maxFoldersForFree) databases & \(Limits.maxKnowledgesPerFolderForFree) records per database.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -42,18 +40,15 @@ struct SettingsView: View {
                 
                 if !adManager.isProUser {
                     Button(action: { appState.isShowingPaywall = true }) {
-                        HStack {
-                            Image(systemName: "star.fill")
-                                .foregroundStyle(.yellow)
-                            Text("Upgrade to Pro")
-                                .bold()
-                        }
+                        Label("Upgrade to Pro", systemImage: "star.fill")
+                            .bold()
+                            .foregroundStyle(Color.accentColor)
                     }
                 }
             }
             
-            // Statistics
-            Section(header: Text("Statistics")) {
+            // MARK: Usage Statistics
+            Section(header: Text("Usage Statistics")) {
                 HStack {
                     Text("Total Databases")
                     Spacer()
@@ -62,7 +57,7 @@ struct SettingsView: View {
                 }
             }
             
-            // Appearance
+            // MARK: Appearance Section
             Section(header: Text("Appearance")) {
                 Picker("Theme", selection: $userColorScheme) {
                     Text("System").tag(0)
@@ -72,14 +67,12 @@ struct SettingsView: View {
                 .pickerStyle(.menu)
             }
             
-            // Data Management Section
+            // MARK: Data Management Section
             Section(header: Text("Data Management")) {
                 Button(action: {
                     SampleDataGenerator.insertSampleDataIfNeeded(modelContext: modelContext)
                 }) {
-                    HStack {
-                        Text(hasInsertedSampleData ? "Sample Data Loaded" : "Load Sample Data")
-                    }
+                    Text(hasInsertedSampleData ? "Sample Databases Loaded" : "Load Sample Databases")
                 }
                 .disabled(hasInsertedSampleData)
                 
@@ -88,12 +81,12 @@ struct SettingsView: View {
                 }
             }
             
-            // App Info
-            Section(header: Text("About App")) {
+            // MARK: App Information
+            Section(header: Text("About")) {
                 HStack {
                     Text("Version")
                     Spacer()
-                    Text("3.0")
+                    Text("3.2.0")
                         .foregroundStyle(.secondary)
                 }
                 
@@ -112,10 +105,14 @@ struct SettingsView: View {
     }
 }
 
+// MARK: - Preview
 #Preview {
-    NavigationStack {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: Folder.self, Knowledge.self, configurations: config)
+    
+    return NavigationStack {
         SettingsView()
             .environmentObject(AppState())
-            .modelContainer(for: [Folder.self, Knowledge.self], inMemory: true)
+            .modelContainer(container)
     }
 }

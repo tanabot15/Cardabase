@@ -19,11 +19,9 @@ struct FlashcardView: View {
     
     var onDone: (() -> Void)? = nil
     
-    // index management
+    // MARK: - State Management
     @State private var currentIndex: Int = 0
     @State private var isFlipped: Bool = false
-    
-    // result tracking
     @State private var correctCount: Int = 0
     @State private var incorrectCount: Int = 0
     @State private var isCompleted: Bool = false
@@ -33,7 +31,7 @@ struct FlashcardView: View {
         return knowledges[currentIndex]
     }
     
-    // MARK: - Main view
+    // MARK: - Main Body
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
@@ -41,7 +39,7 @@ struct FlashcardView: View {
                     AdBannerView()
                 }
                 
-                // progress bar
+                // Progress Bar & Counter
                 ProgressView(value: Double(currentIndex), total: Double(knowledges.count))
                     .padding(.horizontal)
                 
@@ -55,21 +53,18 @@ struct FlashcardView: View {
                 
                 Spacer()
                 
-                // flip card
+                // Card Flip View
                 if let knowledge = currentKnowledge {
                     ZStack {
-                        // front (Question)
+                        // Front Card (Question)
                         CardFrontFaceView(
                             title: frontKey,
                             content: knowledge.value(forKey: frontKey) ?? "(Empty)"
                         )
                         .opacity(isFlipped ? 0.0 : 1.0)
-                        .rotation3DEffect(
-                            .degrees(isFlipped ? 180 : 0),
-                            axis: (x: 0.0, y: 1.0, z: 0.0)
-                        )
+                        .rotation3DEffect(.degrees(isFlipped ? 180 : 0), axis: (x: 0.0, y: 1.0, z: 0.0))
                         
-                        // back (Question + Divider + Answer)
+                        // Back Card (Answer)
                         CardBackFaceView(
                             frontTitle: frontKey,
                             frontContent: knowledge.value(forKey: frontKey) ?? "(Empty)",
@@ -77,10 +72,7 @@ struct FlashcardView: View {
                             backContent: knowledge.value(forKey: backKey) ?? "(Empty)"
                         )
                         .opacity(isFlipped ? 1.0 : 0.0)
-                        .rotation3DEffect(
-                            .degrees(isFlipped ? 0 : -180),
-                            axis: (x: 0.0, y: 1.0, z: 0.0)
-                        )
+                        .rotation3DEffect(.degrees(isFlipped ? 0 : -180), axis: (x: 0.0, y: 1.0, z: 0.0))
                     }
                     .frame(maxWidth: .infinity, maxHeight: 380)
                     .padding(.horizontal)
@@ -93,7 +85,7 @@ struct FlashcardView: View {
                 
                 Spacer()
                 
-                // action button (only back card)
+                // Action Buttons (Visible when flipped)
                 if isFlipped {
                     HStack(spacing: 20) {
                         Button(action: { recordAnswer(isCorrect: false) }) {
@@ -160,10 +152,10 @@ struct FlashcardView: View {
     }
     
     // MARK: - Logic
+    
     private func recordAnswer(isCorrect: Bool) {
         guard let knowledge = currentKnowledge else { return }
         
-        // update stidy record
         knowledge.reviewCount += 1
         if isCorrect {
             knowledge.correctCount += 1
@@ -175,7 +167,6 @@ struct FlashcardView: View {
         }
         knowledge.lastReviewedAt = Date()
         
-        // to next card
         if currentIndex + 1 < knowledges.count {
             withAnimation {
                 isFlipped = false
@@ -187,8 +178,8 @@ struct FlashcardView: View {
     }
 }
 
-// MARK: - Subview for Card Design
-// Front Face
+// MARK: - Subviews: Card Faces
+
 private struct CardFrontFaceView: View {
     let title: String
     let content: String
@@ -233,7 +224,6 @@ private struct CardFrontFaceView: View {
     }
 }
 
-// Back Face
 private struct CardBackFaceView: View {
     let frontTitle: String
     let frontContent: String
@@ -244,7 +234,6 @@ private struct CardBackFaceView: View {
         VStack(spacing: 12) {
             ScrollView {
                 VStack(spacing: 12) {
-                    // 問題部分（上部）
                     VStack(spacing: 6) {
                         Text(frontTitle.uppercased())
                             .font(.caption2)
@@ -262,7 +251,6 @@ private struct CardBackFaceView: View {
                     Divider()
                         .padding(.vertical, 4)
                     
-                    // 解答部分（下部）
                     VStack(spacing: 8) {
                         Text(backTitle.uppercased())
                             .font(.caption)
@@ -299,10 +287,12 @@ private struct CardBackFaceView: View {
     }
 }
 
+// MARK: - Preview
 
 #Preview {
     let folder = Folder(name: "Sample Database")
-    let k1 = Knowledge(title: "SwiftUI", summary: "Declarative UI framework for iOS.")
+    let k1 = Knowledge(title: "SwiftUI", summary: "Declarative UI framework for iOS development.")
     return FlashcardView(folder: folder, knowledges: [k1], frontKey: "Title", backKey: "Summary")
+        .environmentObject(AppState())
         .modelContainer(for: [Folder.self, Knowledge.self], inMemory: true)
 }

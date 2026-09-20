@@ -2,12 +2,11 @@
 //  AppState.swift
 //  Cardabase
 //
-//  Created by Kenichiro Suzuki on 2026/07/31.
-//
 
 import SwiftUI
 import Combine
 
+/// Global application state handling subscription status and paywall presentations.
 @MainActor
 final class AppState: ObservableObject {
     @Published var isProUser: Bool = false
@@ -16,12 +15,18 @@ final class AppState: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     
     init() {
+        // Observe Pro subscription updates from AdMobManager
         AdMobManager.shared.$isProUser
             .receive(on: DispatchQueue.main)
-            .assign(to: &$isProUser)
+            .sink { [weak self] isPro in
+                self?.isProUser = isPro
+            }
+            .store(in: &cancellables)
     }
     
+    /// Refreshes the active subscription status via StoreKit.
     func refreshProStatus() async {
         await AdMobManager.shared.checkProStatus()
+        self.isProUser = AdMobManager.shared.isProUser
     }
 }

@@ -2,12 +2,11 @@
 //  OnboardingView.swift
 //  Cardabase
 //
-//  Created by Kenichiro Suzuki on 2026/08/31.
-//
 
 import SwiftUI
 import SwiftData
 
+/// Introductory view displayed on the user's first launch.
 struct OnboardingView: View {
     @Environment(\.modelContext) private var modelContext
     @Binding var isFirstLaunch: Bool
@@ -17,13 +16,12 @@ struct OnboardingView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Page View
             TabView(selection: $currentPage) {
                 // Page 1: Concept
                 OnboardingPageView(
                     imageName: "cylinder.split.1x2.fill",
-                    title: "Custom Database",
-                    description: "Build flexible databases tailored to your unique learning needs with fully customizable fields."
+                    title: "Custom Databases",
+                    description: "Create tailored knowledge bases suited to your specific studies with custom schema fields."
                 )
                 .tag(0)
                 
@@ -31,11 +29,11 @@ struct OnboardingView: View {
                 OnboardingPageView(
                     imageName: "rectangle.on.rectangle.angled.fill",
                     title: "Smart Flashcards",
-                    description: "Review your knowledge efficiently using dynamic flashcards generated directly from your database."
+                    description: "Review and memorize records effectively using dynamic flashcards generated from your database."
                 )
                 .tag(1)
                 
-                // Page 3: Sample Data Choice & Get Started
+                // Page 3: Starter Setup
                 VStack(spacing: 24) {
                     Spacer()
                     
@@ -44,7 +42,7 @@ struct OnboardingView: View {
                         .foregroundStyle(Color.accentColor)
                     
                     VStack(spacing: 8) {
-                        Text("Ready to Start")
+                        Text("Ready to Learn")
                             .font(.title)
                             .bold()
                         
@@ -55,12 +53,11 @@ struct OnboardingView: View {
                             .padding(.horizontal, 32)
                     }
                     
-                    // Toggle for sample data
                     Toggle(isOn: $loadSampleData) {
                         HStack(spacing: 12) {
                             Image(systemName: "square.and.arrow.down.fill")
                                 .foregroundStyle(Color.accentColor)
-                            Text("Load Sample Databases")
+                            Text("Load Starter Databases")
                                 .font(.headline)
                         }
                     }
@@ -88,7 +85,7 @@ struct OnboardingView: View {
             .tabViewStyle(.page(indexDisplayMode: .always))
             .indexViewStyle(.page(backgroundDisplayMode: .always))
             
-            // Bottom Action (for Pages 0 and 1)
+            // Navigation controls for Pages 0 and 1
             if currentPage < 2 {
                 HStack {
                     Button("Skip") {
@@ -121,7 +118,7 @@ struct OnboardingView: View {
     }
 }
 
-// Subview for page items
+// MARK: - Subview for Onboarding Pages
 private struct OnboardingPageView: View {
     let imageName: String
     let title: String
@@ -152,6 +149,7 @@ private struct OnboardingPageView: View {
     }
 }
 
+// MARK: - Preview
 #Preview {
     OnboardingView(isFirstLaunch: .constant(true))
 }

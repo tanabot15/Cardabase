@@ -11,7 +11,6 @@
 		D96D2FD2301C41880083DC1E /* CardabaseApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FCE301C41880083DC1E /* CardabaseApp.swift */; };
 		D96D2FD3301C41880083DC1E /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FCF301C41880083DC1E /* MainTabView.swift */; };
 		D96D2FD7301C42900083DC1E /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = D96D2FD6301C42900083DC1E /* GoogleMobileAds */; };
-		D96D2FDF301C5E7F0083DC1E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FDE301C5E7F0083DC1E /* AppDelegate.swift */; };
 		D96D2FE1301C5E8E0083DC1E /* Folder.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FE0301C5E8E0083DC1E /* Folder.swift */; };
 		D96D2FE3301C5E990083DC1E /* Knowledge.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FE2301C5E990083DC1E /* Knowledge.swift */; };
 		D96D2FE5301C5EA70083DC1E /* FieldValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FE4301C5EA70083DC1E /* FieldValue.swift */; };
@@ -34,6 +33,7 @@
 		D9D57E3F303D5F3E004B29BA /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D57E3E303D5F3E004B29BA /* AnalyticsView.swift */; };
 		D9D57E4530454697004B29BA /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D57E4430454697004B29BA /* OnboardingView.swift */; };
 		D9D57E473046FACA004B29BA /* Products.storekit in Resources */ = {isa = PBXBuildFile; fileRef = D9D57E463046FACA004B29BA /* Products.storekit */; };
+		D9D57E4A304A8488004B29BA /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9D57E49304A8488004B29BA /* StoreKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,7 +42,6 @@
 		D96D2FCE301C41880083DC1E /* CardabaseApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardabaseApp.swift; sourceTree = "<group>"; };
 		D96D2FCF301C41880083DC1E /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		D96D2FD4301C424E0083DC1E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D96D2FDE301C5E7F0083DC1E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D96D2FE0301C5E8E0083DC1E /* Folder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Folder.swift; sourceTree = "<group>"; };
 		D96D2FE2301C5E990083DC1E /* Knowledge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Knowledge.swift; sourceTree = "<group>"; };
 		D96D2FE4301C5EA70083DC1E /* FieldValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldValue.swift; sourceTree = "<group>"; };
@@ -65,6 +64,7 @@
 		D9D57E3E303D5F3E004B29BA /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsView.swift; sourceTree = "<group>"; };
 		D9D57E4430454697004B29BA /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		D9D57E463046FACA004B29BA /* Products.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Products.storekit; sourceTree = "<group>"; };
+		D9D57E49304A8488004B29BA /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +73,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D96D2FD7301C42900083DC1E /* GoogleMobileAds in Frameworks */,
+				D9D57E4A304A8488004B29BA /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +85,7 @@
 			children = (
 				D9D57E463046FACA004B29BA /* Products.storekit */,
 				D96D2FD0301C41880083DC1E /* Cardabase */,
+				D9D57E48304A8488004B29BA /* Frameworks */,
 				D96D2FC0301C40930083DC1E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -113,7 +115,6 @@
 			isa = PBXGroup;
 			children = (
 				D96D2FCE301C41880083DC1E /* CardabaseApp.swift */,
-				D96D2FDE301C5E7F0083DC1E /* AppDelegate.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -241,6 +242,14 @@
 			path = Onboarding;
 			sourceTree = "<group>";
 		};
+		D9D57E48304A8488004B29BA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D9D57E49304A8488004B29BA /* StoreKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -322,7 +331,6 @@
 				D96D2FF2301C5F2B0083DC1E /* CardConfigView.swift in Sources */,
 				D96D3002301C5F8C0083DC1E /* AdMobManager.swift in Sources */,
 				D990D1BA303C059C001B3CDA /* DataTransferManager.swift in Sources */,
-				D96D2FDF301C5E7F0083DC1E /* AppDelegate.swift in Sources */,
 				D96D2FF0301C5F1F0083DC1E /* KnowledgeFormView.swift in Sources */,
 				D9D57E3F303D5F3E004B29BA /* AnalyticsView.swift in Sources */,
 				D96D3000301C5F820083DC1E /* Limits.swift in Sources */,
@@ -475,7 +483,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_TEAM = D86GFNUD35;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -492,7 +500,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.0;
+				MARKETING_VERSION = 3.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.suzuki.kenichiro.Cardabase;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -515,7 +523,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_TEAM = D86GFNUD35;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -532,7 +540,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.0;
+				MARKETING_VERSION = 3.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.suzuki.kenichiro.Cardabase;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;

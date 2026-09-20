@@ -2,14 +2,13 @@
 //  PaywallView.swift
 //  Cardabase
 //
-//  Created by Kenichiro Suzuki on 2026/07/31.
-//
 
 import SwiftUI
 import StoreKit
 
+/// View representing the Pro upgrade screen and handling StoreKit 2 transactions.
 struct PaywallView: View {
-    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var appState: AppState
     @StateObject private var adManager = AdMobManager.shared
     
     @State private var isPurchasing: Bool = false
@@ -20,7 +19,7 @@ struct PaywallView: View {
             VStack(spacing: 24) {
                 Spacer()
                 
-                // icon
+                // Header Icon & Title
                 Image(systemName: "star.circle.fill")
                     .font(.system(size: 80))
                     .foregroundStyle(.yellow)
@@ -29,21 +28,20 @@ struct PaywallView: View {
                     Text("Upgrade to Cardabase Pro")
                         .font(.title)
                         .bold()
-                        .foregroundStyle(.primary)
                     
-                    Text("Unlock unlimited databases, records, data transfer, and enjoy an ad-free experience.")
+                    Text("Unlock unlimited databases, records, data transfer, and enjoy an ad-free study experience.")
                         .font(.subheadline)
                         .multilineTextAlignment(.center)
                         .foregroundStyle(.secondary)
                         .padding(.horizontal)
                 }
                 
-                // compare list
+                // Feature Highlights
                 VStack(alignment: .leading, spacing: 14) {
-                    FeatureRow(icon: "folder.fill", title: "Unlimited Databases", description: "Free version is limited to \(Limits.maxFoldersForFree) databases.")
-                    FeatureRow(icon: "doc.text.fill", title: "Unlimited Records", description: "Free version is limited to \(Limits.maxKnowledgesPerFolderForFree) records per database.")
-                    FeatureRow(icon: "arrow.triangle.2.circlepath", title: "Data Import & Export", description: "Bulk import/export via CSV and JSON backup.")
-                    FeatureRow(icon: "nosign", title: "Remove All Ads", description: "Enjoy a clean, distraction-free study environment.")
+                    FeatureRow(icon: "folder.fill", title: "Unlimited Databases", description: "Free tier limited to \(Limits.maxFoldersForFree) databases.")
+                    FeatureRow(icon: "doc.text.fill", title: "Unlimited Records", description: "Free tier limited to \(Limits.maxKnowledgesPerFolderForFree) records per database.")
+                    FeatureRow(icon: "arrow.triangle.2.circlepath", title: "Data Transfer", description: "Bulk CSV/JSON import & full backup export.")
+                    FeatureRow(icon: "nosign", title: "Ad-Free Experience", description: "Remove all banner and interstitial ads.")
                 }
                 .padding()
                 .background(Color(.secondarySystemBackground))
@@ -52,13 +50,16 @@ struct PaywallView: View {
                 
                 Spacer()
                 
+                // Error Message Display
                 if let errorMessage = errorMessage {
                     Text(errorMessage)
                         .font(.caption)
                         .foregroundStyle(.red)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
                 }
                 
-                // buy action
+                // Action Buttons
                 VStack(spacing: 12) {
                     Button(action: purchasePro) {
                         HStack {
@@ -66,30 +67,34 @@ struct PaywallView: View {
                                 ProgressView()
                                     .tint(.white)
                             } else {
-                                Text(adManager.isProUser ? "Already Unlocked" : "Upgrade for Pro")
+                                Text(appState.isProUser ? "Pro Plan Active" : "Upgrade to Pro")
                                     .bold()
                             }
                         }
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(adManager.isProUser ? Color.gray : Color.accentColor)
+                        .background(appState.isProUser ? Color.gray : Color.accentColor)
                         .foregroundStyle(.white)
                         .cornerRadius(12)
                     }
-                    .disabled(isPurchasing || adManager.isProUser)
+                    .disabled(isPurchasing || appState.isProUser)
                     
                     Button("Restore Purchases") {
                         restorePurchases()
                     }
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
+                    .disabled(isPurchasing)
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 16)
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") { dismiss() }
+                    Button("Close") {
+                        appState.isShowingPaywall = false
+                    }
+                    .disabled(isPurchasing)
                 }
             }
         }
@@ -100,6 +105,8 @@ struct PaywallView: View {
         Task {
             isPurchasing = true
             errorMessage = nil
+            defer { isPurchasing = false }
+            
             do {
                 let products = try await Product.products(for: [Limits.proProductID])
                 if let product = products.first {
@@ -107,8 +114,10 @@ struct PaywallView: View {
                     switch result {
                     case .success(let verification):
                         if case .verified = verification {
-                            await adManager.checkProStatus()
-                            dismiss()
+                            await appState.refreshProStatus()
+                            appState.isShowingPaywall = false
+                        } else {
+                            errorMessage = "Transaction verification failed."
                         }
                     case .userCancelled:
                         break
@@ -118,12 +127,11 @@ struct PaywallView: View {
                         break
                     }
                 } else {
-                    errorMessage = "Product not found. Please try again later."
+                    errorMessage = "Product not found (\(Limits.proProductID)). Please try again later."
                 }
             } catch {
                 errorMessage = error.localizedDescription
             }
-            isPurchasing = false
         }
     }
     
@@ -131,21 +139,24 @@ struct PaywallView: View {
         Task {
             isPurchasing = true
             errorMessage = nil
+            defer { isPurchasing = false }
+            
             do {
                 try await adManager.restorePurchases()
-                if adManager.isProUser {
-                    dismiss()
+                await appState.refreshProStatus()
+                if appState.isProUser {
+                    appState.isShowingPaywall = false
                 } else {
-                    errorMessage = "No active Pro purchase found."
+                    errorMessage = "No active Pro subscription found."
                 }
             } catch {
                 errorMessage = error.localizedDescription
             }
-            isPurchasing = false
         }
     }
 }
 
+// MARK: - Subview for Feature List Item
 private struct FeatureRow: View {
     let icon: String
     let title: String
@@ -161,7 +172,6 @@ private struct FeatureRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.headline)
-                    .foregroundStyle(.primary)
                 Text(description)
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -170,6 +180,8 @@ private struct FeatureRow: View {
     }
 }
 
+// MARK: - Preview
 #Preview {
     PaywallView()
+        .environmentObject(AppState())
 }

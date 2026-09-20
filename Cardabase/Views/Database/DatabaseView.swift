@@ -13,13 +13,12 @@ struct DatabaseView: View {
     @EnvironmentObject private var appState: AppState
     @Bindable var folder: Folder
     
-    // state management
+    // MARK: - State Management
     @State private var searchText: String = ""
     @State private var isShowingAddSheet: Bool = false
     @State private var selectedKnowledgeToEdit: Knowledge?
-    @State private var isShowingStudyConfig: Bool = false
     
-    // search filtering record list
+    // Filtered records based on search query
     private var filteredKnowledges: [Knowledge] {
         if searchText.isEmpty {
             return folder.knowledges.sorted { $0.createdAt > $1.createdAt }
@@ -32,7 +31,7 @@ struct DatabaseView: View {
         }
     }
     
-    // MARK: - Main view
+    // MARK: - Main Body
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             VStack(spacing: 0) {
@@ -40,7 +39,7 @@ struct DatabaseView: View {
                     AdBannerView()
                 }
                 
-                // 2. 広告の直下に配置するカスタム検索バー
+                // Search Bar
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundStyle(.secondary)
@@ -63,7 +62,7 @@ struct DatabaseView: View {
                 .padding(.horizontal)
                 .padding(.vertical, 8)
                 
-                // 3. レコードリスト
+                // Record List
                 List {
                     Section(header: Text("Records (\(filteredKnowledges.count))")) {
                         if filteredKnowledges.isEmpty {
@@ -85,6 +84,7 @@ struct DatabaseView: View {
                 }
             }
             
+            // Add Floating Action Button
             Button(action: handleAddKnowledgeTapped) {
                 Image(systemName: "plus")
                     .font(.title2.bold())
@@ -111,6 +111,7 @@ struct DatabaseView: View {
     }
     
     // MARK: - Actions
+    
     private func handleAddKnowledgeTapped() {
         if Limits.isKnowledgeLimitReached(currentCountInFolder: folder.knowledges.count, isPro: appState.isProUser) {
             appState.isShowingPaywall = true
@@ -127,7 +128,8 @@ struct DatabaseView: View {
     }
 }
 
-// MARK: - Knowledge Row Component
+// MARK: - Subview: Knowledge Row Component
+
 private struct KnowledgeRowView: View {
     let knowledge: Knowledge
     
@@ -168,7 +170,7 @@ private struct KnowledgeRowView: View {
                     HStack(spacing: 6) {
                         ForEach(knowledge.customFields) { field in
                             HStack(spacing: 3) {
-                                Text("\(field.key)")
+                                Text("\(field.key):")
                                     .fontWeight(.semibold)
                                 Text(field.value)
                             }
@@ -188,6 +190,8 @@ private struct KnowledgeRowView: View {
     }
 }
 
+// MARK: - Preview
+
 #Preview {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: Folder.self, Knowledge.self, configurations: config)
@@ -195,39 +199,28 @@ private struct KnowledgeRowView: View {
     
     let folder = Folder(name: "SAKE DIPLOMA")
     
-    // 1. マスター済み ＋ カスタムフィールドあり
     let k1 = Knowledge(
-        title: "山田錦",
-        summary: "兵庫県特A地区などで生産される代表的な酒造好適米。心白が大きく心白率が高い。",
+        title: "Yamada Nishiki",
+        summary: "Premier sake rice variety originating in Hyogo Prefecture, high Shinhaku ratio.",
         customFields: [
-            FieldValue(key: "原産地", value: "兵庫県"),
-            FieldValue(key: "特性", value: "心白大")
+            FieldValue(key: "Origin", value: "Hyogo"),
+            FieldValue(key: "Feature", value: "Large Shinhaku")
         ],
         masterStatus: .mastered
     )
     
-    // 2. 不正解 ＋ サマリーのみ
     let k2 = Knowledge(
-        title: "生酛造り",
-        summary: "自然の乳酸菌を活用して醸造する伝統的な酒母造りの手法。重厚で複雑な味わいになる。",
+        title: "Kimoto Method",
+        summary: "Traditional starter method utilizing naturally occurring lactic acid bacteria.",
         masterStatus: .incorrect
     )
     
-    // 3. 未レビュー ＋ サマリーなし ＋ カスタムフィールドのみ
-    let k3 = Knowledge(
-        title: "醸造アルコール",
-        summary: "",
-        customFields: [
-            FieldValue(key: "目的", value: "香りの引き出し・スッキリ感")
-        ],
-        masterStatus: .unreviewed
-    )
-    
-    folder.knowledges.append(contentsOf: [k1, k2, k3])
+    folder.knowledges.append(contentsOf: [k1, k2])
     context.insert(folder)
     
     return NavigationStack {
         DatabaseView(folder: folder)
     }
     .modelContainer(container)
+    .environmentObject(AppState())
 }

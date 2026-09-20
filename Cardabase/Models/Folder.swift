@@ -2,33 +2,33 @@
 //  Folder.swift
 //  Cardabase
 //
-//  Created by Kenichiro Suzuki on 2026/07/31.
-//
 
 import Foundation
 import SwiftData
+import SwiftUI
 
+/// SwiftData entity representing a database folder with custom schemas.
 @Model
 final class Folder {
     var id: UUID
     var name: String
     var createdAt: Date
     
-    // default key
+    // Default flashcard card keys
     var defaultFrontKey: String
     var defaultBackKey: String
     
-    // Custom Field Schemas defined at Database level
+    // Custom field schemas defined at the database level
     var customFieldSchemas: [FieldSchema]
     
-    // child folder
+    // Subfolders hierarchy
     @Relationship(deleteRule: .cascade, inverse: \Folder.parent)
     var subfolders: [Folder]
     
-    // parent folder
+    // Parent folder
     var parent: Folder?
     
-    // knowledges included folder
+    // Child records in this folder
     @Relationship(deleteRule: .cascade, inverse: \Knowledge.folder)
     var knowledges: [Knowledge]
     
@@ -52,6 +52,7 @@ final class Folder {
         self.knowledges = knowledges
     }
     
+    /// Returns all available field keys including built-in and custom fields.
     var availableFieldKeys: [String] {
         var keys: Set<String> = ["Title", "Summary"]
         for schema in customFieldSchemas {
@@ -59,4 +60,31 @@ final class Folder {
         }
         return Array(keys).sorted()
     }
+}
+
+// MARK: - Preview
+#Preview("Folder Preview") {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: Folder.self, Knowledge.self, configurations: config)
+    
+    let folder = Folder(
+        name: "Financial Indicators",
+        customFieldSchemas: [
+            FieldSchema(key: "Formula", type: .text),
+            FieldSchema(key: "Benchmark", type: .text)
+        ]
+    )
+    container.mainContext.insert(folder)
+    
+    return NavigationStack {
+        List {
+            Section(header: Text("Database Details")) {
+                LabeledContent("Name", value: folder.name)
+                LabeledContent("Created", value: folder.createdAt.formatted(date: .abbreviated, time: .omitted))
+                LabeledContent("Custom Schemas", value: "\(folder.customFieldSchemas.count) fields")
+            }
+        }
+        .navigationTitle("Folder Overview")
+    }
+    .modelContainer(container)
 }

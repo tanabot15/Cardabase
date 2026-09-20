@@ -15,7 +15,7 @@ struct KnowledgeFormView: View {
     let folder: Folder
     var knowledgeToEdit: Knowledge?
     
-    // State management
+    // MARK: - State Management
     @State private var title: String = ""
     @State private var summary: String = ""
     @State private var customFields: [FieldValue] = []
@@ -24,13 +24,11 @@ struct KnowledgeFormView: View {
         knowledgeToEdit != nil
     }
     
-    // Disabled function
     private var isSaveDisabled: Bool {
         let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
         let trimmedSummary = summary.trimmingCharacters(in: .whitespacesAndNewlines)
         
         if let knowledge = knowledgeToEdit {
-            // Edit Mode
             let isTitleEmpty = trimmedTitle.isEmpty
             let isSummaryEmpty = trimmedSummary.isEmpty
             let isUnchanged = title == knowledge.title &&
@@ -39,11 +37,11 @@ struct KnowledgeFormView: View {
             
             return isTitleEmpty || isSummaryEmpty || isUnchanged
         } else {
-            // Add Mode
             return trimmedTitle.isEmpty || trimmedSummary.isEmpty
         }
     }
     
+    // MARK: - Main Body
     var body: some View {
         NavigationStack {
             Form {
@@ -51,7 +49,7 @@ struct KnowledgeFormView: View {
                     TextField("Title (Front Card)", text: $title)
                     
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Summary / Explanation (Back Card)")
+                        Text("Summary / Details (Back Card)")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                         TextEditor(text: $summary)
@@ -101,6 +99,8 @@ struct KnowledgeFormView: View {
         }
     }
     
+    // MARK: - Private Helper Methods
+    
     private func initialCustomFields(for knowledge: Knowledge) -> [FieldValue] {
         folder.customFieldSchemas.map { schema in
             if let existing = knowledge.customFields.first(where: { $0.key == schema.key }) {
@@ -147,34 +147,36 @@ struct KnowledgeFormView: View {
     }
 }
 
+// MARK: - Previews
+
 #Preview("New Record") {
     let folder = Folder(
         name: "Sample Folder",
         customFieldSchemas: [
             FieldSchema(key: "Category", type: .text),
-            FieldSchema(key: "URL", type: .text)
+            FieldSchema(key: "URL", type: .url)
         ]
     )
     
-    KnowledgeFormView(folder: folder)
+    return KnowledgeFormView(folder: folder)
         .modelContainer(for: [Folder.self, Knowledge.self], inMemory: true)
 }
 
 #Preview("Edit Record") {
     let folder = Folder(
-        name: "Sample Folder",
+        name: "Tech Companies",
         customFieldSchemas: [
             FieldSchema(key: "Category", type: .text),
-            FieldSchema(key: "URL", type: .text)
+            FieldSchema(key: "URL", type: .url)
         ]
     )
     
     let sampleKnowledge = Knowledge(
         title: "Apple Inc.",
-        summary: "An American multinational technology company headquartered in Cupertino, California.",
+        summary: "Multinational technology company headquartered in Cupertino, California.",
         customFields: [
-            FieldValue(key: "Category", value: "Tech", type: .text),
-            FieldValue(key: "URL", value: "https://apple.com", type: .text)
+            FieldValue(key: "Category", value: "Technology", type: .text),
+            FieldValue(key: "URL", value: "https://apple.com", type: .url)
         ]
     )
     sampleKnowledge.folder = folder

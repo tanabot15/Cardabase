@@ -2,12 +2,11 @@
 //  DataTransferManager.swift
 //  Cardabase
 //
-//  Created by Kenichiro Suzuki on 2026/08/24.
-//
 
 import Foundation
 import SwiftData
 
+// MARK: - Codable Models for Export/Import
 struct ExportableKnowledge: Codable {
     let title: String
     let summary: String
@@ -19,6 +18,7 @@ struct ExportableFolder: Codable {
     let knowledges: [ExportableKnowledge]
 }
 
+/// Helper manager for JSON and CSV file import/export operations.
 @MainActor
 final class DataTransferManager {
     
@@ -45,7 +45,7 @@ final class DataTransferManager {
         return tempURL
     }
     
-    // MARK: - Export (CSV - 1 Folder)
+    // MARK: - Export (CSV - Single Database)
     static func exportToCSV(folder: Folder) -> URL? {
         var csvText = "Title,Summary\n"
         for k in folder.knowledges {
@@ -59,7 +59,7 @@ final class DataTransferManager {
         return tempURL
     }
     
-    // MARK: - Import (CSV into Folder)
+    // MARK: - Import (CSV into Target Folder)
     static func importCSV(url: URL, targetFolder: Folder, context: ModelContext) -> Int {
         guard url.startAccessingSecurityScopedResource() else { return 0 }
         defer { url.stopAccessingSecurityScopedResource() }
@@ -69,7 +69,7 @@ final class DataTransferManager {
         var count = 0
         
         for (index, line) in lines.enumerated() {
-            if index == 0 || line.trimmingCharacters(in: .whitespaces).isEmpty { continue } // Header or empty
+            if index == 0 || line.trimmingCharacters(in: .whitespaces).isEmpty { continue }
             
             let components = parseCSVLine(line)
             if !components.isEmpty {
@@ -88,7 +88,7 @@ final class DataTransferManager {
         return count
     }
     
-    // MARK: - Helper Utilities
+    // MARK: - Private Helpers
     private static let encoder = JSONEncoder()
     private static var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()

@@ -46,6 +46,7 @@ struct AnalyticsView: View {
         "Unreviewed": Color.gray.opacity(0.4)
     ]
     
+    // MARK: - Main Body
     var body: some View {
         NavigationStack {
             VStack {
@@ -53,7 +54,7 @@ struct AnalyticsView: View {
 
                 ScrollView {
                     VStack(spacing: 20) {
-                        // MARK: - Overview Cards
+                        // Overview Metric Cards
                         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                             MetricCard(title: "Total Records", value: "\(totalCards)", systemImage: "doc.text.fill", color: .blue)
                             MetricCard(title: "Overall Accuracy", value: "\(overallAccuracy)%", systemImage: "target", color: .green)
@@ -62,7 +63,7 @@ struct AnalyticsView: View {
                         }
                         .padding(.horizontal)
                         
-                        // MARK: - Mastery Status Chart
+                        // Mastery Distribution Chart
                         if !knowledges.isEmpty {
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("Mastery Distribution")
@@ -101,7 +102,7 @@ struct AnalyticsView: View {
                             .padding(.horizontal)
                         }
                         
-                        // MARK: - Database Breakdown List
+                        // Accuracy Breakdown List by Database
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Accuracy by Database")
                                 .font(.headline)
@@ -111,7 +112,7 @@ struct AnalyticsView: View {
                                 ContentUnavailableView(
                                     "No Databases",
                                     systemImage: "tray",
-                                    description: Text("Create a database to track your accuracy.")
+                                    description: Text("Create a database to track your learning performance.")
                                 )
                             } else {
                                 VStack(spacing: 0) {
@@ -132,11 +133,13 @@ struct AnalyticsView: View {
                     .padding(.vertical)
                 }
             }
+            .navigationTitle("Analytics")
         }
     }
 }
 
-// MARK: - Metric Card Component
+// MARK: - Subviews: Metric Card Component
+
 private struct MetricCard: View {
     let title: String
     let value: String
@@ -167,7 +170,8 @@ private struct MetricCard: View {
     }
 }
 
-// MARK: - Folder Accuracy Row Component
+// MARK: - Subviews: Folder Accuracy Row Component
+
 private struct FolderAccuracyRow: View {
     let folder: Folder
     
@@ -210,36 +214,24 @@ private struct FolderAccuracyRow: View {
     }
 }
 
+// MARK: - Preview
 #Preview {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: Folder.self, Knowledge.self, configurations: config)
     let context = container.mainContext
     
-    // 1. AI & Tech Concepts (高正答率フォルダ)
-    let folder1 = Folder(name: "AI & Tech Concepts")
-    let k1 = Knowledge(title: "Attention Mechanism", summary: "Calculates dynamic weights for input sequence.", reviewCount: 5, correctCount: 5, masterStatus: .mastered)
-    let k2 = Knowledge(title: "Transformer", summary: "Architecture based entirely on attention mechanisms.", reviewCount: 4, correctCount: 4, masterStatus: .mastered)
-    let k3 = Knowledge(title: "LLM", summary: "Large Language Model.", reviewCount: 3, correctCount: 2, masterStatus: .mastered)
-    folder1.knowledges.append(contentsOf: [k1, k2, k3])
+    let folder1 = Folder(name: "SAKE DIPLOMA")
+    let k1 = Knowledge(title: "Yamada Nishiki", summary: "Premier sake rice variety", reviewCount: 5, correctCount: 5, masterStatus: .mastered)
+    let k2 = Knowledge(title: "Gohyakumangoku", summary: "Crisp and clean sake rice", reviewCount: 4, correctCount: 3, masterStatus: .mastered)
+    folder1.knowledges.append(contentsOf: [k1, k2])
     
-    // 2. Financial Indicators (要復習カードあり)
     let folder2 = Folder(name: "Financial Indicators")
-    let k4 = Knowledge(title: "ROIC", summary: "Return on Invested Capital", reviewCount: 6, correctCount: 5, masterStatus: .mastered)
-    let k5 = Knowledge(title: "PER", summary: "Price to Earnings Ratio", reviewCount: 3, correctCount: 1, masterStatus: .incorrect)
-    let k6 = Knowledge(title: "ROE", summary: "Return on Equity", reviewCount: 2, correctCount: 1, masterStatus: .incorrect)
-    let k7 = Knowledge(title: "PBR", summary: "Price to Book Ratio", reviewCount: 0, correctCount: 0, masterStatus: .unreviewed)
-    folder2.knowledges.append(contentsOf: [k4, k5, k6, k7])
-    
-    // 3. SAKE DIPLOMA (未レビュー多め)
-    let folder3 = Folder(name: "SAKE DIPLOMA")
-    let k8 = Knowledge(title: "山田錦", summary: "兵庫県原産の代表的な酒造好適米", reviewCount: 2, correctCount: 2, masterStatus: .mastered)
-    let k9 = Knowledge(title: "雄町", summary: "オマチ。岡山県特産の酒米", reviewCount: 0, correctCount: 0, masterStatus: .unreviewed)
-    let k10 = Knowledge(title: "協会9号酵母", summary: "熊本酵母。香気成分カプロン酸エチルを多く生成", reviewCount: 0, correctCount: 0, masterStatus: .unreviewed)
-    folder3.knowledges.append(contentsOf: [k8, k9, k10])
+    let k3 = Knowledge(title: "ROIC", summary: "Return on Invested Capital", reviewCount: 6, correctCount: 5, masterStatus: .mastered)
+    let k4 = Knowledge(title: "PER", summary: "Price to Earnings Ratio", reviewCount: 3, correctCount: 1, masterStatus: .incorrect)
+    folder2.knowledges.append(contentsOf: [k3, k4])
     
     context.insert(folder1)
     context.insert(folder2)
-    context.insert(folder3)
     
     return AnalyticsView()
         .modelContainer(container)

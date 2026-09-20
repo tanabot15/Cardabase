@@ -2,12 +2,11 @@
 //  SampleDataGenerator.swift
 //  Cardabase
 //
-//  Created by Kenichiro Suzuki on 2026/07/31.
-//
 
 import Foundation
 import SwiftData
 
+/// Utility responsible for generating initial template databases for new users.
 @MainActor
 struct SampleDataGenerator {
     static let hasInsertedSampleKey = "HasInsertedSampleData_v2"
@@ -16,23 +15,37 @@ struct SampleDataGenerator {
         // Skip if sample data has already been generated
         guard !UserDefaults.standard.bool(forKey: hasInsertedSampleKey) else { return }
         
-        // ==========================================
-        // 1. Financial Indicators (10 items)
-        // ==========================================
-        let financeSchemas = [
+        let financeFolder = createFinancialIndicatorsFolder()
+        let wineFolder = createWineGrapesFolder()
+        let scienceFolder = createScientificMilestonesFolder()
+        
+        // Save folders to SwiftData Context
+        modelContext.insert(financeFolder)
+        modelContext.insert(wineFolder)
+        modelContext.insert(scienceFolder)
+        
+        // Set flag to prevent duplicated generation
+        UserDefaults.standard.set(true, forKey: hasInsertedSampleKey)
+    }
+    
+    // MARK: - Folder Generators
+    
+    /// Generates Financial Indicators database (10 items)
+    private static func createFinancialIndicatorsFolder() -> Folder {
+        let schemas = [
             FieldSchema(key: "Formula", type: .text),
             FieldSchema(key: "Benchmark", type: .text),
             FieldSchema(key: "Tag", type: .tag)
         ]
         
-        let financeFolder = Folder(
+        let folder = Folder(
             name: "Financial Indicators",
             defaultFrontKey: "Title",
             defaultBackKey: "Summary",
-            customFieldSchemas: financeSchemas
+            customFieldSchemas: schemas
         )
         
-        financeFolder.knowledges = [
+        folder.knowledges = [
             Knowledge(
                 title: "PER",
                 summary: "Price to Earnings Ratio. Indicates how much investors pay per dollar of net income.",
@@ -124,24 +137,25 @@ struct SampleDataGenerator {
                 ]
             )
         ]
-        
-        // ==========================================
-        // 2. Wine Grape Varieties (10 items)
-        // ==========================================
-        let wineSchemas = [
+        return folder
+    }
+    
+    /// Generates Wine Grape Varieties database (10 items)
+    private static func createWineGrapesFolder() -> Folder {
+        let schemas = [
             FieldSchema(key: "Color", type: .text),
             FieldSchema(key: "Taste", type: .text),
             FieldSchema(key: "Main Country", type: .text)
         ]
         
-        let wineFolder = Folder(
+        let folder = Folder(
             name: "Wine Grape Varieties",
             defaultFrontKey: "Title",
             defaultBackKey: "Summary",
-            customFieldSchemas: wineSchemas
+            customFieldSchemas: schemas
         )
         
-        wineFolder.knowledges = [
+        folder.knowledges = [
             Knowledge(
                 title: "Cabernet Sauvignon",
                 summary: "Full-bodied red variety known for high tannins, acidity, and black currant notes.",
@@ -233,23 +247,24 @@ struct SampleDataGenerator {
                 ]
             )
         ]
-        
-        // ==========================================
-        // 3. Scientific Milestones (10 items)
-        // ==========================================
-        let scienceSchemas = [
+        return folder
+    }
+    
+    /// Generates Scientific Milestones database (10 items)
+    private static func createScientificMilestonesFolder() -> Folder {
+        let schemas = [
             FieldSchema(key: "Year", type: .number),
             FieldSchema(key: "Source", type: .text)
         ]
         
-        let scienceFolder = Folder(
+        let folder = Folder(
             name: "Scientific Milestones",
             defaultFrontKey: "Title",
             defaultBackKey: "Summary",
-            customFieldSchemas: scienceSchemas
+            customFieldSchemas: schemas
         )
         
-        scienceFolder.knowledges = [
+        folder.knowledges = [
             Knowledge(
                 title: "Theory of General Relativity",
                 summary: "Albert Einstein proposed that gravity is the curvature of spacetime caused by mass.",
@@ -331,13 +346,6 @@ struct SampleDataGenerator {
                 ]
             )
         ]
-        
-        // Save folders to SwiftData Context
-        modelContext.insert(financeFolder)
-        modelContext.insert(wineFolder)
-        modelContext.insert(scienceFolder)
-        
-        // Set flag to prevent duplicated generation
-        UserDefaults.standard.set(true, forKey: hasInsertedSampleKey)
+        return folder
     }
 }

@@ -2,24 +2,23 @@
 //  AdMobManager.swift
 //  Cardabase
 //
-//  Created by Kenichiro Suzuki on 2026/07/31.
-//
 
 import Foundation
 import Combine
 import StoreKit
 
+/// Manager singleton responsible for AdMob configuration and entitlement checking.
 @MainActor
 final class AdMobManager: ObservableObject {
     static let shared = AdMobManager()
     
     @Published var isProUser: Bool = false
     
-    // AdMob Unit ID
     let bannerAdUnitID: String
     
     private init() {
         #if DEBUG
+        // Default Google AdMob Test Banner ID
         self.bannerAdUnitID = "ca-app-pub-3940256099942544/2934735716"
         #else
         if let path = Bundle.main.path(forResource: "AdMobConfig", ofType: "plist"),
@@ -36,7 +35,7 @@ final class AdMobManager: ObservableObject {
         }
     }
     
-    // StoreKit 2 Status Check
+    /// Verifies current StoreKit 2 entitlement status.
     func checkProStatus() async {
         var hasActivePro = false
         for await result in Transaction.currentEntitlements {
@@ -50,7 +49,7 @@ final class AdMobManager: ObservableObject {
         self.isProUser = hasActivePro
     }
     
-    // Restore Purchases
+    /// Syncs transactions with App Store.
     func restorePurchases() async throws {
         try await AppStore.sync()
         await checkProStatus()

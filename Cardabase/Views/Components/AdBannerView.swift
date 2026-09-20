@@ -2,13 +2,11 @@
 //  AdBannerView.swift
 //  Cardabase
 //
-//  Created by Kenichiro Suzuki on 2026/07/31.
-//
 
 import SwiftUI
 import GoogleMobileAds
 
-// MARK: - AdMob View Wrapper (UIViewRepresentable)
+/// UIViewRepresentable wrapper for Google Mobile Ads BannerView.
 struct BannerAdRepresentable: UIViewRepresentable {
     let adUnitID: String
     
@@ -25,25 +23,21 @@ struct BannerAdRepresentable: UIViewRepresentable {
         return bannerView
     }
     
-    func updateUIView(_ uiView: BannerView, context: Context) { }
+    func updateUIView(_ uiView: BannerView, context: Context) {}
 }
 
-// MARK: - SwiftUI AdBannerView Component
+/// SwiftUI component displaying Google Mobile Ads banner or a canvas placeholder.
 struct AdBannerView: View {
     @StateObject private var adManager = AdMobManager.shared
     
-    // for Xcode Canvas
     private var isRunningInPreview: Bool {
         ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
     }
     
     var body: some View {
-        
-        // for Pro
-//        if adManager.isProUser {
-//            EmptyView()
-//        } else {
-        if isRunningInPreview {
+        if adManager.isProUser {
+            EmptyView()
+        } else if isRunningInPreview {
             HStack {
                 Spacer()
                 Text("AdMob Banner Placeholder")
@@ -78,11 +72,11 @@ struct AdBannerView: View {
             )
             .padding(4)
             #endif
-            //        }
         }
     }
 }
 
+// MARK: - Preview
 #Preview {
     AdBannerView()
 }

@@ -25,6 +25,7 @@ struct StudyResultView: View {
         return Int(round(Double(correctCount) / Double(totalStudied) * 100))
     }
     
+    // MARK: - Main Body
     var body: some View {
         NavigationStack {
             VStack(spacing: 24) {
@@ -34,7 +35,7 @@ struct StudyResultView: View {
                 
                 Spacer()
                 
-                // icon
+                // Result Icon
                 Image(systemName: accuracyRate >= 80 ? "trophy.fill" : "checkmark.seal.fill")
                     .font(.system(size: 70))
                     .foregroundStyle(accuracyRate >= 80 ? .yellow : Color.accentColor)
@@ -50,7 +51,7 @@ struct StudyResultView: View {
                         .foregroundStyle(.secondary)
                 }
                 
-                // score card
+                // Score Cards Grid
                 HStack(spacing: 20) {
                     ResultStatBox(title: "Accuracy", value: "\(accuracyRate)%", color: .blue)
                     ResultStatBox(title: "Correct", value: "\(correctCount)", color: .green)
@@ -60,7 +61,7 @@ struct StudyResultView: View {
                 
                 Spacer()
                 
-                // action buttons
+                // Action Buttons
                 HStack(spacing: 24) {
                     Button(action: resetAndRestart) {
                         HStack(spacing: 6) {
@@ -95,6 +96,8 @@ struct StudyResultView: View {
         }
     }
     
+    // MARK: - Actions
+    
     private func resetAndRestart() {
         for knowledge in folder.knowledges {
             knowledge.masterStatus = .unreviewed
@@ -109,6 +112,8 @@ struct StudyResultView: View {
         onDone?()
     }
 }
+
+// MARK: - Subview: Stat Box
 
 private struct ResultStatBox: View {
     let title: String
@@ -133,7 +138,10 @@ private struct ResultStatBox: View {
     }
 }
 
+// MARK: - Preview
+
 #Preview {
-    let folder = Folder(name: "Sample Folder")
+    let folder = Folder(name: "SAKE DIPLOMA Prep")
     return StudyResultView(folder: folder, totalStudied: 10, correctCount: 8, incorrectCount: 2)
+        .environmentObject(AppState())
 }

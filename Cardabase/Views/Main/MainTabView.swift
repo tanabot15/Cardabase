@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  MainTabView.swift
 //  Cardabase
 //
 //  Created by Kenichiro Suzuki on 2026/07/31.
@@ -8,7 +8,6 @@
 import SwiftUI
 import SwiftData
 import AppTrackingTransparency
-import AdSupport
 
 enum ViewMode {
     case database
@@ -31,7 +30,7 @@ struct MainTabView: View {
                 FolderListView(mode: .flashcards)
             }
             .tabItem {
-                Label("Flashcards", systemImage: "rectangle.stack.fill")
+                Label("Flashcards", systemImage: "rectangle.on.rectangle.angled.fill")
             }
             
             // 3. Analytics Tab
@@ -51,12 +50,14 @@ struct MainTabView: View {
             }
         }
         .onAppear {
-            requestATTInView()
+            requestATTAuthorization()
         }
     }
     
-    /// Request App Tracking Transparency (ATT) authorization
-    private func requestATTInView() {
+    // MARK: - Private Methods
+    
+    /// Request App Tracking Transparency authorization for ad personalized tracking
+    private func requestATTAuthorization() {
         if ATTrackingManager.trackingAuthorizationStatus == .notDetermined {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 ATTrackingManager.requestTrackingAuthorization { _ in }
@@ -65,13 +66,14 @@ struct MainTabView: View {
     }
 }
 
+// MARK: - Preview
 #Preview {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: Folder.self, Knowledge.self, configurations: config)
     let context = container.mainContext
     
-    let folder1 = Folder(name: "AI & Tech Concepts")
-    folder1.knowledges.append(Knowledge(title: "Attention Mechanism", summary: "Calculates dynamic weights"))
+    let folder1 = Folder(name: "SAKE DIPLOMA Exam")
+    folder1.knowledges.append(Knowledge(title: "Yamada Nishiki", summary: "King of Sake Rice produced mainly in Hyogo Pref."))
     
     let folder2 = Folder(name: "Financial Indicators")
     let k1 = Knowledge(title: "ROIC", summary: "Return on Invested Capital")
@@ -82,11 +84,8 @@ struct MainTabView: View {
         Knowledge(title: "ROE", summary: "Return on Equity")
     ])
     
-    let folder3 = Folder(name: "Intellectual Property")
-    
     context.insert(folder1)
     context.insert(folder2)
-    context.insert(folder3)
     
     return MainTabView()
         .environmentObject(AppState())
