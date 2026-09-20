@@ -2,8 +2,6 @@
 //  StudyResultView.swift
 //  Cardabase
 //
-//  Created by Kenichiro Suzuki on 2026/07/31.
-//
 
 import SwiftUI
 import SwiftData
@@ -27,72 +25,69 @@ struct StudyResultView: View {
     
     // MARK: - Main Body
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 24) {
-                if !appState.isProUser {
-                    AdBannerView()
-                }
-                
-                Spacer()
-                
-                // Result Icon
-                Image(systemName: accuracyRate >= 80 ? "trophy.fill" : "checkmark.seal.fill")
-                    .font(.system(size: 70))
-                    .foregroundStyle(accuracyRate >= 80 ? .yellow : Color.accentColor)
-                
-                VStack(spacing: 8) {
-                    Text("Session Completed!")
-                        .font(.title)
-                        .bold()
-                        .foregroundStyle(.primary)
-                    
-                    Text("Great job studying '\(folder.name)'")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-                
-                // Score Cards Grid
-                HStack(spacing: 20) {
-                    ResultStatBox(title: "Accuracy", value: "\(accuracyRate)%", color: .blue)
-                    ResultStatBox(title: "Correct", value: "\(correctCount)", color: .green)
-                    ResultStatBox(title: "Incorrect", value: "\(incorrectCount)", color: .red)
-                }
-                .padding(.horizontal)
-                
-                Spacer()
-                
-                // Action Buttons
-                HStack(spacing: 24) {
-                    Button(action: resetAndRestart) {
-                        HStack(spacing: 6) {
-                            Image(systemName: "arrow.clockwise")
-                            Text("Restart")
-                        }
-                        .font(.headline)
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(.red)
-                        .cornerRadius(12)
-                    }
-                    
-                    Button(action: handleDone) {
-                        HStack(spacing: 6) {
-                            Image(systemName: "checkmark")
-                            Text("Done")
-                        }
-                        .font(.headline)
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(.green)
-                        .cornerRadius(12)
-                    }
-                }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 16)
+        VStack(spacing: 24) {
+            if !appState.isProUser {
+                AdBannerView()
             }
-            .navigationBarBackButtonHidden(true)
+            
+            Spacer()
+            
+            // Result Icon
+            Image(systemName: accuracyRate >= 80 ? "trophy.fill" : "checkmark.seal.fill")
+                .font(.system(size: 70))
+                .foregroundStyle(accuracyRate >= 80 ? .yellow : Color.accentColor)
+            
+            VStack(spacing: 8) {
+                Text("Session Completed!")
+                    .font(.title)
+                    .bold()
+                    .foregroundStyle(.primary)
+                
+                Text("Great job studying '\(folder.name)'")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+            
+            // Score Cards Grid
+            HStack(spacing: 20) {
+                ResultStatBox(title: "Accuracy", value: "\(accuracyRate)%", color: .blue)
+                ResultStatBox(title: "Correct", value: "\(correctCount)", color: .green)
+                ResultStatBox(title: "Incorrect", value: "\(incorrectCount)", color: .red)
+            }
+            .padding(.horizontal)
+            
+            Spacer()
+            
+            // Action Buttons
+            HStack(spacing: 24) {
+                Button(action: resetAndRestart) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "arrow.clockwise")
+                        Text("Restart")
+                    }
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(.red)
+                    .cornerRadius(12)
+                }
+                
+                Button(action: handleDone) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "checkmark")
+                        Text("Done")
+                    }
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(.green)
+                    .cornerRadius(12)
+                }
+            }
+            .padding(.horizontal, 24)
+            .padding(.bottom, 16)
         }
     }
     

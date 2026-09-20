@@ -57,7 +57,7 @@ struct DatabaseView: View {
                 }
                 .padding(.horizontal, 10)
                 .padding(.vertical, 8)
-                .background(Color(.secondarySystemBackground))
+                .background(Color(.systemGroupedBackground))
                 .cornerRadius(10)
                 .padding(.horizontal)
                 .padding(.vertical, 8)
@@ -82,6 +82,7 @@ struct DatabaseView: View {
                         }
                     }
                 }
+                .listStyle(.insetGrouped)
             }
             
             // Add Floating Action Button

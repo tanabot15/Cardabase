@@ -2,8 +2,6 @@
 //  CardConfigView.swift
 //  Cardabase
 //
-//  Created by Kenichiro Suzuki on 2026/07/31.
-//
 
 import SwiftUI
 import SwiftData
@@ -30,63 +28,56 @@ struct CardConfigView: View {
     
     // MARK: - Main Body
     var body: some View {
-        NavigationStack {
-            Form {
-                // Field Mapping Section
-                Section(header: Text("Card Mapping"), footer: Text("Select which field to display on the front and back of the flashcard.")) {
-                    Picker("Front (Question)", selection: $selectedFrontKey) {
-                        ForEach(folder.availableFieldKeys, id: \.self) { key in
-                            Text(key).tag(key)
-                        }
-                    }
-                    
-                    Picker("Back (Answer)", selection: $selectedBackKey) {
-                        ForEach(folder.availableFieldKeys, id: \.self) { key in
-                            Text(key).tag(key)
-                        }
+        Form {
+            // Field Mapping Section
+            Section(header: Text("Card Mapping"), footer: Text("Select which field to display on the front and back of the flashcard.")) {
+                Picker("Front (Question)", selection: $selectedFrontKey) {
+                    ForEach(folder.availableFieldKeys, id: \.self) { key in
+                        Text(key).tag(key)
                     }
                 }
                 
-                // Study Options Section
-                Section(header: Text("Study Options")) {
-                    Toggle("Only Unmastered Cards", isOn: $onlyUnmastered)
-                    Toggle("Shuffle Cards", isOn: $shuffleCards)
-                }
-                
-                // Start Study Button Section
-                Section {
-                    Button(action: startStudy) {
-                        HStack {
-                            Spacer()
-                            Image(systemName: "play.fill")
-                            Text("Start Study (\(currentTargetKnowledges.count) Cards)")
-                                .bold()
-                            Spacer()
-                        }
+                Picker("Back (Answer)", selection: $selectedBackKey) {
+                    ForEach(folder.availableFieldKeys, id: \.self) { key in
+                        Text(key).tag(key)
                     }
-                    .disabled(currentTargetKnowledges.isEmpty)
                 }
             }
-            .navigationTitle("Study Setup")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+            
+            // Study Options Section
+            Section(header: Text("Study Options")) {
+                Toggle("Only Unmastered Cards", isOn: $onlyUnmastered)
+                Toggle("Shuffle Cards", isOn: $shuffleCards)
+            }
+            
+            // Start Study Button Section
+            Section {
+                Button(action: startStudy) {
+                    HStack {
+                        Spacer()
+                        Image(systemName: "play.fill")
+                        Text("Start Study (\(currentTargetKnowledges.count) Cards)")
+                            .bold()
+                        Spacer()
+                    }
                 }
+                .disabled(currentTargetKnowledges.isEmpty)
             }
-            .onAppear {
-                selectedFrontKey = folder.defaultFrontKey
-                selectedBackKey = folder.defaultBackKey
-            }
-            .fullScreenCover(isPresented: $isShowingFlashcard) {
-                FlashcardView(
-                    folder: folder,
-                    knowledges: preparedKnowledges,
-                    frontKey: selectedFrontKey,
-                    backKey: selectedBackKey,
-                    onDone: { dismiss() }
-                )
-            }
+        }
+        .navigationTitle("Study Setup")
+        .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            selectedFrontKey = folder.defaultFrontKey
+            selectedBackKey = folder.defaultBackKey
+        }
+        .fullScreenCover(isPresented: $isShowingFlashcard) {
+            FlashcardView(
+                folder: folder,
+                knowledges: preparedKnowledges,
+                frontKey: selectedFrontKey,
+                backKey: selectedBackKey,
+                onDone: { dismiss() }
+            )
         }
     }
     
@@ -116,6 +107,8 @@ struct CardConfigView: View {
 #Preview {
     let folder = Folder(name: "SAKE DIPLOMA Prep")
     folder.knowledges.append(Knowledge(title: "Yamada Nishiki", summary: "King of Sake Rice produced mainly in Hyogo Pref."))
-    return CardConfigView(folder: folder)
-        .modelContainer(for: [Folder.self, Knowledge.self], inMemory: true)
+    return NavigationStack {
+        CardConfigView(folder: folder)
+    }
+    .modelContainer(for: [Folder.self, Knowledge.self], inMemory: true)
 }

@@ -56,6 +56,7 @@ struct FolderListView: View {
                         .onDelete(perform: deleteFolders)
                     }
                 }
+                .listStyle(.insetGrouped)
             }
             
             // Floating Add Button
@@ -71,8 +72,7 @@ struct FolderListView: View {
             .padding(.trailing, 20)
             .padding(.bottom, 20)
         }
-        .navigationTitle("Databases")
-        .navigationBarTitleDisplayMode(.large)
+        .navigationTitle("Folders")
         .sheet(isPresented: $isShowingCreateSheet) {
             createFolderSheet
         }
@@ -233,8 +233,8 @@ private struct FolderRowView: View {
             
             Spacer()
             
-            HStack(spacing: 8) {
-                // 1. DatebaseView
+            HStack(spacing: 16) {
+                // 1. Databse
                 Button(action: {
                     isShowingDatabase = true
                 }) {
@@ -247,7 +247,7 @@ private struct FolderRowView: View {
                 }
                 .buttonStyle(.borderless)
                 
-                // 2. FlashCardView
+                // 2. Flashcard
                 Button(action: {
                     isShowingCardConfig = true
                 }) {

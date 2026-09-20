@@ -2,8 +2,6 @@
 //  FlashcardView.swift
 //  Cardabase
 //
-//  Created by Kenichiro Suzuki on 2026/07/31.
-//
 
 import SwiftUI
 import SwiftData
@@ -33,121 +31,129 @@ struct FlashcardView: View {
     
     // MARK: - Main Body
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 20) {
-                if !appState.isProUser {
-                    AdBannerView()
+        VStack(spacing: 16) {
+            HStack {
+                Button("Exit") { dismiss() }
+                    .foregroundStyle(.primary)
+                
+                Spacer()
+                
+                Text(folder.name)
+                    .font(.headline)
+                    .lineLimit(1)
+                
+                Spacer()
+                
+                Text("Exit").opacity(0)
+            }
+            .padding(.horizontal)
+            .padding(.top, 12)
+            
+            if !appState.isProUser {
+                AdBannerView()
+            }
+            
+            // Progress Bar & Counter
+            ProgressView(value: Double(currentIndex), total: Double(knowledges.count))
+                .padding(.horizontal)
+            
+            HStack {
+                Text("Card \(currentIndex + 1) of \(knowledges.count)")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Spacer()
+            }
+            .padding(.horizontal)
+            
+            Spacer()
+            
+            // Card Flip View
+            if let knowledge = currentKnowledge {
+                ZStack {
+                    // Front Card (Question)
+                    CardFrontFaceView(
+                        title: frontKey,
+                        content: knowledge.value(forKey: frontKey) ?? "(Empty)"
+                    )
+                    .opacity(isFlipped ? 0.0 : 1.0)
+                    .rotation3DEffect(.degrees(isFlipped ? 180 : 0), axis: (x: 0.0, y: 1.0, z: 0.0))
+                    
+                    // Back Card (Answer)
+                    CardBackFaceView(
+                        frontTitle: frontKey,
+                        frontContent: knowledge.value(forKey: frontKey) ?? "(Empty)",
+                        backTitle: backKey,
+                        backContent: knowledge.value(forKey: backKey) ?? "(Empty)"
+                    )
+                    .opacity(isFlipped ? 1.0 : 0.0)
+                    .rotation3DEffect(.degrees(isFlipped ? 0 : -180), axis: (x: 0.0, y: 1.0, z: 0.0))
                 }
-                
-                // Progress Bar & Counter
-                ProgressView(value: Double(currentIndex), total: Double(knowledges.count))
-                    .padding(.horizontal)
-                
-                HStack {
-                    Text("Card \(currentIndex + 1) of \(knowledges.count)")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Spacer()
+                .frame(maxWidth: .infinity, maxHeight: 380)
+                .padding(.horizontal)
+                .onTapGesture {
+                    withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+                        isFlipped.toggle()
+                    }
+                }
+            }
+            
+            Spacer()
+            
+            // Action Buttons
+            if isFlipped {
+                HStack(spacing: 20) {
+                    Button(action: { recordAnswer(isCorrect: false) }) {
+                        HStack {
+                            Image(systemName: "xmark.circle.fill")
+                            Text("Incorrect")
+                        }
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.red)
+                        .cornerRadius(12)
+                    }
+                    
+                    Button(action: { recordAnswer(isCorrect: true) }) {
+                        HStack {
+                            Image(systemName: "checkmark.circle.fill")
+                            Text("Correct")
+                        }
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.green)
+                        .cornerRadius(12)
+                    }
                 }
                 .padding(.horizontal)
-                
-                Spacer()
-                
-                // Card Flip View
-                if let knowledge = currentKnowledge {
-                    ZStack {
-                        // Front Card (Question)
-                        CardFrontFaceView(
-                            title: frontKey,
-                            content: knowledge.value(forKey: frontKey) ?? "(Empty)"
-                        )
-                        .opacity(isFlipped ? 0.0 : 1.0)
-                        .rotation3DEffect(.degrees(isFlipped ? 180 : 0), axis: (x: 0.0, y: 1.0, z: 0.0))
-                        
-                        // Back Card (Answer)
-                        CardBackFaceView(
-                            frontTitle: frontKey,
-                            frontContent: knowledge.value(forKey: frontKey) ?? "(Empty)",
-                            backTitle: backKey,
-                            backContent: knowledge.value(forKey: backKey) ?? "(Empty)"
-                        )
-                        .opacity(isFlipped ? 1.0 : 0.0)
-                        .rotation3DEffect(.degrees(isFlipped ? 0 : -180), axis: (x: 0.0, y: 1.0, z: 0.0))
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: 380)
-                    .padding(.horizontal)
-                    .onTapGesture {
-                        withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
-                            isFlipped.toggle()
-                        }
-                    }
-                }
-                
-                Spacer()
-                
-                // Action Buttons (Visible when flipped)
-                if isFlipped {
-                    HStack(spacing: 20) {
-                        Button(action: { recordAnswer(isCorrect: false) }) {
-                            HStack {
-                                Image(systemName: "xmark.circle.fill")
-                                Text("Incorrect")
-                            }
-                            .font(.headline)
-                            .foregroundStyle(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.red)
-                            .cornerRadius(12)
-                        }
-                        
-                        Button(action: { recordAnswer(isCorrect: true) }) {
-                            HStack {
-                                Image(systemName: "checkmark.circle.fill")
-                                Text("Correct")
-                            }
-                            .font(.headline)
-                            .foregroundStyle(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.green)
-                            .cornerRadius(12)
-                        }
-                    }
-                    .padding(.horizontal)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-                } else {
-                    Text("Tap card to reveal answer")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .padding(.bottom, 10)
-                }
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+            } else {
+                Text("Tap card to reveal answer")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .padding(.bottom, 10)
             }
-            .navigationTitle(folder.name)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Exit") { dismiss() }
+        }
+        .fullScreenCover(isPresented: $isCompleted) {
+            StudyResultView(
+                folder: folder,
+                totalStudied: knowledges.count,
+                correctCount: correctCount,
+                incorrectCount: incorrectCount,
+                onRestart: {
+                    currentIndex = 0
+                    correctCount = 0
+                    incorrectCount = 0
+                    isFlipped = false
+                },
+                onDone: {
+                    dismiss()
+                    onDone?()
                 }
-            }
-            .fullScreenCover(isPresented: $isCompleted) {
-                StudyResultView(
-                    folder: folder,
-                    totalStudied: knowledges.count,
-                    correctCount: correctCount,
-                    incorrectCount: incorrectCount,
-                    onRestart: {
-                        currentIndex = 0
-                        correctCount = 0
-                        incorrectCount = 0
-                        isFlipped = false
-                    },
-                    onDone: {
-                        dismiss()
-                        onDone?()
-                    }
-                )
-            }
+            )
         }
     }
     
@@ -156,16 +162,20 @@ struct FlashcardView: View {
     private func recordAnswer(isCorrect: Bool) {
         guard let knowledge = currentKnowledge else { return }
         
+        let nextCorrect = correctCount + (isCorrect ? 1 : 0)
+        let nextIncorrect = incorrectCount + (isCorrect ? 0 : 1)
+        
         knowledge.reviewCount += 1
         if isCorrect {
             knowledge.correctCount += 1
-            correctCount += 1
             knowledge.masterStatus = .mastered
         } else {
-            incorrectCount += 1
             knowledge.masterStatus = .incorrect
         }
         knowledge.lastReviewedAt = Date()
+        
+        self.correctCount = nextCorrect
+        self.incorrectCount = nextIncorrect
         
         if currentIndex + 1 < knowledges.count {
             withAnimation {
@@ -173,7 +183,10 @@ struct FlashcardView: View {
                 currentIndex += 1
             }
         } else {
-            isCompleted = true
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 50_000_000)
+                isCompleted = true
+            }
         }
     }
 }
@@ -197,20 +210,19 @@ private struct CardFrontFaceView: View {
             
             Spacer()
             
-            ScrollView {
+            ScrollView(.vertical, showsIndicators: false) {
                 Text(content)
                     .font(.title3)
                     .fontWeight(.medium)
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.primary)
-                    .padding(.horizontal)
+                    .lineLimit(nil)
+                    .minimumScaleFactor(0.85)
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 8)
             }
             
             Spacer()
-            
-            Text("Tap to flip")
-                .font(.caption2)
-                .foregroundStyle(.tertiary)
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -232,7 +244,7 @@ private struct CardBackFaceView: View {
     
     var body: some View {
         VStack(spacing: 12) {
-            ScrollView {
+            ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 12) {
                     VStack(spacing: 6) {
                         Text(frontTitle.uppercased())
@@ -245,6 +257,8 @@ private struct CardBackFaceView: View {
                             .fontWeight(.medium)
                             .multilineTextAlignment(.center)
                             .foregroundStyle(.secondary)
+                            .minimumScaleFactor(0.85)
+                            .frame(maxWidth: .infinity)
                     }
                     .padding(.top, 4)
                     
@@ -266,14 +280,12 @@ private struct CardBackFaceView: View {
                             .fontWeight(.bold)
                             .multilineTextAlignment(.center)
                             .foregroundStyle(.primary)
+                            .minimumScaleFactor(0.85)
+                            .frame(maxWidth: .infinity)
                     }
                 }
-                .padding(.horizontal)
+                .padding(.horizontal, 8)
             }
-            
-            Text("How was your recall?")
-                .font(.caption2)
-                .foregroundStyle(.tertiary)
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
