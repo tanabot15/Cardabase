@@ -6,17 +6,23 @@
 import SwiftUI
 import SwiftData
 
+struct StudySessionConfig: Identifiable {
+    let id = UUID()
+    let knowledges: [Knowledge]
+    let frontKey: String
+    let backKey: String
+}
+
 struct CardConfigView: View {
     @Environment(\.dismiss) private var dismiss
     @Bindable var folder: Folder
     
     // MARK: - State Management
-    @State private var selectedFrontKey: String = "Title"
-    @State private var selectedBackKey: String = "Summary"
+    @State private var selectedFrontKey: String = ""
+    @State private var selectedBackKey: String = ""
     @State private var onlyUnmastered: Bool = false
     @State private var shuffleCards: Bool = true
-    @State private var isShowingFlashcard: Bool = false
-    @State private var preparedKnowledges: [Knowledge] = []
+    @State private var activeSession: StudySessionConfig? = nil
     
     private var currentTargetKnowledges: [Knowledge] {
         var list = folder.knowledges
@@ -67,15 +73,19 @@ struct CardConfigView: View {
         .navigationTitle("Study Setup")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
-            selectedFrontKey = folder.defaultFrontKey
-            selectedBackKey = folder.defaultBackKey
+            if selectedFrontKey.isEmpty {
+                selectedFrontKey = folder.defaultFrontKey
+            }
+            if selectedBackKey.isEmpty {
+                selectedBackKey = folder.defaultBackKey
+            }
         }
-        .fullScreenCover(isPresented: $isShowingFlashcard) {
+        .fullScreenCover(item: $activeSession) { session in
             FlashcardView(
                 folder: folder,
-                knowledges: preparedKnowledges,
-                frontKey: selectedFrontKey,
-                backKey: selectedBackKey,
+                knowledges: session.knowledges,
+                frontKey: session.frontKey,
+                backKey: session.backKey,
                 onDone: { dismiss() }
             )
         }
@@ -92,13 +102,18 @@ struct CardConfigView: View {
             list = list.filter { $0.masterStatus != .mastered }
         }
         
+        let preparedList: [Knowledge]
         if shuffleCards {
-            preparedKnowledges = list.shuffled()
+            preparedList = list.shuffled()
         } else {
-            preparedKnowledges = list.sorted { $0.createdAt > $1.createdAt }
+            preparedList = list.sorted { $0.createdAt > $1.createdAt }
         }
         
-        isShowingFlashcard = true
+        self.activeSession = StudySessionConfig(
+            knowledges: preparedList,
+            frontKey: selectedFrontKey,
+            backKey: selectedBackKey
+        )
     }
 }
 

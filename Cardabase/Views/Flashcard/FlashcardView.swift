@@ -6,6 +6,13 @@
 import SwiftUI
 import SwiftData
 
+struct StudyResultData: Identifiable {
+    let id = UUID()
+    let totalStudied: Int
+    let correctCount: Int
+    let incorrectCount: Int
+}
+
 struct FlashcardView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var appState: AppState
@@ -22,16 +29,29 @@ struct FlashcardView: View {
     @State private var isFlipped: Bool = false
     @State private var correctCount: Int = 0
     @State private var incorrectCount: Int = 0
-    @State private var isCompleted: Bool = false
+    
+    @State private var resultData: StudyResultData? = nil
     
     private var currentKnowledge: Knowledge? {
         guard currentIndex < knowledges.count else { return nil }
         return knowledges[currentIndex]
     }
     
+    private func getValue(for key: String, from knowledge: Knowledge) -> String {
+        if key == "Title" {
+            return knowledge.title.isEmpty ? "(Empty)" : knowledge.title
+        } else if key == "Summary" {
+            return knowledge.summary.isEmpty ? "(Empty)" : knowledge.summary
+        } else if let customVal = knowledge.value(forKey: key), !customVal.isEmpty {
+            return customVal
+        }
+        return "(Empty)"
+    }
+    
     // MARK: - Main Body
     var body: some View {
         VStack(spacing: 16) {
+            // Header
             HStack {
                 Button("Exit") { dismiss() }
                     .foregroundStyle(.primary)
@@ -69,29 +89,30 @@ struct FlashcardView: View {
             
             // Card Flip View
             if let knowledge = currentKnowledge {
+                let frontText = getValue(for: frontKey, from: knowledge)
+                let backText = getValue(for: backKey, from: knowledge)
+                
                 ZStack {
-                    // Front Card (Question)
-                    CardFrontFaceView(
-                        title: frontKey,
-                        content: knowledge.value(forKey: frontKey) ?? "(Empty)"
-                    )
-                    .opacity(isFlipped ? 0.0 : 1.0)
-                    .rotation3DEffect(.degrees(isFlipped ? 180 : 0), axis: (x: 0.0, y: 1.0, z: 0.0))
-                    
-                    // Back Card (Answer)
-                    CardBackFaceView(
-                        frontTitle: frontKey,
-                        frontContent: knowledge.value(forKey: frontKey) ?? "(Empty)",
-                        backTitle: backKey,
-                        backContent: knowledge.value(forKey: backKey) ?? "(Empty)"
-                    )
-                    .opacity(isFlipped ? 1.0 : 0.0)
-                    .rotation3DEffect(.degrees(isFlipped ? 0 : -180), axis: (x: 0.0, y: 1.0, z: 0.0))
+                    if isFlipped {
+                        CardBackFaceView(
+                            frontTitle: frontKey,
+                            frontContent: frontText,
+                            backTitle: backKey,
+                            backContent: backText
+                        )
+                        .rotation3DEffect(.degrees(0), axis: (x: 0.0, y: 1.0, z: 0.0))
+                    } else {
+                        CardFrontFaceView(
+                            title: frontKey,
+                            content: frontText
+                        )
+                        .rotation3DEffect(.degrees(0), axis: (x: 0.0, y: 1.0, z: 0.0))
+                    }
                 }
                 .frame(maxWidth: .infinity, maxHeight: 380)
                 .padding(.horizontal)
                 .onTapGesture {
-                    withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
                         isFlipped.toggle()
                     }
                 }
@@ -137,12 +158,12 @@ struct FlashcardView: View {
                     .padding(.bottom, 10)
             }
         }
-        .fullScreenCover(isPresented: $isCompleted) {
+        .fullScreenCover(item: $resultData) { result in
             StudyResultView(
                 folder: folder,
-                totalStudied: knowledges.count,
-                correctCount: correctCount,
-                incorrectCount: incorrectCount,
+                totalStudied: result.totalStudied,
+                correctCount: result.correctCount,
+                incorrectCount: result.incorrectCount,
                 onRestart: {
                     currentIndex = 0
                     correctCount = 0
@@ -162,8 +183,8 @@ struct FlashcardView: View {
     private func recordAnswer(isCorrect: Bool) {
         guard let knowledge = currentKnowledge else { return }
         
-        let nextCorrect = correctCount + (isCorrect ? 1 : 0)
-        let nextIncorrect = incorrectCount + (isCorrect ? 0 : 1)
+        let updatedCorrect = correctCount + (isCorrect ? 1 : 0)
+        let updatedIncorrect = incorrectCount + (isCorrect ? 0 : 1)
         
         knowledge.reviewCount += 1
         if isCorrect {
@@ -174,8 +195,8 @@ struct FlashcardView: View {
         }
         knowledge.lastReviewedAt = Date()
         
-        self.correctCount = nextCorrect
-        self.incorrectCount = nextIncorrect
+        self.correctCount = updatedCorrect
+        self.incorrectCount = updatedIncorrect
         
         if currentIndex + 1 < knowledges.count {
             withAnimation {
@@ -183,9 +204,14 @@ struct FlashcardView: View {
                 currentIndex += 1
             }
         } else {
-            Task { @MainActor in
-                try? await Task.sleep(nanoseconds: 50_000_000)
-                isCompleted = true
+            let finalData = StudyResultData(
+                totalStudied: knowledges.count,
+                correctCount: updatedCorrect,
+                incorrectCount: updatedIncorrect
+            )
+            
+            DispatchQueue.main.async {
+                self.resultData = finalData
             }
         }
     }
@@ -199,7 +225,7 @@ private struct CardFrontFaceView: View {
     
     var body: some View {
         VStack(spacing: 16) {
-            Text(title.uppercased())
+            Text("Question")
                 .font(.caption)
                 .fontWeight(.bold)
                 .foregroundStyle(Color.accentColor)
@@ -247,7 +273,7 @@ private struct CardBackFaceView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 12) {
                     VStack(spacing: 6) {
-                        Text(frontTitle.uppercased())
+                        Text("Question")
                             .font(.caption2)
                             .fontWeight(.bold)
                             .foregroundStyle(.secondary)
@@ -263,10 +289,10 @@ private struct CardBackFaceView: View {
                     .padding(.top, 4)
                     
                     Divider()
-                        .padding(.vertical, 4)
+                        .padding(.vertical, 8)
                     
                     VStack(spacing: 8) {
-                        Text(backTitle.uppercased())
+                        Text("Answer")
                             .font(.caption)
                             .fontWeight(.bold)
                             .foregroundStyle(Color.accentColor)
