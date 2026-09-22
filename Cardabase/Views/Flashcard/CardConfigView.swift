@@ -6,11 +6,33 @@
 import SwiftUI
 import SwiftData
 
+enum StudyMode: String, Codable, CaseIterable, Identifiable {
+    case memorization
+    case test
+    
+    var id: String { rawValue }
+    
+    var displayName: String {
+        switch self {
+        case .memorization: return "Memorization"
+        case .test: return "Test"
+        }
+    }
+    
+    var description: String {
+        switch self {
+        case .memorization: return "Repeat incorrect cards until every card is answered correctly."
+        case .test: return "Go through all cards once and test your knowledge."
+        }
+    }
+}
+
 struct StudySessionConfig: Identifiable {
     let id = UUID()
     let knowledges: [Knowledge]
     let frontKey: String
     let backKey: String
+    let mode: StudyMode
 }
 
 struct CardConfigView: View {
@@ -20,17 +42,8 @@ struct CardConfigView: View {
     // MARK: - State Management
     @State private var selectedFrontKey: String = ""
     @State private var selectedBackKey: String = ""
-    @State private var onlyUnmastered: Bool = false
-    @State private var shuffleCards: Bool = true
+    @State private var selectedMode: StudyMode = .memorization
     @State private var activeSession: StudySessionConfig? = nil
-    
-    private var currentTargetKnowledges: [Knowledge] {
-        var list = folder.knowledges
-        if onlyUnmastered {
-            list = list.filter { $0.masterStatus != .mastered }
-        }
-        return list
-    }
     
     // MARK: - Main Body
     var body: some View {
@@ -50,10 +63,14 @@ struct CardConfigView: View {
                 }
             }
             
-            // Study Options Section
-            Section(header: Text("Study Options")) {
-                Toggle("Only Unmastered Cards", isOn: $onlyUnmastered)
-                Toggle("Shuffle Cards", isOn: $shuffleCards)
+            // Study Mode Section
+            Section(header: Text("Study Mode"), footer: Text(selectedMode.description)) {
+                Picker("Mode", selection: $selectedMode) {
+                    ForEach(StudyMode.allCases) { mode in
+                        Text(mode.displayName).tag(mode)
+                    }
+                }
+                .pickerStyle(.segmented)
             }
             
             // Start Study Button Section
@@ -62,12 +79,12 @@ struct CardConfigView: View {
                     HStack {
                         Spacer()
                         Image(systemName: "play.fill")
-                        Text("Start Study (\(currentTargetKnowledges.count) Cards)")
+                        Text("Start Study (\(folder.knowledges.count) Cards)")
                             .bold()
                         Spacer()
                     }
                 }
-                .disabled(currentTargetKnowledges.isEmpty)
+                .disabled(folder.knowledges.isEmpty)
             }
         }
         .navigationTitle("Study Setup")
@@ -86,6 +103,7 @@ struct CardConfigView: View {
                 knowledges: session.knowledges,
                 frontKey: session.frontKey,
                 backKey: session.backKey,
+                mode: session.mode,
                 onDone: { dismiss() }
             )
         }
@@ -97,22 +115,14 @@ struct CardConfigView: View {
         folder.defaultFrontKey = selectedFrontKey
         folder.defaultBackKey = selectedBackKey
         
-        var list = folder.knowledges
-        if onlyUnmastered {
-            list = list.filter { $0.masterStatus != .mastered }
-        }
-        
-        let preparedList: [Knowledge]
-        if shuffleCards {
-            preparedList = list.shuffled()
-        } else {
-            preparedList = list.sorted { $0.createdAt > $1.createdAt }
-        }
+        // Always shuffle cards at start
+        let preparedList = folder.knowledges.shuffled()
         
         self.activeSession = StudySessionConfig(
             knowledges: preparedList,
             frontKey: selectedFrontKey,
-            backKey: selectedBackKey
+            backKey: selectedBackKey,
+            mode: selectedMode
         )
     }
 }

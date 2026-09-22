@@ -11,16 +11,19 @@ struct StudyResultView: View {
     @EnvironmentObject private var appState: AppState
     
     let folder: Folder
-    let totalStudied: Int
-    let correctCount: Int
-    let incorrectCount: Int
+    let resultData: StudyResultData
     
     var onRestart: (() -> Void)? = nil
     var onDone: (() -> Void)? = nil
     
-    private var accuracyRate: Int {
-        guard totalStudied > 0 else { return 0 }
-        return Int(round(Double(correctCount) / Double(totalStudied) * 100))
+    private var testAccuracyRate: Int {
+        guard resultData.totalCards > 0 else { return 0 }
+        return Int(round(Double(resultData.correctCount) / Double(resultData.totalCards) * 100))
+    }
+    
+    private var memorizationFirstTryRate: Int {
+        guard resultData.totalCards > 0 else { return 0 }
+        return Int(round(Double(resultData.firstTryCorrectCount) / Double(resultData.totalCards) * 100))
     }
     
     // MARK: - Main Body
@@ -32,27 +35,74 @@ struct StudyResultView: View {
             
             Spacer()
             
-            // Result Icon
-            Image(systemName: accuracyRate >= 80 ? "trophy.fill" : "checkmark.seal.fill")
-                .font(.system(size: 70))
-                .foregroundStyle(accuracyRate >= 80 ? .yellow : Color.accentColor)
-            
-            VStack(spacing: 8) {
-                Text("Session Completed!")
-                    .font(.title)
-                    .bold()
-                    .foregroundStyle(.primary)
+            // Result Icon & Main Title
+            if resultData.mode == .memorization {
+                Image(systemName: "checkmark.seal.fill")
+                    .font(.system(size: 70))
+                    .foregroundStyle(.green)
                 
-                Text("Great job studying '\(folder.name)'")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                VStack(spacing: 8) {
+                    Text("All Cards Mastered!")
+                        .font(.title)
+                        .bold()
+                        .foregroundStyle(.primary)
+                    
+                    Text("You completed all cards in '\(folder.name)'")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+            } else {
+                Image(systemName: testAccuracyRate >= 80 ? "trophy.fill" : "checkmark.seal.fill")
+                    .font(.system(size: 70))
+                    .foregroundStyle(testAccuracyRate >= 80 ? .yellow : Color.accentColor)
+                
+                VStack(spacing: 8) {
+                    Text("Test Completed!")
+                        .font(.title)
+                        .bold()
+                        .foregroundStyle(.primary)
+                    
+                    Text("Great job testing '\(folder.name)'")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
             }
             
             // Score Cards Grid
-            HStack(spacing: 20) {
-                ResultStatBox(title: "Accuracy", value: "\(accuracyRate)%", color: .blue)
-                ResultStatBox(title: "Correct", value: "\(correctCount)", color: .green)
-                ResultStatBox(title: "Incorrect", value: "\(incorrectCount)", color: .red)
+            HStack(spacing: 16) {
+                if resultData.mode == .memorization {
+                    ResultStatBox(
+                        title: "First Try Rate",
+                        value: "\(memorizationFirstTryRate)%",
+                        color: .blue
+                    )
+                    ResultStatBox(
+                        title: "Total Reviews",
+                        value: "\(resultData.totalAttempts)",
+                        color: .purple
+                    )
+                    ResultStatBox(
+                        title: "Cards Cleared",
+                        value: "\(resultData.totalCards)",
+                        color: .green
+                    )
+                } else {
+                    ResultStatBox(
+                        title: "Accuracy",
+                        value: "\(testAccuracyRate)%",
+                        color: .blue
+                    )
+                    ResultStatBox(
+                        title: "Correct",
+                        value: "\(resultData.correctCount)",
+                        color: .green
+                    )
+                    ResultStatBox(
+                        title: "Incorrect",
+                        value: "\(resultData.incorrectCount)",
+                        color: .red
+                    )
+                }
             }
             .padding(.horizontal)
             
@@ -135,8 +185,30 @@ private struct ResultStatBox: View {
 
 // MARK: - Preview
 
-#Preview {
+#Preview("Memorization Result") {
     let folder = Folder(name: "SAKE DIPLOMA Prep")
-    return StudyResultView(folder: folder, totalStudied: 10, correctCount: 8, incorrectCount: 2)
+    let data = StudyResultData(
+        mode: .memorization,
+        totalCards: 10,
+        firstTryCorrectCount: 7,
+        totalAttempts: 14,
+        correctCount: 10,
+        incorrectCount: 3
+    )
+    return StudyResultView(folder: folder, resultData: data)
+        .environmentObject(AppState())
+}
+
+#Preview("Test Result") {
+    let folder = Folder(name: "SAKE DIPLOMA Prep")
+    let data = StudyResultData(
+        mode: .test,
+        totalCards: 10,
+        firstTryCorrectCount: 8,
+        totalAttempts: 10,
+        correctCount: 8,
+        incorrectCount: 2
+    )
+    return StudyResultView(folder: folder, resultData: data)
         .environmentObject(AppState())
 }

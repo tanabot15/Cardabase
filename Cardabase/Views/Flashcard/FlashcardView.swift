@@ -8,7 +8,10 @@ import SwiftData
 
 struct StudyResultData: Identifiable {
     let id = UUID()
-    let totalStudied: Int
+    let mode: StudyMode
+    let totalCards: Int
+    let firstTryCorrectCount: Int
+    let totalAttempts: Int
     let correctCount: Int
     let incorrectCount: Int
 }
@@ -18,23 +21,41 @@ struct FlashcardView: View {
     @EnvironmentObject private var appState: AppState
     
     let folder: Folder
-    let knowledges: [Knowledge]
+    let initialKnowledges: [Knowledge]
     let frontKey: String
     let backKey: String
+    let mode: StudyMode
     
     var onDone: (() -> Void)? = nil
     
     // MARK: - State Management
+    @State private var cardQueue: [Knowledge] = []
     @State private var currentIndex: Int = 0
     @State private var isFlipped: Bool = false
-    @State private var correctCount: Int = 0
-    @State private var incorrectCount: Int = 0
+    
+    // Test mode tracking
+    @State private var testCorrectCount: Int = 0
+    @State private var testIncorrectCount: Int = 0
+    
+    // Memorization mode tracking
+    @State private var failedCardIDs: Set<UUID> = []
+    @State private var totalAttempts: Int = 0
     
     @State private var resultData: StudyResultData? = nil
     
+    init(folder: Folder, knowledges: [Knowledge], frontKey: String, backKey: String, mode: StudyMode, onDone: (() -> Void)? = nil) {
+        self.folder = folder
+        self.initialKnowledges = knowledges
+        self.frontKey = frontKey
+        self.backKey = backKey
+        self.mode = mode
+        self.onDone = onDone
+        _cardQueue = State(initialValue: knowledges)
+    }
+    
     private var currentKnowledge: Knowledge? {
-        guard currentIndex < knowledges.count else { return nil }
-        return knowledges[currentIndex]
+        guard currentIndex < cardQueue.count else { return nil }
+        return cardQueue[currentIndex]
     }
     
     private func getValue(for key: String, from knowledge: Knowledge) -> String {
@@ -58,9 +79,14 @@ struct FlashcardView: View {
                 
                 Spacer()
                 
-                Text(folder.name)
-                    .font(.headline)
-                    .lineLimit(1)
+                VStack(spacing: 2) {
+                    Text(folder.name)
+                        .font(.headline)
+                        .lineLimit(1)
+                    Text(mode.displayName)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
                 
                 Spacer()
                 
@@ -74,13 +100,19 @@ struct FlashcardView: View {
             }
             
             // Progress Bar & Counter
-            ProgressView(value: Double(currentIndex), total: Double(knowledges.count))
+            ProgressView(value: Double(currentIndex), total: Double(cardQueue.count))
                 .padding(.horizontal)
             
             HStack {
-                Text("Card \(currentIndex + 1) of \(knowledges.count)")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                if mode == .memorization {
+                    Text("Remaining: \(cardQueue.count - currentIndex) Cards")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text("Card \(currentIndex + 1) of \(cardQueue.count)")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
                 Spacer()
             }
             .padding(.horizontal)
@@ -100,13 +132,11 @@ struct FlashcardView: View {
                             backTitle: backKey,
                             backContent: backText
                         )
-                        .rotation3DEffect(.degrees(0), axis: (x: 0.0, y: 1.0, z: 0.0))
                     } else {
                         CardFrontFaceView(
                             title: frontKey,
                             content: frontText
                         )
-                        .rotation3DEffect(.degrees(0), axis: (x: 0.0, y: 1.0, z: 0.0))
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: 380)
@@ -161,13 +191,14 @@ struct FlashcardView: View {
         .fullScreenCover(item: $resultData) { result in
             StudyResultView(
                 folder: folder,
-                totalStudied: result.totalStudied,
-                correctCount: result.correctCount,
-                incorrectCount: result.incorrectCount,
+                resultData: result,
                 onRestart: {
+                    cardQueue = initialKnowledges.shuffled()
                     currentIndex = 0
-                    correctCount = 0
-                    incorrectCount = 0
+                    testCorrectCount = 0
+                    testIncorrectCount = 0
+                    failedCardIDs.removeAll()
+                    totalAttempts = 0
                     isFlipped = false
                 },
                 onDone: {
@@ -183,32 +214,58 @@ struct FlashcardView: View {
     private func recordAnswer(isCorrect: Bool) {
         guard let knowledge = currentKnowledge else { return }
         
-        let updatedCorrect = correctCount + (isCorrect ? 1 : 0)
-        let updatedIncorrect = incorrectCount + (isCorrect ? 0 : 1)
-        
+        totalAttempts += 1
         knowledge.reviewCount += 1
-        if isCorrect {
-            knowledge.correctCount += 1
-            knowledge.masterStatus = .mastered
-        } else {
-            knowledge.masterStatus = .incorrect
-        }
         knowledge.lastReviewedAt = Date()
         
-        self.correctCount = updatedCorrect
-        self.incorrectCount = updatedIncorrect
+        if mode == .memorization {
+            if isCorrect {
+                knowledge.correctCount += 1
+                knowledge.masterStatus = .mastered
+            } else {
+                knowledge.masterStatus = .incorrect
+                failedCardIDs.insert(knowledge.id)
+                // Append failed card back to the queue end
+                cardQueue.append(knowledge)
+            }
+        } else { // Test Mode
+            if isCorrect {
+                knowledge.correctCount += 1
+                knowledge.masterStatus = .mastered
+                testCorrectCount += 1
+            } else {
+                knowledge.masterStatus = .incorrect
+                testIncorrectCount += 1
+            }
+        }
         
-        if currentIndex + 1 < knowledges.count {
+        if currentIndex + 1 < cardQueue.count {
             withAnimation {
                 isFlipped = false
                 currentIndex += 1
             }
         } else {
-            let finalData = StudyResultData(
-                totalStudied: knowledges.count,
-                correctCount: updatedCorrect,
-                incorrectCount: updatedIncorrect
-            )
+            let finalData: StudyResultData
+            if mode == .memorization {
+                let firstTryCorrect = initialKnowledges.count - failedCardIDs.count
+                finalData = StudyResultData(
+                    mode: .memorization,
+                    totalCards: initialKnowledges.count,
+                    firstTryCorrectCount: max(0, firstTryCorrect),
+                    totalAttempts: totalAttempts,
+                    correctCount: initialKnowledges.count,
+                    incorrectCount: failedCardIDs.count
+                )
+            } else {
+                finalData = StudyResultData(
+                    mode: .test,
+                    totalCards: initialKnowledges.count,
+                    firstTryCorrectCount: testCorrectCount,
+                    totalAttempts: initialKnowledges.count,
+                    correctCount: testCorrectCount,
+                    incorrectCount: testIncorrectCount
+                )
+            }
             
             DispatchQueue.main.async {
                 self.resultData = finalData
@@ -225,7 +282,7 @@ private struct CardFrontFaceView: View {
     
     var body: some View {
         VStack(spacing: 16) {
-            Text("Question")
+            Text("Question : (\(title.uppercased()))")
                 .font(.caption)
                 .fontWeight(.bold)
                 .foregroundStyle(Color.accentColor)
@@ -273,7 +330,7 @@ private struct CardBackFaceView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 12) {
                     VStack(spacing: 6) {
-                        Text("Question")
+                        Text("Question : (\(frontTitle.uppercased()))")
                             .font(.caption2)
                             .fontWeight(.bold)
                             .foregroundStyle(.secondary)
@@ -292,7 +349,7 @@ private struct CardBackFaceView: View {
                         .padding(.vertical, 8)
                     
                     VStack(spacing: 8) {
-                        Text("Answer")
+                        Text("Answer : (\(backTitle.uppercased()))")
                             .font(.caption)
                             .fontWeight(.bold)
                             .foregroundStyle(Color.accentColor)
@@ -330,7 +387,13 @@ private struct CardBackFaceView: View {
 #Preview {
     let folder = Folder(name: "Sample Database")
     let k1 = Knowledge(title: "SwiftUI", summary: "Declarative UI framework for iOS development.")
-    return FlashcardView(folder: folder, knowledges: [k1], frontKey: "Title", backKey: "Summary")
-        .environmentObject(AppState())
-        .modelContainer(for: [Folder.self, Knowledge.self], inMemory: true)
+    return FlashcardView(
+        folder: folder,
+        knowledges: [k1],
+        frontKey: "Title",
+        backKey: "Summary",
+        mode: .memorization
+    )
+    .environmentObject(AppState())
+    .modelContainer(for: [Folder.self, Knowledge.self], inMemory: true)
 }

@@ -46,10 +46,10 @@ struct KnowledgeFormView: View {
         NavigationStack {
             Form {
                 Section(header: Text("Basic Information")) {
-                    TextField("Title (Front Card)", text: $title)
+                    TextField("Title", text: $title)
                     
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Summary / Details (Back Card)")
+                        Text("Summary")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                         TextEditor(text: $summary)
