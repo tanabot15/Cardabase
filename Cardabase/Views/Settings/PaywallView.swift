@@ -29,7 +29,7 @@ struct PaywallView: View {
                         .font(.title)
                         .bold()
                     
-                    Text("Unlock unlimited databases, records, data transfer, and enjoy an ad-free study experience.")
+                    Text("Unlock unlimited databases, records, and enjoy an ad-free study experience.")
                         .font(.subheadline)
                         .multilineTextAlignment(.center)
                         .foregroundStyle(.secondary)
@@ -40,7 +40,6 @@ struct PaywallView: View {
                 VStack(alignment: .leading, spacing: 14) {
                     FeatureRow(icon: "folder.fill", title: "Unlimited Databases", description: "Free tier limited to \(Limits.maxFoldersForFree) databases.")
                     FeatureRow(icon: "doc.text.fill", title: "Unlimited Records", description: "Free tier limited to \(Limits.maxKnowledgesPerFolderForFree) records per database.")
-                    FeatureRow(icon: "arrow.triangle.2.circlepath", title: "Data Transfer", description: "Bulk CSV/JSON import & full backup export.")
                     FeatureRow(icon: "nosign", title: "Ad-Free Experience", description: "Remove all banner and interstitial ads.")
                 }
                 .padding()

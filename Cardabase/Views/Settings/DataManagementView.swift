@@ -23,11 +23,6 @@ struct DataManagementView: View {
     
     var body: some View {
         Form {
-            // MARK: Pro Banner
-            if !appState.isProUser {
-                proBannerSection
-            }
-            
             // MARK: Import CSV Section
             Section(header: Text("Import Data")) {
                 Picker("Target Database", selection: $selectedFolderForCSV) {
@@ -40,7 +35,7 @@ struct DataManagementView: View {
                 Button(action: { isShowingFileImporter = true }) {
                     Label("Import CSV File", systemImage: "square.and.arrow.down")
                 }
-                .disabled(selectedFolderForCSV == nil || !appState.isProUser)
+                .disabled(selectedFolderForCSV == nil)
             }
             
             // MARK: Export Section
@@ -48,13 +43,12 @@ struct DataManagementView: View {
                 Button(action: exportAllJSON) {
                     Label("Export All Data (JSON Backup)", systemImage: "doc.badge.plus")
                 }
-                .disabled(folders.isEmpty || !appState.isProUser)
+                .disabled(folders.isEmpty)
                 
                 if let target = selectedFolderForCSV {
                     Button(action: { exportCSV(folder: target) }) {
                         Label("Export '\(target.name)' to CSV", systemImage: "tablecells")
                     }
-                    .disabled(!appState.isProUser)
                 }
             }
         }
@@ -72,43 +66,10 @@ struct DataManagementView: View {
                 ShareSheet(activityItems: [url])
             }
         }
-        .sheet(isPresented: $appState.isShowingPaywall) {
-            PaywallView()
-        }
         .alert("Import Status", isPresented: $isShowingAlert) {
             Button("OK", role: .cancel) { }
         } message: {
             Text(alertMessage)
-        }
-    }
-    
-    // MARK: - Subviews
-    private var proBannerSection: some View {
-        Section {
-            VStack(spacing: 12) {
-                Image(systemName: "lock.circle.fill")
-                    .font(.system(size: 48))
-                    .foregroundStyle(Color.accentColor)
-                
-                Text("Pro Feature Required")
-                    .font(.headline)
-                
-                Text("CSV and JSON import/export functions are available exclusively to Cardabase Pro members.")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-                
-                Button(action: { appState.isShowingPaywall = true }) {
-                    Text("Upgrade to Pro")
-                        .font(.headline)
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
-                        .background(Color.accentColor)
-                        .cornerRadius(10)
-                }
-            }
-            .padding(.vertical, 8)
         }
     }
     
@@ -164,7 +125,6 @@ struct ShareSheet: UIViewControllerRepresentable {
     container.mainContext.insert(sampleFolder)
     
     let appState = AppState()
-    appState.isProUser = true
     
     return NavigationStack {
         DataManagementView()
