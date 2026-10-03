@@ -39,6 +39,8 @@ struct CardConfigView: View {
     @Environment(\.dismiss) private var dismiss
     @Bindable var folder: Folder
     
+    @AppStorage("defaultStudyMode") private var defaultStudyMode: String = StudyMode.memorization.rawValue
+    
     // MARK: - State Management
     @State private var selectedFrontKey: String = ""
     @State private var selectedBackKey: String = ""
@@ -106,6 +108,9 @@ struct CardConfigView: View {
         .navigationTitle("Study Setup")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
+            if let mode = StudyMode(rawValue: defaultStudyMode) {
+                selectedMode = mode
+            }
             setupInitialKeys()
         }
         .fullScreenCover(item: $activeSession) { session in

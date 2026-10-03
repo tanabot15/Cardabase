@@ -279,6 +279,7 @@ struct FlashcardView: View {
 private struct CardFrontFaceView: View {
     let title: String
     let content: String
+    @AppStorage("flashcardFontSize") private var flashcardFontSize: Double = 18.0
     
     var body: some View {
         VStack(spacing: 16) {
@@ -295,8 +296,7 @@ private struct CardFrontFaceView: View {
             
             ScrollView(.vertical, showsIndicators: false) {
                 Text(content)
-                    .font(.title3)
-                    .fontWeight(.medium)
+                    .font(.system(size: CGFloat(flashcardFontSize), weight: .medium))
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.primary)
                     .lineLimit(nil)
@@ -324,6 +324,7 @@ private struct CardBackFaceView: View {
     let frontContent: String
     let backTitle: String
     let backContent: String
+    @AppStorage("flashcardFontSize") private var flashcardFontSize: Double = 18.0
     
     var body: some View {
         VStack(spacing: 12) {
@@ -336,8 +337,7 @@ private struct CardBackFaceView: View {
                             .foregroundStyle(.secondary)
                         
                         Text(frontContent)
-                            .font(.subheadline)
-                            .fontWeight(.medium)
+                            .font(.system(size: max(12, CGFloat(flashcardFontSize - 4)), weight: .medium))
                             .multilineTextAlignment(.center)
                             .foregroundStyle(.secondary)
                             .minimumScaleFactor(0.85)
@@ -359,8 +359,7 @@ private struct CardBackFaceView: View {
                             .cornerRadius(6)
                         
                         Text(backContent)
-                            .font(.title3)
-                            .fontWeight(.bold)
+                            .font(.system(size: CGFloat(flashcardFontSize), weight: .bold))
                             .multilineTextAlignment(.center)
                             .foregroundStyle(.primary)
                             .minimumScaleFactor(0.85)

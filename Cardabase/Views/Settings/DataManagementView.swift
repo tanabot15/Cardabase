@@ -7,7 +7,7 @@ import SwiftUI
 import SwiftData
 import UniformTypeIdentifiers
 
-/// View responsible for importing and exporting database content in CSV/JSON formats.
+/// View responsible for backup and restore of database content (JSON / CSV formats).
 struct DataManagementView: View {
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject private var appState: AppState
@@ -23,27 +23,22 @@ struct DataManagementView: View {
     
     var body: some View {
         Form {
-            // MARK: Import CSV Section
-            Section(header: Text("Import Data")) {
-                Picker("Target Database", selection: $selectedFolderForCSV) {
+            // MARK: Backup Section
+            Section(
+                header: Text("Data Backup (Export)"),
+                footer: Text("Export all data to JSON format or export a specific database to CSV.")
+            ) {
+                Button(action: exportAllJSON) {
+                    Label("Backup All Data (JSON)", systemImage: "doc.badge.plus")
+                }
+                .disabled(folders.isEmpty)
+                
+                Picker("Target Database (CSV)", selection: $selectedFolderForCSV) {
                     Text("Select Database").tag(Folder?.none)
                     ForEach(folders) { folder in
                         Text(folder.name).tag(Folder?.some(folder))
                     }
                 }
-                
-                Button(action: { isShowingFileImporter = true }) {
-                    Label("Import CSV File", systemImage: "square.and.arrow.down")
-                }
-                .disabled(selectedFolderForCSV == nil)
-            }
-            
-            // MARK: Export Section
-            Section(header: Text("Export & Backup")) {
-                Button(action: exportAllJSON) {
-                    Label("Export All Data (JSON Backup)", systemImage: "doc.badge.plus")
-                }
-                .disabled(folders.isEmpty)
                 
                 if let target = selectedFolderForCSV {
                     Button(action: { exportCSV(folder: target) }) {
@@ -51,8 +46,16 @@ struct DataManagementView: View {
                     }
                 }
             }
+            
+            // MARK: Restore / Import Section
+            Section(header: Text("Data Restore (Import)")) {
+                Button(action: { isShowingFileImporter = true }) {
+                    Label("Restore / Import from CSV File", systemImage: "square.and.arrow.down")
+                }
+                .disabled(selectedFolderForCSV == nil)
+            }
         }
-        .navigationTitle("Data Management")
+        .navigationTitle("Data Backup & Restore")
         .navigationBarTitleDisplayMode(.inline)
         .fileImporter(
             isPresented: $isShowingFileImporter,
@@ -66,7 +69,7 @@ struct DataManagementView: View {
                 ShareSheet(activityItems: [url])
             }
         }
-        .alert("Import Status", isPresented: $isShowingAlert) {
+        .alert("Status", isPresented: $isShowingAlert) {
             Button("OK", role: .cancel) { }
         } message: {
             Text(alertMessage)
@@ -81,7 +84,7 @@ struct DataManagementView: View {
         case .success(let urls):
             if let selectedURL = urls.first {
                 let count = DataTransferManager.importCSV(url: selectedURL, targetFolder: targetFolder, context: modelContext)
-                alertMessage = "Successfully imported \(count) records into '\(targetFolder.name)'."
+                alertMessage = "Successfully restored \(count) records into '\(targetFolder.name)'."
                 isShowingAlert = true
             }
         case .failure(let error):
