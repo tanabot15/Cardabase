@@ -7,7 +7,6 @@
 
 import SwiftUI
 import SwiftData
-import Charts
 
 struct AnalyticsView: View {
     @Query private var folders: [Folder]
@@ -32,77 +31,43 @@ struct AnalyticsView: View {
         knowledges.filter { $0.masterStatus == .mastered }.count
     }
     
-    private var incorrectCount: Int {
-        knowledges.filter { $0.masterStatus == .incorrect }.count
+    private var streakInfo: (currentStreak: Int, weeklyDays: Int) {
+        calculateStreak(from: knowledges)
     }
-    
-    private var unreviewedCount: Int {
-        knowledges.filter { $0.masterStatus == .unreviewed }.count
-    }
-    
-    private let statusColors: [String: Color] = [
-        "Mastered": .green,
-        "Needs Review": .red,
-        "Unreviewed": Color.gray.opacity(0.4)
-    ]
     
     // MARK: - Main Body
     var body: some View {
         NavigationStack {
-            VStack {
+            VStack(spacing: 0) {
                 AdBannerView()
-
+                
                 ScrollView {
-                    VStack(spacing: 20) {
-                        // Overview Metric Cards
-                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                            MetricCard(title: "Total Records", value: "\(totalCards)", systemImage: "doc.text.fill", color: .blue)
-                            MetricCard(title: "Overall Accuracy", value: "\(overallAccuracy)%", systemImage: "target", color: .green)
-                            MetricCard(title: "Mastered Cards", value: "\(masteredCount)", systemImage: "checkmark.seal.fill", color: .orange)
-                            MetricCard(title: "Total Reviews", value: "\(totalReviewedCount)", systemImage: "arrow.clockwise.circle.fill", color: .purple)
-                        }
-                        .padding(.horizontal)
-                        
-                        // Mastery Distribution Chart
-                        if !knowledges.isEmpty {
-                            VStack(alignment: .leading, spacing: 12) {
-                                Text("Mastery Distribution")
-                                    .font(.headline)
+                    VStack(spacing: 24) {
+                        // Overview Metrics Section
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Overview")
+                                .font(.headline)
+                                .padding(.horizontal)
+                            
+                            VStack(spacing: 12) {
+                                // Streak Card
+                                StreakBannerCard(
+                                    streak: streakInfo.currentStreak,
+                                    weeklyDays: streakInfo.weeklyDays
+                                )
                                 
-                                Chart {
-                                    SectorMark(
-                                        angle: .value("Count", masteredCount),
-                                        innerRadius: .ratio(0.6),
-                                        angularInset: 1.5
-                                    )
-                                    .foregroundStyle(by: .value("Status", "Mastered"))
-                                    
-                                    SectorMark(
-                                        angle: .value("Count", incorrectCount),
-                                        innerRadius: .ratio(0.6),
-                                        angularInset: 1.5
-                                    )
-                                    .foregroundStyle(by: .value("Status", "Needs Review"))
-                                    
-                                    SectorMark(
-                                        angle: .value("Count", unreviewedCount),
-                                        innerRadius: .ratio(0.6),
-                                        angularInset: 1.5
-                                    )
-                                    .foregroundStyle(by: .value("Status", "Unreviewed"))
+                                // Metric Grid
+                                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                                    MetricCard(title: "Total Records", value: "\(totalCards)", systemImage: "doc.text.fill", color: .blue)
+                                    MetricCard(title: "Accuracy", value: "\(overallAccuracy)%", systemImage: "target", color: .green)
+                                    MetricCard(title: "Mastered", value: "\(masteredCount)", systemImage: "checkmark.seal.fill", color: .orange)
+                                    MetricCard(title: "Total Reviews", value: "\(totalReviewedCount)", systemImage: "arrow.clockwise.circle.fill", color: .purple)
                                 }
-                                .chartForegroundStyleScale(mapping: { (status: String) -> Color in
-                                    statusColors[status] ?? .gray
-                                })
-                                .frame(height: 180)
                             }
-                            .padding()
-                            .background(Color(.secondarySystemBackground))
-                            .cornerRadius(16)
                             .padding(.horizontal)
                         }
                         
-                        // Accuracy Breakdown List by Database
+                        // Accuracy Breakdown List by Database Section
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Accuracy by Database")
                                 .font(.headline)
@@ -134,7 +99,116 @@ struct AnalyticsView: View {
                 }
             }
             .navigationTitle("Analytics")
+            .navigationBarTitleDisplayMode(.inline)
         }
+    }
+    
+    // MARK: - Streak Logic Helper
+    private func calculateStreak(from knowledges: [Knowledge]) -> (currentStreak: Int, weeklyDays: Int) {
+        let calendar = Calendar.current
+        let now = Date()
+        
+        let reviewDates = Set(knowledges.compactMap { knowledge -> Date? in
+            guard let date = knowledge.lastReviewedAt else { return nil }
+            return calendar.startOfDay(for: date)
+        })
+        
+        guard !reviewDates.isEmpty else { return (0, 0) }
+        
+        // 今週の学習日数を算出
+        let weeklyDays = reviewDates.filter { date in
+            calendar.isDate(date, equalTo: now, toGranularity: .weekOfYear)
+        }.count
+        
+        // 連続学習日数を算出
+        var streak = 0
+        var checkDate = calendar.startOfDay(for: now)
+        
+        if !reviewDates.contains(checkDate) {
+            if let yesterday = calendar.date(byAdding: .day, value: -1, to: checkDate),
+               reviewDates.contains(yesterday) {
+                checkDate = yesterday
+            } else {
+                return (0, weeklyDays)
+            }
+        }
+        
+        while reviewDates.contains(checkDate) {
+            streak += 1
+            guard let previousDay = calendar.date(byAdding: .day, value: -1, to: checkDate) else { break }
+            checkDate = previousDay
+        }
+        
+        return (streak, weeklyDays)
+    }
+}
+
+// MARK: - Subviews: Streak Banner Component
+private struct StreakBannerCard: View {
+    let streak: Int
+    let weeklyDays: Int
+    
+    var body: some View {
+        HStack(spacing: 16) {
+            HStack(spacing: 12) {
+                ZStack {
+                    Circle()
+                        .fill(Color.orange.opacity(0.15))
+                        .frame(width: 48, height: 48)
+                    
+                    Image(systemName: "flame.fill")
+                        .font(.title2)
+                        .foregroundStyle(.red)
+                }
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("\(streak) \(streak == 1 ? "Day" : "Days")")
+                        .font(.title2)
+                        .bold()
+                        .foregroundStyle(.primary)
+                    
+                    Text("Current Streak")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            
+            Spacer()
+            
+            Divider()
+                .frame(height: 36)
+            
+            Spacer()
+            
+            // 右側: 今週の学習日数
+            VStack(alignment: .trailing, spacing: 2) {
+                HStack(spacing: 4) {
+                    Text("\(weeklyDays)")
+                        .font(.title3)
+                        .bold()
+                        .foregroundStyle(.primary)
+                    Text("/ 7 days")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                
+                Text("This Week")
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 16)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color(.secondarySystemBackground))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .strokeBorder(streak > 0 ? Color.orange.opacity(0.3) : Color.clear, lineWidth: 1)
+        )
     }
 }
 
@@ -147,26 +221,40 @@ private struct MetricCard: View {
     let color: Color
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
+        HStack(spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(color.opacity(0.15))
+                    .frame(width: 44, height: 44)
+                
                 Image(systemName: systemImage)
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundStyle(color)
-                Spacer()
             }
             
-            Text(value)
-                .font(.title)
-                .bold()
-                .foregroundStyle(.primary)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(value)
+                    .font(.title3)
+                    .bold()
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                
+                Text(title)
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
             
-            Text(title)
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            Spacer(minLength: 0)
         }
-        .padding()
-        .background(Color(.secondarySystemBackground))
-        .cornerRadius(14)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 14)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color(.secondarySystemBackground))
+        )
     }
 }
 

@@ -45,11 +45,27 @@ struct CardConfigView: View {
     @State private var selectedMode: StudyMode = .memorization
     @State private var activeSession: StudySessionConfig? = nil
     
+    // MARK: - Computed Properties
+    private var isInvalidMapping: Bool {
+        !selectedFrontKey.isEmpty && selectedFrontKey == selectedBackKey
+    }
+    
     // MARK: - Main Body
     var body: some View {
         Form {
             // Field Mapping Section
-            Section(header: Text("Card Mapping"), footer: Text("Select which field to display on the front and back of the flashcard.")) {
+            Section(
+                header: Text("Card Mapping"),
+                footer: Group {
+                    if isInvalidMapping {
+                        Text("Front and Back fields must be different.")
+                            .foregroundStyle(.red)
+                            .bold()
+                    } else {
+                        Text("Select the front and back of the flashcard.")
+                    }
+                }
+            ) {
                 Picker("Front (Question)", selection: $selectedFrontKey) {
                     ForEach(folder.availableFieldKeys, id: \.self) { key in
                         Text(key).tag(key)
@@ -84,18 +100,13 @@ struct CardConfigView: View {
                         Spacer()
                     }
                 }
-                .disabled(folder.knowledges.isEmpty)
+                .disabled(folder.knowledges.isEmpty || isInvalidMapping)
             }
         }
         .navigationTitle("Study Setup")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
-            if selectedFrontKey.isEmpty {
-                selectedFrontKey = folder.defaultFrontKey
-            }
-            if selectedBackKey.isEmpty {
-                selectedBackKey = folder.defaultBackKey
-            }
+            setupInitialKeys()
         }
         .fullScreenCover(item: $activeSession) { session in
             FlashcardView(
@@ -111,7 +122,27 @@ struct CardConfigView: View {
     
     // MARK: - Actions
     
+    private func setupInitialKeys() {
+        let keys = folder.availableFieldKeys
+        guard !keys.isEmpty else { return }
+        
+        if selectedFrontKey.isEmpty {
+            selectedFrontKey = folder.defaultFrontKey
+        }
+        if selectedBackKey.isEmpty {
+            selectedBackKey = folder.defaultBackKey
+        }
+        
+        if selectedFrontKey == selectedBackKey {
+            if let alternativeKey = keys.first(where: { $0 != selectedFrontKey }) {
+                selectedBackKey = alternativeKey
+            }
+        }
+    }
+    
     private func startStudy() {
+        guard !isInvalidMapping else { return }
+        
         folder.defaultFrontKey = selectedFrontKey
         folder.defaultBackKey = selectedBackKey
         

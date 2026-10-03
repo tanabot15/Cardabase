@@ -73,6 +73,7 @@ struct FolderListView: View {
             .padding(.bottom, 20)
         }
         .navigationTitle("Folders")
+        .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $isShowingCreateSheet) {
             createFolderSheet
         }
@@ -87,7 +88,7 @@ struct FolderListView: View {
         NavigationStack {
             Form {
                 Section(header: Text("Database Name")) {
-                    TextField("e.g. SAKE DIPLOMA, Finance, AI Concepts", text: $newFolderName)
+                    TextField("e.g. Finance, AI Concepts", text: $newFolderName)
                 }
                 
                 Section(header: Text("Custom Field Schemas (\(customSchemas.count))")) {
