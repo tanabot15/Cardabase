@@ -8,6 +8,7 @@ import StoreKit
 
 /// View representing the Pro upgrade screen and handling StoreKit 2 transactions.
 struct PaywallView: View {
+    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var appState: AppState
     @StateObject private var adManager = AdMobManager.shared
     
@@ -91,11 +92,18 @@ struct PaywallView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Close") {
-                        appState.isShowingPaywall = false
+                        closePaywall()
                     }
                     .disabled(isPurchasing)
                 }
             }
+        }
+    }
+    
+    private func closePaywall() {
+        DispatchQueue.main.async {
+            appState.isShowingPaywall = false
+            dismiss()
         }
     }
     
@@ -114,7 +122,7 @@ struct PaywallView: View {
                     case .success(let verification):
                         if case .verified = verification {
                             await appState.refreshProStatus()
-                            appState.isShowingPaywall = false
+                            closePaywall()
                         } else {
                             errorMessage = "Transaction verification failed."
                         }
@@ -144,7 +152,7 @@ struct PaywallView: View {
                 try await adManager.restorePurchases()
                 await appState.refreshProStatus()
                 if appState.isProUser {
-                    appState.isShowingPaywall = false
+                    closePaywall()
                 } else {
                     errorMessage = "No active Pro subscription found."
                 }

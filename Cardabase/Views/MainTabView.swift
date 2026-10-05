@@ -7,6 +7,8 @@ import SwiftUI
 import SwiftData
 
 struct MainTabView: View {
+    @EnvironmentObject private var appState: AppState
+    
     var body: some View {
         TabView {
             // 1. Unified Databases & Flashcards Tab
@@ -32,6 +34,9 @@ struct MainTabView: View {
             .tabItem {
                 Label("Settings", systemImage: "gearshape.fill")
             }
+        }
+        .sheet(isPresented: $appState.isShowingPaywall) {
+            PaywallView()
         }
     }
 }

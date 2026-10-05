@@ -151,15 +151,18 @@ struct CardConfigView: View {
         folder.defaultFrontKey = selectedFrontKey
         folder.defaultBackKey = selectedBackKey
         
-        // Always shuffle cards at start
         let preparedList = folder.knowledges.shuffled()
-        
-        self.activeSession = StudySessionConfig(
+        let newSession = StudySessionConfig(
             knowledges: preparedList,
             frontKey: selectedFrontKey,
             backKey: selectedBackKey,
             mode: selectedMode
         )
+        
+        activeSession = nil
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            self.activeSession = newSession
+        }
     }
 }
 

@@ -77,9 +77,6 @@ struct FolderListView: View {
         .sheet(isPresented: $isShowingCreateSheet) {
             createFolderSheet
         }
-        .sheet(isPresented: $appState.isShowingPaywall) {
-            PaywallView()
-        }
     }
     
     // MARK: - Subviews

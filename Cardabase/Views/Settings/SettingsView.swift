@@ -113,19 +113,26 @@ struct SettingsView: View {
             
             // MARK: 2. Study & Review
             Section(header: Text("Study & Review")) {
-                Toggle("Notifications / Reminders", isOn: $isNotificationEnabled)
-                    .onChange(of: isNotificationEnabled) { _, newValue in
-                        if newValue {
-                            requestAndScheduleNotification()
+                VStack(alignment: .leading, spacing: 16) {
+                    Toggle("Notifications / Reminders", isOn: $isNotificationEnabled)
+                        .onChange(of: isNotificationEnabled) { _, newValue in
+                            if newValue {
+                                requestAndScheduleNotification()
+                            }
                         }
+                    
+                    if isNotificationEnabled {
+                        DatePicker("Reminder Time", selection: $selectedNotificationDate, displayedComponents: .hourAndMinute)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .padding(.leading, 12)
+                            .transition(.opacity.combined(with: .move(edge: .top)))
+                            .onChange(of: selectedNotificationDate) { _, newDate in
+                                scheduleNotification(at: newDate)
+                            }
                     }
-                
-                if isNotificationEnabled {
-                    DatePicker("Reminder Time", selection: $selectedNotificationDate, displayedComponents: .hourAndMinute)
-                        .onChange(of: selectedNotificationDate) { _, newDate in
-                            scheduleNotification(at: newDate)
-                        }
                 }
+                .animation(.default, value: isNotificationEnabled)
                 
                 Picker("Default Study Mode", selection: $defaultStudyMode) {
                     ForEach(StudyMode.allCases) { mode in
@@ -177,7 +184,7 @@ struct SettingsView: View {
                 HStack {
                     Text("App Version")
                     Spacer()
-                    Text("3.8")
+                    Text("3.9")
                         .foregroundStyle(.secondary)
                 }
                 
@@ -188,9 +195,6 @@ struct SettingsView: View {
         }
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $appState.isShowingPaywall) {
-            PaywallView()
-        }
         .confirmationDialog("Reset All Data", isPresented: $isShowingDeleteConfirm, titleVisibility: .visible) {
             Button("Delete All Data", role: .destructive) {
                 deleteAllData()

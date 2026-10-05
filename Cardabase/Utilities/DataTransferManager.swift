@@ -88,6 +88,45 @@ final class DataTransferManager {
         return count
     }
     
+    // MARK: - Import (JSON - Full Restore)
+    static func importJSON(url: URL, context: ModelContext) -> Int {
+        guard url.startAccessingSecurityScopedResource() else { return 0 }
+        defer { url.stopAccessingSecurityScopedResource() }
+        
+        guard let data = try? Data(contentsOf: url),
+              let importedFolders = try? JSONDecoder().decode([ExportableFolder].self, from: data) else {
+            return 0
+        }
+        
+        var totalImportedKnowledgesCount = 0
+        
+        for folderData in importedFolders {
+            let newFolder = Folder(name: folderData.name)
+            context.insert(newFolder)
+            
+            for knowledgeData in folderData.knowledges {
+                // [String: String] の辞書から [FieldValue] の配列へ変換
+                let fields = knowledgeData.customFields.map { key, value in
+                    FieldValue(key: key, value: value, type: .text)
+                }
+                
+                let newKnowledge = Knowledge(
+                    title: knowledgeData.title,
+                    summary: knowledgeData.summary,
+                    customFields: fields
+                )
+                
+                newKnowledge.folder = newFolder
+                newFolder.knowledges.append(newKnowledge)
+                context.insert(newKnowledge)
+                totalImportedKnowledgesCount += 1
+            }
+        }
+        
+        try? context.save()
+        return totalImportedKnowledgesCount
+    }
+    
     // MARK: - Private Helpers
     private static let encoder = JSONEncoder()
     private static var dateFormatter: DateFormatter = {
