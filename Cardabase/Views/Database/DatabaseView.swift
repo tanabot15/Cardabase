@@ -2,8 +2,6 @@
 //  DatabaseView.swift
 //  Cardabase
 //
-//  Created by Kenichiro Suzuki on 2026/07/31.
-//
 
 import SwiftUI
 import SwiftData
@@ -16,6 +14,7 @@ struct DatabaseView: View {
     // MARK: - State Management
     @State private var searchText: String = ""
     @State private var isShowingAddSheet: Bool = false
+    @State private var isShowingQuickAddSheet: Bool = false
     @State private var selectedKnowledgeToEdit: Knowledge?
     
     // Filtered records based on search query
@@ -69,7 +68,7 @@ struct DatabaseView: View {
                             ContentUnavailableView(
                                 searchText.isEmpty ? "No Records" : "No Matching Records",
                                 systemImage: searchText.isEmpty ? "doc.badge.plus" : "magnifyingglass",
-                                description: Text(searchText.isEmpty ? "Tap '+' to add your first knowledge record." : "Try a different search term.")
+                                description: Text(searchText.isEmpty ? "Tap '+' to add records individually or in bulk." : "Try a different search term.")
                             )
                         } else {
                             ForEach(filteredKnowledges) { knowledge in
@@ -85,8 +84,16 @@ struct DatabaseView: View {
                 .listStyle(.insetGrouped)
             }
             
-            // Add Floating Action Button
-            Button(action: handleAddKnowledgeTapped) {
+            // Add Floating Action Menu
+            Menu {
+                Button(action: handleAddKnowledgeTapped) {
+                    Label("Add Single Record", systemImage: "doc.badge.plus")
+                }
+                
+                Button(action: handleQuickAddTapped) {
+                    Label("Quick Paste / Bulk Add", systemImage: "doc.on.clipboard")
+                }
+            } label: {
                 Image(systemName: "plus")
                     .font(.title2.bold())
                     .foregroundStyle(.white)
@@ -103,6 +110,9 @@ struct DatabaseView: View {
         .sheet(isPresented: $isShowingAddSheet) {
             KnowledgeFormView(folder: folder)
         }
+        .sheet(isPresented: $isShowingQuickAddSheet) {
+            QuickAddView(folder: folder)
+        }
         .sheet(item: $selectedKnowledgeToEdit) { knowledge in
             KnowledgeFormView(folder: folder, knowledgeToEdit: knowledge)
         }
@@ -118,6 +128,14 @@ struct DatabaseView: View {
             appState.isShowingPaywall = true
         } else {
             isShowingAddSheet = true
+        }
+    }
+    
+    private func handleQuickAddTapped() {
+        if Limits.isKnowledgeLimitReached(currentCountInFolder: folder.knowledges.count, isPro: appState.isProUser) {
+            appState.isShowingPaywall = true
+        } else {
+            isShowingQuickAddSheet = true
         }
     }
     
@@ -210,13 +228,7 @@ private struct KnowledgeRowView: View {
         masterStatus: .mastered
     )
     
-    let k2 = Knowledge(
-        title: "Kimoto Method",
-        summary: "Traditional starter method utilizing naturally occurring lactic acid bacteria.",
-        masterStatus: .incorrect
-    )
-    
-    folder.knowledges.append(contentsOf: [k1, k2])
+    folder.knowledges.append(k1)
     context.insert(folder)
     
     return NavigationStack {

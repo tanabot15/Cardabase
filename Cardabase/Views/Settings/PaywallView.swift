@@ -12,6 +12,7 @@ struct PaywallView: View {
     @EnvironmentObject private var appState: AppState
     @StateObject private var adManager = AdMobManager.shared
     
+    @State private var proProduct: Product?
     @State private var isPurchasing: Bool = false
     @State private var errorMessage: String?
     
@@ -67,7 +68,7 @@ struct PaywallView: View {
                                 ProgressView()
                                     .tint(.white)
                             } else {
-                                Text(appState.isProUser ? "Pro Plan Active" : "Upgrade to Pro")
+                                Text(buttonTitle)
                                     .bold()
                             }
                         }
@@ -89,6 +90,9 @@ struct PaywallView: View {
                 .padding(.horizontal, 24)
                 .padding(.bottom, 16)
             }
+            .task {
+                await fetchProduct()
+            }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Close") {
@@ -100,6 +104,18 @@ struct PaywallView: View {
         }
     }
     
+    private var buttonTitle: String {
+        if appState.isProUser {
+            return "Pro Plan Active"
+        } else if let product = proProduct {
+            return "Upgrade to Pro - \(product.displayPrice)"
+        } else {
+            return "Upgrade to Pro"
+        }
+    }
+    
+    
+    
     private func closePaywall() {
         DispatchQueue.main.async {
             appState.isShowingPaywall = false
@@ -108,6 +124,16 @@ struct PaywallView: View {
     }
     
     // MARK: - StoreKit Actions
+    
+    private func fetchProduct() async {
+        do {
+            let products = try await Product.products(for: [Limits.proProductID])
+            self.proProduct = products.first
+        } catch {
+            print("Failed to fetch product: \(error.localizedDescription)")
+        }
+    }
+    
     private func purchasePro() {
         Task {
             isPurchasing = true
