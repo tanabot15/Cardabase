@@ -13,7 +13,6 @@ struct KnowledgeFormView: View {
     let folder: Folder
     var knowledgeToEdit: Knowledge?
     
-    // MARK: - Field Focus
     enum Field {
         case title
         case summary
@@ -21,13 +20,14 @@ struct KnowledgeFormView: View {
     
     @FocusState private var focusedField: Field?
     
-    // MARK: - State Management
     @State private var title: String = ""
     @State private var summary: String = ""
     @State private var customFields: [FieldValue] = []
-    
-    /// Keep Adding Mode Toggle State
     @State private var isKeepAddingMode: Bool = false
+    
+    // OCR Camera Scanner State
+    @State private var isShowingOCRScanner: Bool = false
+    @State private var targetFieldForOCR: Field = .title
     
     private var isEditing: Bool {
         knowledgeToEdit != nil
@@ -38,23 +38,16 @@ struct KnowledgeFormView: View {
         let trimmedSummary = summary.trimmingCharacters(in: .whitespacesAndNewlines)
         
         if let knowledge = knowledgeToEdit {
-            let isTitleEmpty = trimmedTitle.isEmpty
-            let isSummaryEmpty = trimmedSummary.isEmpty
-            let isUnchanged = title == knowledge.title &&
-                              summary == knowledge.summary &&
-                              customFields == initialCustomFields(for: knowledge)
-            
-            return isTitleEmpty || isSummaryEmpty || isUnchanged
+            return trimmedTitle.isEmpty || trimmedSummary.isEmpty ||
+            (title == knowledge.title && summary == knowledge.summary && customFields == initialCustomFields(for: knowledge))
         } else {
             return trimmedTitle.isEmpty || trimmedSummary.isEmpty
         }
     }
     
-    // MARK: - Main Body
     var body: some View {
         NavigationStack {
             Form {
-                // Keep Adding Toggle (Only for New Records)
                 if !isEditing {
                     Section {
                         Toggle(isOn: $isKeepAddingMode) {
@@ -71,13 +64,40 @@ struct KnowledgeFormView: View {
                 }
                 
                 Section(header: Text("Basic Information")) {
-                    TextField("Title", text: $title)
-                        .focused($focusedField, equals: .title)
+                    HStack {
+                        TextField("Title", text: $title)
+                            .focused($focusedField, equals: .title)
+                        
+                        Button(action: {
+                            targetFieldForOCR = .title
+                            isShowingOCRScanner = true
+                        }) {
+                            Image(systemName: "camera.viewfinder")
+                                .foregroundStyle(Color.accentColor)
+                        }
+                        .buttonStyle(.plain)
+                    }
                     
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Summary")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                        HStack {
+                            Text("Summary")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                            Button(action: {
+                                targetFieldForOCR = .summary
+                                isShowingOCRScanner = true
+                            }) {
+                                HStack(spacing: 2) {
+                                    Image(systemName: "camera.viewfinder")
+                                    Text("Scan")
+                                }
+                                .font(.caption)
+                                .foregroundStyle(Color.accentColor)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        
                         TextEditor(text: $summary)
                             .frame(minHeight: 100)
                             .focused($focusedField, equals: .summary)
@@ -122,17 +142,27 @@ struct KnowledgeFormView: View {
                     .disabled(isSaveDisabled)
                 }
             }
+            .sheet(isPresented: $isShowingOCRScanner) {
+                TextScannerView { recognizedText in
+                    if targetFieldForOCR == .title {
+                        self.title = recognizedText
+                    } else {
+                        if self.summary.isEmpty {
+                            self.summary = recognizedText
+                        } else {
+                            self.summary += "\n\(recognizedText)"
+                        }
+                    }
+                }
+            }
             .onAppear {
                 setupInitialValues()
-                // Auto focus Title field when presented
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     focusedField = .title
                 }
             }
         }
     }
-    
-    // MARK: - Private Helper Methods
     
     private func initialCustomFields(for knowledge: Knowledge) -> [FieldValue] {
         folder.customFieldSchemas.map { schema in
@@ -183,7 +213,6 @@ struct KnowledgeFormView: View {
             folder.knowledges.append(knowledge)
             
             if isKeepAddingMode {
-                // Keep form open for next card
                 resetFormFields()
                 focusedField = .title
             } else {
@@ -194,40 +223,8 @@ struct KnowledgeFormView: View {
 }
 
 // MARK: - Previews
-
-#Preview("New Record") {
-    let folder = Folder(
-        name: "Sample Folder",
-        customFieldSchemas: [
-            FieldSchema(key: "Category", type: .text),
-            FieldSchema(key: "URL", type: .url)
-        ]
-    )
-    
+#Preview("New Record Form Preview") {
+    let folder = Folder(name: "SAKE DIPLOMA Exam")
     return KnowledgeFormView(folder: folder)
-        .modelContainer(for: [Folder.self, Knowledge.self], inMemory: true)
-}
-
-#Preview("Edit Record") {
-    let folder = Folder(
-        name: "Tech Companies",
-        customFieldSchemas: [
-            FieldSchema(key: "Category", type: .text),
-            FieldSchema(key: "URL", type: .url)
-        ]
-    )
-    
-    let sampleKnowledge = Knowledge(
-        title: "Apple Inc.",
-        summary: "Multinational technology company headquartered in Cupertino, California.",
-        customFields: [
-            FieldValue(key: "Category", value: "Technology", type: .text),
-            FieldValue(key: "URL", value: "https://apple.com", type: .url)
-        ]
-    )
-    sampleKnowledge.folder = folder
-    folder.knowledges.append(sampleKnowledge)
-    
-    return KnowledgeFormView(folder: folder, knowledgeToEdit: sampleKnowledge)
         .modelContainer(for: [Folder.self, Knowledge.self], inMemory: true)
 }

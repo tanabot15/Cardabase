@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		D910C59C3074C6AA00489582 /* QuickAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D910C59B3074C6AA00489582 /* QuickAddView.swift */; };
+		D910C59E3077203200489582 /* TextScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D910C59D3077203200489582 /* TextScannerView.swift */; };
 		D96D2FD1301C41880083DC1E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D96D2FCD301C41880083DC1E /* Assets.xcassets */; };
 		D96D2FD2301C41880083DC1E /* CardabaseApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FCE301C41880083DC1E /* CardabaseApp.swift */; };
 		D96D2FD3301C41880083DC1E /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FCF301C41880083DC1E /* MainTabView.swift */; };
@@ -39,6 +40,7 @@
 
 /* Begin PBXFileReference section */
 		D910C59B3074C6AA00489582 /* QuickAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddView.swift; sourceTree = "<group>"; };
+		D910C59D3077203200489582 /* TextScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextScannerView.swift; sourceTree = "<group>"; };
 		D96D2FBF301C40930083DC1E /* Cardabase.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cardabase.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D96D2FCD301C41880083DC1E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D96D2FCE301C41880083DC1E /* CardabaseApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardabaseApp.swift; sourceTree = "<group>"; };
@@ -189,6 +191,7 @@
 				D96D2FED301C5F140083DC1E /* DatabaseView.swift */,
 				D96D2FEF301C5F1F0083DC1E /* KnowledgeFormView.swift */,
 				D910C59B3074C6AA00489582 /* QuickAddView.swift */,
+				D910C59D3077203200489582 /* TextScannerView.swift */,
 			);
 			path = Database;
 			sourceTree = "<group>";
@@ -333,6 +336,7 @@
 				D910C59C3074C6AA00489582 /* QuickAddView.swift in Sources */,
 				D96D2FE5301C5EA70083DC1E /* FieldValue.swift in Sources */,
 				D96D2FD3301C41880083DC1E /* MainTabView.swift in Sources */,
+				D910C59E3077203200489582 /* TextScannerView.swift in Sources */,
 				D96D2FFC301C5F640083DC1E /* AdBannerView.swift in Sources */,
 				D990D1B8303C0562001B3CDA /* DataManagementView.swift in Sources */,
 				D96D2FE1301C5E8E0083DC1E /* Folder.swift in Sources */,
