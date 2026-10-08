@@ -76,10 +76,12 @@ struct SettingsView: View {
                                     .font(.headline)
                                     .fontWeight(.bold)
                                     .foregroundStyle(.white)
+                                    .shadow(color: Color.black.opacity(0.25), radius: 2, x: 0, y: 1)
                                 
                                 Text("Unlock unlimited cards & ad-free experience")
                                     .font(.caption2)
-                                    .foregroundStyle(Color.white.opacity(0.9))
+                                    .foregroundStyle(Color.white.opacity(0.95))
+                                    .shadow(color: Color.black.opacity(0.25), radius: 2, x: 0, y: 1)
                             }
                             
                             Spacer()
@@ -87,13 +89,14 @@ struct SettingsView: View {
                             // Chevron Indicator
                             Image(systemName: "chevron.right")
                                 .font(.system(size: 14, weight: .semibold))
-                                .foregroundStyle(Color.white.opacity(0.8))
+                                .foregroundStyle(Color.white.opacity(0.9))
+                                .shadow(color: Color.black.opacity(0.25), radius: 2, x: 0, y: 1)
                         }
                         .padding(.vertical, 10)
                         .padding(.horizontal, 14)
                         .background(
                             LinearGradient(
-                                colors: [Color.orange, Color.yellow],
+                                colors: [Color.orange, Color(red: 0.95, green: 0.45, blue: 0.0)],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
@@ -104,11 +107,6 @@ struct SettingsView: View {
                     .buttonStyle(PlainButtonStyle())
                     .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
                 }
-                
-                Button("Restore Purchases") {
-                    restorePurchases()
-                }
-                .buttonStyle(.plain)
             }
             
             // MARK: 2. Study & Review
@@ -186,6 +184,10 @@ struct SettingsView: View {
                     Spacer()
                     Text("3.13")
                         .foregroundStyle(.secondary)
+                }
+                
+                Button("Restore Purchases") {
+                    restorePurchases()
                 }
                 
                 Button(action: openAppStoreReview) {
