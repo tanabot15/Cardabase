@@ -86,12 +86,12 @@ struct DatabaseView: View {
             
             // Add Floating Action Menu
             Menu {
-                Button(action: handleAddKnowledgeTapped) {
-                    Label("Add Single Record", systemImage: "doc.badge.plus")
+                Button(action: handleQuickAddTapped) {
+                    Label("Add Bulk Records", systemImage: "doc.on.clipboard")
                 }
                 
-                Button(action: handleQuickAddTapped) {
-                    Label("Quick Paste / Bulk Add", systemImage: "doc.on.clipboard")
+                Button(action: handleAddKnowledgeTapped) {
+                    Label("Add Single Record", systemImage: "doc.badge.plus")
                 }
             } label: {
                 Image(systemName: "plus")

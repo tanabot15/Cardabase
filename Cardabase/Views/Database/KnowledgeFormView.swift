@@ -2,8 +2,6 @@
 //  KnowledgeFormView.swift
 //  Cardabase
 //
-//  Created by Kenichiro Suzuki on 2026/07/31.
-//
 
 import SwiftUI
 import SwiftData
@@ -15,10 +13,21 @@ struct KnowledgeFormView: View {
     let folder: Folder
     var knowledgeToEdit: Knowledge?
     
+    // MARK: - Field Focus
+    enum Field {
+        case title
+        case summary
+    }
+    
+    @FocusState private var focusedField: Field?
+    
     // MARK: - State Management
     @State private var title: String = ""
     @State private var summary: String = ""
     @State private var customFields: [FieldValue] = []
+    
+    /// Keep Adding Mode Toggle State
+    @State private var isKeepAddingMode: Bool = false
     
     private var isEditing: Bool {
         knowledgeToEdit != nil
@@ -45,8 +54,25 @@ struct KnowledgeFormView: View {
     var body: some View {
         NavigationStack {
             Form {
+                // Keep Adding Toggle (Only for New Records)
+                if !isEditing {
+                    Section {
+                        Toggle(isOn: $isKeepAddingMode) {
+                            Label("Keep Adding Mode", systemImage: "arrow.triangle.2.circlepath")
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                        }
+                    } footer: {
+                        if isKeepAddingMode {
+                            Text("Form will remain open after adding a record so you can quickly add the next one.")
+                                .font(.caption2)
+                        }
+                    }
+                }
+                
                 Section(header: Text("Basic Information")) {
                     TextField("Title", text: $title)
+                        .focused($focusedField, equals: .title)
                     
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Summary")
@@ -54,6 +80,7 @@ struct KnowledgeFormView: View {
                             .foregroundStyle(.secondary)
                         TextEditor(text: $summary)
                             .frame(minHeight: 100)
+                            .focused($focusedField, equals: .summary)
                     }
                 }
                 
@@ -84,10 +111,12 @@ struct KnowledgeFormView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(isKeepAddingMode && !isEditing ? "Done" : "Cancel") {
+                        dismiss()
+                    }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(isEditing ? "Save" : "Add") {
+                    Button(isEditing ? "Save" : (isKeepAddingMode ? "Next" : "Add")) {
                         saveKnowledge()
                     }
                     .disabled(isSaveDisabled)
@@ -95,6 +124,10 @@ struct KnowledgeFormView: View {
             }
             .onAppear {
                 setupInitialValues()
+                // Auto focus Title field when presented
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    focusedField = .title
+                }
             }
         }
     }
@@ -117,9 +150,15 @@ struct KnowledgeFormView: View {
             summary = knowledge.summary
             customFields = initialCustomFields(for: knowledge)
         } else {
-            customFields = folder.customFieldSchemas.map { schema in
-                FieldValue(key: schema.key, value: "", type: schema.type)
-            }
+            resetFormFields()
+        }
+    }
+    
+    private func resetFormFields() {
+        title = ""
+        summary = ""
+        customFields = folder.customFieldSchemas.map { schema in
+            FieldValue(key: schema.key, value: "", type: schema.type)
         }
     }
     
@@ -133,6 +172,7 @@ struct KnowledgeFormView: View {
             knowledge.summary = trimmedSummary
             knowledge.customFields = customFields
             knowledge.updatedAt = Date()
+            dismiss()
         } else {
             let knowledge = Knowledge(
                 title: trimmedTitle,
@@ -141,9 +181,15 @@ struct KnowledgeFormView: View {
             )
             knowledge.folder = folder
             folder.knowledges.append(knowledge)
+            
+            if isKeepAddingMode {
+                // Keep form open for next card
+                resetFormFields()
+                focusedField = .title
+            } else {
+                dismiss()
+            }
         }
-        
-        dismiss()
     }
 }
 
