@@ -31,7 +31,7 @@ struct MainTabView: View {
                     Text("Folder")
                 } icon: {
                     Image(systemName: "folder")
-                        .environment(\.symbolVariants, .none)
+                        .environment(\.symbolVariants, selectedTab == 0 ? .fill : .none)
                 }
             }
             .tag(0)
@@ -44,8 +44,8 @@ struct MainTabView: View {
                 Label {
                     Text("Search")
                 } icon: {
-                    Image(systemName: "magnifyingglass")
-                        .environment(\.symbolVariants, .none)
+                    Image(systemName: "magnifyingglass.circle")
+                        .environment(\.symbolVariants, selectedTab == 1 ? .fill : .none)
                 }
             }
             .tag(1)
@@ -57,7 +57,6 @@ struct MainTabView: View {
                         Text("Add")
                     } icon: {
                         Image(systemName: "plus.circle.fill")
-                            .environment(\.symbolVariants, .none)
                     }
                 }
                 .tag(2)
@@ -71,7 +70,7 @@ struct MainTabView: View {
                     Text("Analytics")
                 } icon: {
                     Image(systemName: "chart.pie")
-                        .environment(\.symbolVariants, .none)
+                        .environment(\.symbolVariants, selectedTab == 3 ? .fill : .none)
                 }
             }
             .tag(3)
@@ -84,8 +83,8 @@ struct MainTabView: View {
                 Label {
                     Text("Settings")
                 } icon: {
-                    Image(systemName: "gear")
-                        .environment(\.symbolVariants, .none)
+                    Image(systemName: "gearshape")
+                        .environment(\.symbolVariants, selectedTab == 4 ? .fill : .none)
                 }
             }
             .tag(4)
@@ -159,9 +158,10 @@ struct MainTabView: View {
     }
 }
 
-// MARK: - Preview
+// MARK: - Preview Helper
 
-#Preview {
+@MainActor
+private func createPreviewContainer() -> ModelContainer {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: Folder.self, Knowledge.self, configurations: config)
     let context = container.mainContext
@@ -186,7 +186,21 @@ struct MainTabView: View {
     context.insert(k3)
     context.insert(k4)
     
-    return MainTabView()
+    return container
+}
+
+// MARK: - Previews
+
+#Preview("Light") {
+    MainTabView()
         .environmentObject(AppState())
-        .modelContainer(container)
+        .modelContainer(createPreviewContainer())
+        .preferredColorScheme(.light)
+}
+
+#Preview("Dark") {
+    MainTabView()
+        .environmentObject(AppState())
+        .modelContainer(createPreviewContainer())
+        .preferredColorScheme(.dark)
 }
