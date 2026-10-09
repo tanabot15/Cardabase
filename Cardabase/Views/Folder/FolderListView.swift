@@ -15,15 +15,7 @@ struct FolderListView: View {
     @Query(filter: #Predicate<Folder> { $0.parent == nil }, sort: \Folder.createdAt, order: .reverse)
     private var rootFolders: [Folder]
     
-    // MARK: - State Management
     @State private var searchText: String = ""
-    @State private var isShowingCreateSheet: Bool = false
-    @State private var newFolderName: String = ""
-    @State private var customSchemas: [FieldSchema] = []
-    
-    // States for custom field creation
-    @State private var newSchemaKey: String = ""
-    @State private var newSchemaType: FieldType = .text
     
     private var displayedFolders: [Folder] {
         let sourceFolders = parentFolder?.subfolders ?? rootFolders
@@ -34,152 +26,30 @@ struct FolderListView: View {
         }
     }
     
-    // MARK: - Main Body
     var body: some View {
-        ZStack(alignment: .bottomTrailing) {
-            VStack(spacing: 0) {
-                if !appState.isProUser {
-                    AdBannerView()
-                }
-                
-                List {
-                    if displayedFolders.isEmpty {
-                        ContentUnavailableView(
-                            searchText.isEmpty ? "No Databases Yet" : "No Results",
-                            systemImage: searchText.isEmpty ? "folder.badge.plus" : "magnifyingglass",
-                            description: Text(searchText.isEmpty ? "Tap '+' button to create your first database." : "Try searching for another name.")
-                        )
-                    } else {
-                        ForEach(displayedFolders) { folder in
-                            FolderRowView(folder: folder)
-                        }
-                        .onDelete(perform: deleteFolders)
-                    }
-                }
-                .listStyle(.insetGrouped)
+        VStack(spacing: 0) {
+            if !appState.isProUser {
+                AdBannerView()
             }
             
-            // Floating Add Button
-            Button(action: handleAddFolderTapped) {
-                Image(systemName: "plus")
-                    .font(.title2.bold())
-                    .foregroundStyle(.white)
-                    .frame(width: 56, height: 56)
-                    .background(Color.accentColor)
-                    .clipShape(Circle())
-                    .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 3)
+            List {
+                if displayedFolders.isEmpty {
+                    ContentUnavailableView(
+                        searchText.isEmpty ? "No Databases Yet" : "No Results",
+                        systemImage: searchText.isEmpty ? "folder.badge.plus" : "magnifyingglass",
+                        description: Text(searchText.isEmpty ? "Tap '+' on the tab bar to create your first database." : "Try searching for another name.")
+                    )
+                } else {
+                    ForEach(displayedFolders) { folder in
+                        FolderRowView(folder: folder)
+                    }
+                    .onDelete(perform: deleteFolders)
+                }
             }
-            .padding(.trailing, 20)
-            .padding(.bottom, 20)
+            .listStyle(.insetGrouped)
         }
         .navigationTitle("Folders")
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $isShowingCreateSheet) {
-            createFolderSheet
-        }
-    }
-    
-    // MARK: - Subviews
-    
-    private var createFolderSheet: some View {
-        NavigationStack {
-            Form {
-                Section(header: Text("Database Name")) {
-                    TextField("e.g. Finance, AI Concepts", text: $newFolderName)
-                }
-                
-                Section(header: Text("Custom Field Schemas (\(customSchemas.count))")) {
-                    if customSchemas.isEmpty {
-                        Text("No custom fields added.")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    } else {
-                        ForEach(customSchemas) { schema in
-                            HStack {
-                                Text(schema.key)
-                                    .font(.subheadline)
-                                Spacer()
-                                Text(schema.type.displayName)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                        .onDelete { customSchemas.remove(atOffsets: $0) }
-                    }
-                }
-                
-                Section(header: Text("Add Custom Field")) {
-                    TextField("Field Key (e.g. Region, Variety, Year)", text: $newSchemaKey)
-                    Picker("Field Type", selection: $newSchemaType) {
-                        ForEach(FieldType.allCases) { type in
-                            Text(type.displayName).tag(type)
-                        }
-                    }
-                    
-                    Button(action: addSchema) {
-                        HStack {
-                            Image(systemName: "plus.circle.fill")
-                            Text("Add Field")
-                        }
-                        .font(.subheadline)
-                        .bold()
-                    }
-                    .disabled(newSchemaKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                }
-            }
-            .navigationTitle("New Database")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { resetCreateSheet() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Create") { createNewFolder() }
-                        .disabled(newFolderName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                }
-            }
-        }
-    }
-    
-    // MARK: - Actions
-    
-    private func addSchema() {
-        let trimmedKey = newSchemaKey.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmedKey.isEmpty else { return }
-        customSchemas.append(FieldSchema(key: trimmedKey, type: newSchemaType))
-        newSchemaKey = ""
-        newSchemaType = .text
-    }
-    
-    private func handleAddFolderTapped() {
-        if Limits.isFolderLimitReached(currentCount: rootFolders.count, isPro: appState.isProUser) {
-            appState.isShowingPaywall = true
-        } else {
-            isShowingCreateSheet = true
-        }
-    }
-    
-    private func createNewFolder() {
-        let trimmedName = newFolderName.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmedName.isEmpty else { return }
-        
-        let folder = Folder(name: trimmedName, customFieldSchemas: customSchemas)
-        if let parentFolder = parentFolder {
-            folder.parent = parentFolder
-            parentFolder.subfolders.append(folder)
-        } else {
-            modelContext.insert(folder)
-        }
-        
-        resetCreateSheet()
-    }
-    
-    private func resetCreateSheet() {
-        newFolderName = ""
-        customSchemas = []
-        newSchemaKey = ""
-        newSchemaType = .text
-        isShowingCreateSheet = false
     }
     
     private func deleteFolders(at offsets: IndexSet) {
@@ -232,7 +102,7 @@ private struct FolderRowView: View {
             Spacer()
             
             HStack(spacing: 16) {
-                // 1. Databse
+                // 1. Database
                 Button(action: {
                     isShowingDatabase = true
                 }) {

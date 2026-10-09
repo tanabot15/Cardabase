@@ -13,10 +13,7 @@ struct DatabaseView: View {
     
     // MARK: - State Management
     @State private var searchText: String = ""
-    @State private var isShowingAddSheet: Bool = false
-    @State private var isShowingQuickAddSheet: Bool = false
     @State private var selectedKnowledgeToEdit: Knowledge?
-    @State private var isShowingVoiceAddSheet: Bool = false
     
     // Filtered records based on search query
     private var filteredKnowledges: [Knowledge] {
@@ -33,127 +30,64 @@ struct DatabaseView: View {
     
     // MARK: - Main Body
     var body: some View {
-        ZStack(alignment: .bottomTrailing) {
-            VStack(spacing: 0) {
-                if !appState.isProUser {
-                    AdBannerView()
-                }
-                
-                // Search Bar
-                HStack {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundStyle(.secondary)
-                    
-                    TextField("Search records & fields...", text: $searchText)
-                        .textFieldStyle(.plain)
-                        .autocorrectionDisabled()
-                    
-                    if !searchText.isEmpty {
-                        Button(action: { searchText = "" }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                }
-                .padding(.horizontal, 10)
-                .padding(.vertical, 8)
-                .background(Color(.systemGroupedBackground))
-                .cornerRadius(10)
-                .padding(.horizontal)
-                .padding(.vertical, 8)
-                
-                // Record List
-                List {
-                    Section(header: Text("Records (\(filteredKnowledges.count))")) {
-                        if filteredKnowledges.isEmpty {
-                            ContentUnavailableView(
-                                searchText.isEmpty ? "No Records" : "No Matching Records",
-                                systemImage: searchText.isEmpty ? "doc.badge.plus" : "magnifyingglass",
-                                description: Text(searchText.isEmpty ? "Tap '+' to add records individually or in bulk." : "Try a different search term.")
-                            )
-                        } else {
-                            ForEach(filteredKnowledges) { knowledge in
-                                Button(action: { selectedKnowledgeToEdit = knowledge }) {
-                                    KnowledgeRowView(knowledge: knowledge)
-                                }
-                                .buttonStyle(.plain)
-                            }
-                            .onDelete(perform: deleteKnowledges)
-                        }
-                    }
-                }
-                .listStyle(.insetGrouped)
+        VStack(spacing: 0) {
+            if !appState.isProUser {
+                AdBannerView()
             }
             
-            // Add Floating Action Menu
-            Menu {
-                Button(action: handleVoiceAddTapped) {
-                    Label("Add by Voice", systemImage: "mic.fill")
-                }
+            // Search Bar
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundStyle(.secondary)
                 
-                Button(action: handleQuickAddTapped) {
-                    Label("Add Bulk Records", systemImage: "doc.on.clipboard")
-                }
+                TextField("Search records & fields...", text: $searchText)
+                    .textFieldStyle(.plain)
+                    .autocorrectionDisabled()
                 
-                Button(action: handleAddKnowledgeTapped) {
-                    Label("Add Single Record", systemImage: "doc.badge.plus")
+                if !searchText.isEmpty {
+                    Button(action: { searchText = "" }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(.secondary)
+                    }
                 }
-            } label: {
-                Image(systemName: "plus")
-                    .font(.title2.bold())
-                    .foregroundStyle(.white)
-                    .frame(width: 56, height: 56)
-                    .background(Color.accentColor)
-                    .clipShape(Circle())
-                    .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 3)
             }
-            .padding(.trailing, 20)
-            .padding(.bottom, 20)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
+            .background(Color(.systemGroupedBackground))
+            .cornerRadius(10)
+            .padding(.horizontal)
+            .padding(.vertical, 8)
+            
+            // Record List
+            List {
+                Section(header: Text("Records (\(filteredKnowledges.count))")) {
+                    if filteredKnowledges.isEmpty {
+                        ContentUnavailableView(
+                            searchText.isEmpty ? "No Records" : "No Matching Records",
+                            systemImage: searchText.isEmpty ? "doc.badge.plus" : "magnifyingglass",
+                            description: Text(searchText.isEmpty ? "Tap '+' on the tab bar to add records." : "Try a different search term.")
+                        )
+                    } else {
+                        ForEach(filteredKnowledges) { knowledge in
+                            Button(action: { selectedKnowledgeToEdit = knowledge }) {
+                                KnowledgeRowView(knowledge: knowledge)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        .onDelete(perform: deleteKnowledges)
+                    }
+                }
+            }
+            .listStyle(.insetGrouped)
         }
         .navigationTitle(folder.name)
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $isShowingAddSheet) {
-            KnowledgeFormView(folder: folder)
-        }
-        .sheet(isPresented: $isShowingQuickAddSheet) {
-            QuickAddView(folder: folder)
-        }
-        .sheet(isPresented: $isShowingVoiceAddSheet) {
-            VoiceCardInputSheet(folder: folder)
-        }
         .sheet(item: $selectedKnowledgeToEdit) { knowledge in
             KnowledgeFormView(folder: folder, knowledgeToEdit: knowledge)
-        }
-        .sheet(isPresented: $appState.isShowingPaywall) {
-            PaywallView()
         }
     }
     
     // MARK: - Actions
-    private func handleVoiceAddTapped() {
-        if Limits.isKnowledgeLimitReached(currentCountInFolder: folder.knowledges.count, isPro: appState.isProUser) {
-            appState.isShowingPaywall = true
-        } else {
-            isShowingVoiceAddSheet = true
-        }
-    }
-    
-    private func handleAddKnowledgeTapped() {
-        if Limits.isKnowledgeLimitReached(currentCountInFolder: folder.knowledges.count, isPro: appState.isProUser) {
-            appState.isShowingPaywall = true
-        } else {
-            isShowingAddSheet = true
-        }
-    }
-    
-    private func handleQuickAddTapped() {
-        if Limits.isKnowledgeLimitReached(currentCountInFolder: folder.knowledges.count, isPro: appState.isProUser) {
-            appState.isShowingPaywall = true
-        } else {
-            isShowingQuickAddSheet = true
-        }
-    }
-    
     private func deleteKnowledges(at offsets: IndexSet) {
         for index in offsets {
             let knowledge = filteredKnowledges[index]
@@ -203,17 +137,19 @@ private struct KnowledgeRowView: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 6) {
                         ForEach(knowledge.customFields) { field in
-                            HStack(spacing: 3) {
-                                Text("\(field.key):")
-                                    .fontWeight(.semibold)
-                                Text(field.value)
+                            if !field.value.isEmpty {
+                                HStack(spacing: 3) {
+                                    Text("\(field.key):")
+                                        .fontWeight(.semibold)
+                                    Text(field.value)
+                                }
+                                .font(.caption2)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 3)
+                                .background(Color(.secondarySystemBackground))
+                                .clipShape(Capsule())
+                                .foregroundStyle(.secondary)
                             }
-                            .font(.caption2)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 3)
-                            .background(Color(.secondarySystemBackground))
-                            .clipShape(Capsule())
-                            .foregroundStyle(.secondary)
                         }
                     }
                 }
