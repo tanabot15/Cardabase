@@ -16,6 +16,7 @@ struct DatabaseView: View {
     @State private var isShowingAddSheet: Bool = false
     @State private var isShowingQuickAddSheet: Bool = false
     @State private var selectedKnowledgeToEdit: Knowledge?
+    @State private var isShowingVoiceAddSheet: Bool = false
     
     // Filtered records based on search query
     private var filteredKnowledges: [Knowledge] {
@@ -86,6 +87,10 @@ struct DatabaseView: View {
             
             // Add Floating Action Menu
             Menu {
+                Button(action: handleVoiceAddTapped) {
+                    Label("Add by Voice", systemImage: "mic.fill")
+                }
+                
                 Button(action: handleQuickAddTapped) {
                     Label("Add Bulk Records", systemImage: "doc.on.clipboard")
                 }
@@ -113,6 +118,9 @@ struct DatabaseView: View {
         .sheet(isPresented: $isShowingQuickAddSheet) {
             QuickAddView(folder: folder)
         }
+        .sheet(isPresented: $isShowingVoiceAddSheet) {
+            VoiceCardInputSheet(folder: folder)
+        }
         .sheet(item: $selectedKnowledgeToEdit) { knowledge in
             KnowledgeFormView(folder: folder, knowledgeToEdit: knowledge)
         }
@@ -122,6 +130,13 @@ struct DatabaseView: View {
     }
     
     // MARK: - Actions
+    private func handleVoiceAddTapped() {
+        if Limits.isKnowledgeLimitReached(currentCountInFolder: folder.knowledges.count, isPro: appState.isProUser) {
+            appState.isShowingPaywall = true
+        } else {
+            isShowingVoiceAddSheet = true
+        }
+    }
     
     private func handleAddKnowledgeTapped() {
         if Limits.isKnowledgeLimitReached(currentCountInFolder: folder.knowledges.count, isPro: appState.isProUser) {

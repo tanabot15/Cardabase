@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		D910C59C3074C6AA00489582 /* QuickAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D910C59B3074C6AA00489582 /* QuickAddView.swift */; };
 		D910C59E3077203200489582 /* TextScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D910C59D3077203200489582 /* TextScannerView.swift */; };
+		D910C5A43078A2AC00489582 /* VoiceInputManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D910C5A33078A2AC00489582 /* VoiceInputManager.swift */; };
+		D910C5A63078A2C600489582 /* VoiceParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D910C5A53078A2C600489582 /* VoiceParser.swift */; };
+		D910C5A83078A31600489582 /* VoiceCardInputSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D910C5A73078A31600489582 /* VoiceCardInputSheet.swift */; };
 		D96D2FD1301C41880083DC1E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D96D2FCD301C41880083DC1E /* Assets.xcassets */; };
 		D96D2FD2301C41880083DC1E /* CardabaseApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FCE301C41880083DC1E /* CardabaseApp.swift */; };
 		D96D2FD3301C41880083DC1E /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96D2FCF301C41880083DC1E /* MainTabView.swift */; };
@@ -41,6 +44,9 @@
 /* Begin PBXFileReference section */
 		D910C59B3074C6AA00489582 /* QuickAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddView.swift; sourceTree = "<group>"; };
 		D910C59D3077203200489582 /* TextScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextScannerView.swift; sourceTree = "<group>"; };
+		D910C5A33078A2AC00489582 /* VoiceInputManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceInputManager.swift; sourceTree = "<group>"; };
+		D910C5A53078A2C600489582 /* VoiceParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceParser.swift; sourceTree = "<group>"; };
+		D910C5A73078A31600489582 /* VoiceCardInputSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardInputSheet.swift; sourceTree = "<group>"; };
 		D96D2FBF301C40930083DC1E /* Cardabase.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cardabase.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D96D2FCD301C41880083DC1E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D96D2FCE301C41880083DC1E /* CardabaseApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardabaseApp.swift; sourceTree = "<group>"; };
@@ -192,6 +198,9 @@
 				D96D2FEF301C5F1F0083DC1E /* KnowledgeFormView.swift */,
 				D910C59B3074C6AA00489582 /* QuickAddView.swift */,
 				D910C59D3077203200489582 /* TextScannerView.swift */,
+				D910C5A33078A2AC00489582 /* VoiceInputManager.swift */,
+				D910C5A53078A2C600489582 /* VoiceParser.swift */,
+				D910C5A73078A31600489582 /* VoiceCardInputSheet.swift */,
 			);
 			path = Database;
 			sourceTree = "<group>";
@@ -328,16 +337,19 @@
 			files = (
 				D96D2FF2301C5F2B0083DC1E /* CardConfigView.swift in Sources */,
 				D96D3002301C5F8C0083DC1E /* AdMobManager.swift in Sources */,
+				D910C5A43078A2AC00489582 /* VoiceInputManager.swift in Sources */,
 				D990D1BA303C059C001B3CDA /* DataTransferManager.swift in Sources */,
 				D96D2FF0301C5F1F0083DC1E /* KnowledgeFormView.swift in Sources */,
 				D9D57E3F303D5F3E004B29BA /* AnalyticsView.swift in Sources */,
 				D96D3000301C5F820083DC1E /* Limits.swift in Sources */,
 				D96D2FD2301C41880083DC1E /* CardabaseApp.swift in Sources */,
 				D910C59C3074C6AA00489582 /* QuickAddView.swift in Sources */,
+				D910C5A63078A2C600489582 /* VoiceParser.swift in Sources */,
 				D96D2FE5301C5EA70083DC1E /* FieldValue.swift in Sources */,
 				D96D2FD3301C41880083DC1E /* MainTabView.swift in Sources */,
 				D910C59E3077203200489582 /* TextScannerView.swift in Sources */,
 				D96D2FFC301C5F640083DC1E /* AdBannerView.swift in Sources */,
+				D910C5A83078A31600489582 /* VoiceCardInputSheet.swift in Sources */,
 				D990D1B8303C0562001B3CDA /* DataManagementView.swift in Sources */,
 				D96D2FE1301C5E8E0083DC1E /* Folder.swift in Sources */,
 				D96D2FFA301C5F570083DC1E /* PaywallView.swift in Sources */,
@@ -483,7 +495,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 31;
+				CURRENT_PROJECT_VERSION = 32;
 				DEVELOPMENT_TEAM = D86GFNUD35;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -500,7 +512,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.13;
+				MARKETING_VERSION = 3.14;
 				PRODUCT_BUNDLE_IDENTIFIER = com.suzuki.kenichiro.Cardabase;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -523,7 +535,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 31;
+				CURRENT_PROJECT_VERSION = 32;
 				DEVELOPMENT_TEAM = D86GFNUD35;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -540,7 +552,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.13;
+				MARKETING_VERSION = 3.14;
 				PRODUCT_BUNDLE_IDENTIFIER = com.suzuki.kenichiro.Cardabase;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;

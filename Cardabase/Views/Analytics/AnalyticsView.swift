@@ -56,7 +56,7 @@ struct AnalyticsView: View {
                                     weeklyDays: streakInfo.weeklyDays
                                 )
                                 
-                                // Metric Grid
+                                // Metric Card
                                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                                     MetricCard(title: "Total Records", value: "\(totalCards)", systemImage: "doc.text.fill", color: .blue)
                                     MetricCard(title: "Accuracy", value: "\(overallAccuracy)%", systemImage: "target", color: .green)
