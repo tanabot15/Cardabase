@@ -12,13 +12,7 @@ struct MainTabView: View {
     @Query(sort: \Folder.createdAt, order: .reverse) private var allFolders: [Folder]
     
     @State private var selectedTab: Int = 0
-    @State private var isShowingQuickAddActionSheet: Bool = false
-    
-    // Quick Add モーダルの状態管理
-    @State private var isShowingSingleAdd: Bool = false
-    @State private var isShowingBulkAdd: Bool = false
-    @State private var isShowingVoiceAdd: Bool = false
-    @State private var isShowingCreateFolder: Bool = false
+    @State private var isShowingQuickAddHub: Bool = false
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -92,68 +86,14 @@ struct MainTabView: View {
         .onChange(of: selectedTab) { oldTab, newTab in
             if newTab == 2 {
                 selectedTab = oldTab
-                handleGlobalAddTapped()
+                isShowingQuickAddHub = true
             }
         }
-        .confirmationDialog("Quick Add", isPresented: $isShowingQuickAddActionSheet, titleVisibility: .visible) {
-            Button("New Database / Folder") {
-                handleCreateFolderTapped()
-            }
-            
-            Button("Add Single Record") {
-                isShowingSingleAdd = true
-            }
-            .disabled(allFolders.isEmpty)
-            
-            Button("Add Bulk Records") {
-                isShowingBulkAdd = true
-            }
-            .disabled(allFolders.isEmpty)
-            
-            Button("Add by Voice") {
-                isShowingVoiceAdd = true
-            }
-            .disabled(allFolders.isEmpty)
-            
-            Button("Cancel", role: .cancel) {}
-        }
-        .sheet(isPresented: $isShowingSingleAdd) {
-            if let folder = targetFolder {
-                KnowledgeFormView(folder: folder)
-            }
-        }
-        .sheet(isPresented: $isShowingBulkAdd) {
-            if let folder = targetFolder {
-                QuickAddView(folder: folder)
-            }
-        }
-        .sheet(isPresented: $isShowingVoiceAdd) {
-            if let folder = targetFolder {
-                VoiceCardInputSheet(folder: folder)
-            }
-        }
-        .sheet(isPresented: $isShowingCreateFolder) {
-            FolderFormView()
+        .sheet(isPresented: $isShowingQuickAddHub) {
+            QuickAddHubSheet(folders: allFolders)
         }
         .sheet(isPresented: $appState.isShowingPaywall) {
             PaywallView()
-        }
-    }
-    
-    /// 保存先フォルダーの決定（フォルダーが存在しない場合は最初のものを自動選択）
-    private var targetFolder: Folder? {
-        allFolders.first
-    }
-    
-    private func handleGlobalAddTapped() {
-        isShowingQuickAddActionSheet = true
-    }
-    
-    private func handleCreateFolderTapped() {
-        if Limits.isFolderLimitReached(currentCount: allFolders.count, isPro: appState.isProUser) {
-            appState.isShowingPaywall = true
-        } else {
-            isShowingCreateFolder = true
         }
     }
 }
